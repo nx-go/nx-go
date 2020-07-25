@@ -6,9 +6,9 @@
 
 ## Getting started
 
-First, make sure you have a Nx Workspace. 
+First, make sure you have a Nx Workspace.
 
-Create a new one using the following command: 
+Create a new one using the following command:
 
 ```bash
 yarn create nx-workspace go-playground --preset=empty --cli=nx --nx-cloud true
@@ -65,4 +65,4 @@ nx test api
 
 ## MIT License
 
-Created by [Bram Borggreve](https://github.com/beeman). 
+Created by [Bram Borggreve](https://github.com/beeman).

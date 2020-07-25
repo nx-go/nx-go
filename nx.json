@@ -18,12 +18,7 @@
       "runner": "@nrwl/nx-cloud",
       "options": {
         "accessToken": "YmMwOWNkM2EtMTI1Yi00NWJiLWE4YzgtNWUwMDM4OGMwMzMzfHJlYWQtd3JpdGU=",
-        "cacheableOperations": [
-          "build",
-          "test",
-          "lint",
-          "e2e"
-        ],
+        "cacheableOperations": ["build", "test", "lint", "e2e"],
         "canTrackAnalytics": false,
         "showUsageWarnings": true
       }
@@ -35,9 +30,7 @@
     },
     "nx-go-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "nx-go"
-      ]
+      "implicitDependencies": ["nx-go"]
     }
   },
   "workspaceLayout": {

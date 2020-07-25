@@ -11,10 +11,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "packages/nx-go/tsconfig.lib.json",
-              "packages/nx-go/tsconfig.spec.json"
-            ],
+            "tsConfig": ["packages/nx-go/tsconfig.lib.json", "packages/nx-go/tsconfig.spec.json"],
             "exclude": ["**/node_modules/**", "!packages/nx-go/**/*"]
           }
         },
