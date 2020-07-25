@@ -7,21 +7,21 @@ import {
 } from '@nrwl/nx-plugin/testing';
 describe('application e2e', () => {
   it('should create application', async (done) => {
-    const plugin = uniq('app');
+    const appName = uniq('app');
     ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go');
-    await runNxCommandAsync(`generate @nx-go/nx-go:application ${plugin}`);
+    await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`);
 
-    const resultBuild = await runNxCommandAsync(`build ${plugin}`);
+    const resultBuild = await runNxCommandAsync(`build ${appName}`);
     expect(resultBuild.stdout).toContain(`Executing command: go build`);
 
     // const resultLint = await runNxCommandAsync(`lint ${plugin}`);
     // expect(resultLint.stdout).toContain(`Executing command: go fmt`);
 
-    const resultServe = await runNxCommandAsync(`serve ${plugin}`);
+    const resultServe = await runNxCommandAsync(`serve ${appName}`);
     expect(resultServe.stdout).toContain(`Executing command: go run`);
 
-    // const resultTest = await runNxCommandAsync(`test ${plugin}`);
-    // expect(resultTest.stdout).toContain(`Executing command: go test`);
+    const resultTest = await runNxCommandAsync(`test ${appName}`);
+    expect(resultTest.stdout).toContain(`Executing command: go test apps/${appName}/**/*.go`);
 
     done();
   });
