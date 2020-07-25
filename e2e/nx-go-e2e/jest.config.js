@@ -7,4 +7,4 @@ module.exports = {
     },
   },
   coverageDirectory: '../../coverage/e2e/nx-go-e2e',
-};
+}
