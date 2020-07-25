@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "projects": {
+    "nx-go": {
+      "root": "packages/nx-go",
+      "sourceRoot": "packages/nx-go/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "packages/nx-go/tsconfig.lib.json",
+              "packages/nx-go/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!packages/nx-go/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "packages/nx-go/jest.config.js",
+            "tsConfig": "packages/nx-go/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/nx-go",
+            "tsConfig": "packages/nx-go/tsconfig.lib.json",
+            "packageJson": "packages/nx-go/package.json",
+            "main": "packages/nx-go/src/index.ts",
+            "assets": [
+              "packages/nx-go/*.md",
+              {
+                "input": "./packages/nx-go/src",
+                "glob": "**/*.!(ts)",
+                "output": "./src"
+              },
+              {
+                "input": "./packages/nx-go",
+                "glob": "collection.json",
+                "output": "."
+              },
+              {
+                "input": "./packages/nx-go",
+                "glob": "builders.json",
+                "output": "."
+              }
+            ]
+          }
+        }
+      }
+    },
+    "nx-go-e2e": {
+      "projectType": "application",
+      "root": "e2e/nx-go-e2e",
+      "sourceRoot": "e2e/nx-go-e2e/src",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/nx-plugin:e2e",
+          "options": {
+            "target": "nx-go:build",
+            "npmPackageName": "@nx-go/nx-go",
+            "pluginOutputPath": "dist/packages/nx-go",
+            "jestConfig": "e2e/nx-go-e2e/jest.config.js",
+            "tsSpecConfig": "e2e/nx-go-e2e/tsconfig.spec.json"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/workspace"
+  },
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    }
+  }
+}

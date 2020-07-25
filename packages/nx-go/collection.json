@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "name": "nx-go",
+  "version": "0.0.1",
+  "schematics": {
+    "nx-go": {
+      "factory": "./src/schematics/nx-go/schematic",
+      "schema": "./src/schematics/nx-go/schema.json",
+      "description": "nx-go schematic"
+    }
+  }
+}
