@@ -11,9 +11,8 @@ export function runBuilder(
   return from(context.getProjectMetadata(context?.target?.project)).pipe(
     map(() => {
       const mainFile = `${options.main}`
-      const output = `-o ${options.outputPath}`
 
-      return runGoCommand(context, "build", [output, mainFile])
+      return runGoCommand(context, "test", [mainFile])
     }),
   );
 }

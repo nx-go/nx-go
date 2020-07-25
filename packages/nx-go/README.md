@@ -1,7 +1,5 @@
-# nx-go
-
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `ng test nx-go` to execute the unit tests via [Jest](https://jestjs.io).
+<div align="center">
+  <h1>nx-go</h1>
+  <p>Use <a href="https://go.dev">Go</a> in a <a href="https://nx.dev">Nx</a> workspace.</p>
+  <img src="https://github.com/nx-go.png" title="nx-go" alt="nx-go logo">
+</div>

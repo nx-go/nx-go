@@ -16,21 +16,22 @@ import {
   toFileName,
   updateWorkspace,
 } from '@nrwl/workspace';
-import { NxGoSchematicSchema } from './schema';
+import { ApplicationSchematicSchema } from './schema';
+import { join, normalize } from 'path';
 
 /**
  * Depending on your needs, you can change this to either `Library` or `Application`
  */
-const projectType = ProjectType.Library;
+const projectType = ProjectType.Application;
 
-interface NormalizedSchema extends NxGoSchematicSchema {
+interface NormalizedSchema extends ApplicationSchematicSchema {
   projectName: string;
   projectRoot: string;
   projectDirectory: string;
   parsedTags: string[];
 }
 
-function normalizeOptions(options: NxGoSchematicSchema): NormalizedSchema {
+function normalizeOptions(options: ApplicationSchematicSchema): NormalizedSchema {
   const name = toFileName(options.name);
   const projectDirectory = options.directory
     ? `${toFileName(options.directory)}/${name}`
@@ -63,21 +64,46 @@ function addFiles(options: NormalizedSchema): Rule {
   );
 }
 
-export default function (options: NxGoSchematicSchema): Rule {
+export default function (options: ApplicationSchematicSchema): Rule {
   const normalizedOptions = normalizeOptions(options);
   return chain([
     updateWorkspace((workspace) => {
-      workspace.projects
+      const appProjectRoot = normalizedOptions.projectRoot
+      const sourceRoot = `${appProjectRoot}/src`
+      const project = workspace.projects
         .add({
           name: normalizedOptions.projectName,
           root: normalizedOptions.projectRoot,
-          sourceRoot: `${normalizedOptions.projectRoot}/src`,
+          sourceRoot,
           projectType,
         })
-        .targets.add({
-          name: 'build',
-          builder: '@nx-go/nx-go:build',
-        });
+      const options = {
+        outputPath: join(normalize('dist'), appProjectRoot),
+        main: join(project.sourceRoot, 'main.go'),
+      };
+      project.targets.add({
+        name: 'build',
+        builder: '@nx-go/nx-go:build',
+        options
+      });
+      project.targets.add({
+        name: 'serve',
+        builder: '@nx-go/nx-go:serve',
+        options: {
+          main: join(project.sourceRoot, 'main.go'),
+        }
+      });
+      project.targets.add({
+        name: 'test',
+        builder: '@nx-go/nx-go:test',
+        options: {
+          main: join(project.sourceRoot, 'main_test.go'),
+        }
+      });
+      project.targets.add({
+        name: 'lint',
+        builder: '@nx-go/nx-go:lint',
+      });
     }),
     addProjectToNxJsonInTree(normalizedOptions.projectName, {
       tags: normalizedOptions.parsedTags,

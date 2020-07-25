@@ -3,11 +3,11 @@ import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 import { join } from 'path';
 
-import { NxGoSchematicSchema } from './schema';
+import { ApplicationSchematicSchema } from './schema';
 
-describe('nx-go schematic', () => {
+describe('application schematic', () => {
   let appTree: Tree;
-  const options: NxGoSchematicSchema = { name: 'test' };
+  const options: ApplicationSchematicSchema = { name: 'test' };
 
   const testRunner = new SchematicTestRunner(
     '@nx-go/nx-go',
@@ -20,7 +20,7 @@ describe('nx-go schematic', () => {
 
   it('should run successfully', async () => {
     await expect(
-      testRunner.runSchematicAsync('nx-go', options, appTree).toPromise()
+      testRunner.runSchematicAsync('application', options, appTree).toPromise()
     ).resolves.not.toThrowError();
   });
 });
