@@ -9,10 +9,11 @@ export function runBuilder(
   context: BuilderContext
 ): Observable<BuilderOutput> {
   return from(context.getProjectMetadata(context?.target?.project)).pipe(
-    map(() => {
-      const mainFile = `${options.main}`
+    map((project) => {
+      const root = project.root
+      const sources = `${root}/**/*.go`
 
-      return runGoCommand(context, "fmt", [mainFile])
+      return runGoCommand(context, "fmt", [sources])
     }),
   );
 }
