@@ -4,5 +4,9 @@
   "main": "src/index.js",
   "schematics": "./collection.json",
   "builders": "./builders.json",
+  "homepage": "https://github.com/nx-go/nx-go",
+  "bugs": {
+    "url": "https://github.com/nx-go/nx-go/issues"
+  },
   "license": "MIT"
 }
