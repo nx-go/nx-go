@@ -1,6 +1,7 @@
 import { JsonObject } from '@angular-devkit/core'
 
-export interface BuildBuilderSchema extends JsonObject {
-  outputPath: string
+export interface ServeBuilderSchema extends JsonObject {
+  cmd: string
   main: string
+  outputPath: string
 }
