@@ -55,6 +55,30 @@ Serves the application using the `go run` command.
 nx serve api
 ```
 
+#### Watch mode
+
+To run the application in watch mode you can use `gow`, after [installing](https://github.com/mitranim/gow#installation) it on your machine.
+
+Find the key `projects.<app-name>.architect.serve.options` and set the `cmd` parameter to `gow`, like so:
+
+```json
+{
+  "projects": {
+    "api": {
+      "architect": {
+        "serve": {
+          "builder": "@nx-go/nx-go:serve",
+          "options": {
+            "cmd": "gow",
+            "main": "apps/api/src/main.go"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
 ### Testing the application
 
 Test the application using the `go test` command.

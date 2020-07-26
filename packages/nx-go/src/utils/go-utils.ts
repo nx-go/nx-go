@@ -5,16 +5,21 @@ export function runGoCommand(
   context: BuilderContext,
   command: 'build' | 'fmt' | 'run' | 'test',
   params: string[],
-  cwd?: string,
+  options: { cwd?: string; cmd?: string } = {},
 ): { success: boolean } {
-  const cmd = `go ${command} ${params.join(' ')}`
-  cwd = cwd || process.cwd()
+  // Take the parameters or set defaults
+  const cmd = options.cmd || 'go'
+  const cwd = options.cwd || process.cwd()
+
+  // Create the command to execute
+  const execute = `${cmd} ${command} ${params.join(' ')}`
+
   try {
-    context.logger.info(`Executing command: ${cmd}`)
-    execSync(cmd, { cwd, stdio: [0, 1, 2] })
+    context.logger.info(`Executing command: ${execute}`)
+    execSync(execute, { cwd, stdio: [0, 1, 2] })
     return { success: true }
   } catch (e) {
-    context.logger.error(`Failed to execute command: ${cmd}`, e)
+    context.logger.error(`Failed to execute command: ${execute}`, e)
     return { success: false }
   }
 }
