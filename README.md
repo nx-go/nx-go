@@ -1,7 +1,7 @@
 <div align="center">
   <h1>nx-go</h1>
   <p>Nx plugin to use <a href="https://go.dev">Go</a> in a <a href="https://nx.dev">Nx</a> workspace.</p>
-  <img src="nx-go-logo.png" title="nx-go" alt="nx-go logo">
+  <img src="https://github.com/nx-go.png" title="nx-go" alt="nx-go logo">
 </div>
 
 ## Getting started
@@ -85,6 +85,56 @@ Test the application using the `go test` command.
 
 ```bash
 nx test api
+```
+
+## Docker
+
+In order to build Docker containers from the Go api inside the Nx Workspace, there are 2 base images provided:
+
+- [nxgo/base](https://hub.docker.com/r/nxgo/base)
+  - Node 14 on Alpine, with Go 1.13
+- [nxgo/cli](https://hub.docker.com/r/nxgo/cli)
+  - Node 14 on Alpine, with Go 1.13
+  - [@angular/cli](https://github.com/angular/angular-cli) v10
+  - [@nrwl/cli](https://github.com/nrwl/nx) v10
+  - [nxpm](https://github.com/nxpm/nxpm-cli) v1
+
+### Using the base images:
+
+```dockerfile
+# Use nxgo/cli as the base image to do the build
+FROM nxgo/cli as builder
+
+# Create app directory
+WORKDIR /workspace
+
+# Copy package.json and the lock file
+COPY package.json yarn.lock /workspace/
+
+# Install app dependencies
+RUN yarn
+
+# Copy source files
+COPY . .
+
+# Build apps
+RUN yarn build api
+
+# This is the stage where the final production image is built
+FROM golang:1.14-alpine as final
+
+# Copy over artifacts from builder image
+COPY --from=builder /workspace/dist/apps/api /workspace/api
+
+# Set environment variables
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
+# Expose default port
+EXPOSE 3000
+
+# Start server
+CMD [ "/workspace/api" ]
 ```
 
 ## MIT License
