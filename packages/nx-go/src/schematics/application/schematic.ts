@@ -57,7 +57,7 @@ export default function (options: ApplicationSchematicSchema): Rule {
   return chain([
     updateWorkspace((workspace) => {
       const appProjectRoot = normalizedOptions.projectRoot
-      const sourceRoot = `${appProjectRoot}/src`
+      const sourceRoot = appProjectRoot
       const project = workspace.projects.add({
         name: normalizedOptions.projectName,
         root: normalizedOptions.projectRoot,

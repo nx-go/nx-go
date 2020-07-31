@@ -5,6 +5,8 @@ describe('application e2e', () => {
     ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
 
+    expect(() => checkFilesExist(`apps/${appName}/main.go`)).not.toThrow()
+
     const resultBuild = await runNxCommandAsync(`build ${appName}`)
     expect(resultBuild.stdout).toContain(`Executing command: go build`)
 
@@ -25,11 +27,11 @@ describe('application e2e', () => {
   })
 
   describe('--directory', () => {
-    it('should create src in the specified directory', async (done) => {
+    it('should create main.go in the specified directory', async (done) => {
       const plugin = uniq('nx-go')
       ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
       await runNxCommandAsync(`generate @nx-go/nx-go:application ${plugin} --directory subdir`)
-      expect(() => checkFilesExist(`apps/subdir/${plugin}/src/main.go`)).not.toThrow()
+      expect(() => checkFilesExist(`apps/subdir/${plugin}/main.go`)).not.toThrow()
       done()
     })
   })
