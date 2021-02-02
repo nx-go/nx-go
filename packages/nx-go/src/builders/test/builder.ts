@@ -8,7 +8,7 @@ export function runBuilder(options: BuildBuilderSchema, context: BuilderContext)
   return from(context.getProjectMetadata(context?.target?.project)).pipe(
     map((project) => {
       const sources = `./... -v`;
-      return runGoCommand(context, 'test', [sources], { cwd: project.root })
+      return runGoCommand(context, 'test', [sources], { cwd: `${project.root}` })
     }),
   )
 }
