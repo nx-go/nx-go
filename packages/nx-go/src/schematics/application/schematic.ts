@@ -83,9 +83,6 @@ export default function (options: ApplicationSchematicSchema): Rule {
       project.targets.add({
         name: 'test',
         builder: '@nx-go/nx-go:test',
-        options: {
-          main: join(project.sourceRoot, 'main_test.go'),
-        },
       })
       project.targets.add({
         name: 'lint',
