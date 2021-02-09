@@ -16,7 +16,11 @@ describe('application e2e', () => {
     expect(resultServe.stdout).toContain(`Executing command: go run`)
 
     const resultTest = await runNxCommandAsync(`test ${appName}`)
-    expect(resultTest.stdout).toContain(`Executing command: go test -v ./...`)
+    expect(resultTest.stdout).toContain(`Executing command: go test -v ./... -cover -race`)
+
+    const resultTestSkip = await runNxCommandAsync(`test ${appName} --skip-cover --skip-race`)
+    expect(resultTestSkip.stdout).toContain(`Executing command: go test -v ./...`)
+    expect(resultTestSkip.stdout).not.toContain(` -cover -race `)
 
     done()
   })
