@@ -2,9 +2,9 @@ import { Architect } from '@angular-devkit/architect'
 import { TestingArchitectHost } from '@angular-devkit/architect/testing'
 import { schema } from '@angular-devkit/core'
 import { join } from 'path'
-import { BuildBuilderSchema } from './schema'
+import { LintBuilderSchema } from './schema'
 
-const options: BuildBuilderSchema = {}
+const options: LintBuilderSchema = {}
 
 describe('Command Runner Builder', () => {
   let architect: Architect
