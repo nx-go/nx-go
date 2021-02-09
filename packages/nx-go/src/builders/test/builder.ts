@@ -9,8 +9,10 @@ export function runBuilder(options: TestBuilderSchema, context: BuilderContext):
     map((project) => {
       const cwd = `${project.root}`
       const sources = `-v ./...`
+      const cover = options.skipCover ? '' : '-cover'
+      const race = options.skipRace ? '' : '-race'
 
-      return runGoCommand(context, 'test', [sources], { cwd })
+      return runGoCommand(context, 'test', [sources, cover, race], { cwd })
     }),
   )
 }

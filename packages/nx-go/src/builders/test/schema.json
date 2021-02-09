@@ -4,6 +4,17 @@
   "title": "Build builder",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "skipCover": {
+      "type": "boolean",
+      "description": "Skip coverage analysis.",
+      "default": false
+    },
+    "skipRace": {
+      "type": "boolean",
+      "description": "Skip data race detection.",
+      "default": false
+    }
+  },
   "required": []
 }
