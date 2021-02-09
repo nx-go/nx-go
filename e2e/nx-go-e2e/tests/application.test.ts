@@ -9,8 +9,7 @@ describe('application e2e', () => {
     expect(resultBuild.stdout).toContain(`Executing command: go build`)
 
     const resultLint = await runNxCommandAsync(`lint ${appName}`)
-    expect(resultLint.stdout).toContain(`Executing command: go fmt apps/${appName}/**/*.go`)
-    expect(resultLint.stdout).toContain(`apps/`)
+    expect(resultLint.stdout).toContain(`Executing command: go fmt ./...`)
 
     const resultServe = await runNxCommandAsync(`serve ${appName}`)
     expect(resultServe.stdout).toContain(`Executing command: go run`)
