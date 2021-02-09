@@ -70,7 +70,7 @@ Find the key `projects.<app-name>.architect.serve.options` and set the `cmd` par
           "builder": "@nx-go/nx-go:serve",
           "options": {
             "cmd": "gow",
-            "main": "apps/api/src/main.go"
+            "main": "apps/api/main.go"
           }
         }
       }
