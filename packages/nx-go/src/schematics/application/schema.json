@@ -22,6 +22,11 @@
       "type": "string",
       "description": "A directory where the project is placed",
       "alias": "d"
+    },
+    "skipGoMod": {
+      "type": "boolean",
+      "description": "Skip creation of go.mod.",
+      "default": false
     }
   },
   "required": ["name"]

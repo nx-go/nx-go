@@ -8,8 +8,8 @@ import {
   toFileName,
   updateWorkspace,
 } from '@nrwl/workspace'
-import { ApplicationSchematicSchema } from './schema'
 import { join, normalize } from 'path'
+import { ApplicationSchematicSchema } from './schema'
 
 /**
  * Depending on your needs, you can change this to either `Library` or `Application`
@@ -21,6 +21,7 @@ interface NormalizedSchema extends ApplicationSchematicSchema {
   projectRoot: string
   projectDirectory: string
   parsedTags: string[]
+  skipGoMod: boolean
 }
 
 function normalizeOptions(options: ApplicationSchematicSchema): NormalizedSchema {
@@ -36,6 +37,7 @@ function normalizeOptions(options: ApplicationSchematicSchema): NormalizedSchema
     projectRoot,
     projectDirectory,
     parsedTags,
+    skipGoMod: options.skipGoMod || false,
   }
 }
 
@@ -50,6 +52,18 @@ function addFiles(options: NormalizedSchema): Rule {
       move(options.projectRoot),
     ]),
   )
+}
+
+function createGoMod(options: NormalizedSchema): Rule {
+  return (tree, context) => {
+    if (options.skipGoMod === false) {
+      const modFile = 'go.mod'
+      if (!tree.exists(`${modFile}`)) {
+        context.logger.info(`Creating ${modFile} in workspace root`)
+        tree.create(`${modFile}`, `module ${options.name}\n`)
+      }
+    }
+  }
 }
 
 export default function (options: ApplicationSchematicSchema): Rule {
@@ -93,5 +107,6 @@ export default function (options: ApplicationSchematicSchema): Rule {
       tags: normalizedOptions.parsedTags,
     }),
     addFiles(normalizedOptions),
+    createGoMod(normalizedOptions),
   ])
 }
