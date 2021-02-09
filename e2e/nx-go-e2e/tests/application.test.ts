@@ -6,6 +6,7 @@ describe('application e2e', () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
 
     expect(() => checkFilesExist(`apps/${appName}/main.go`)).not.toThrow()
+    expect(() => checkFilesExist(`go.mod`)).not.toThrow()
 
     const resultBuild = await runNxCommandAsync(`build ${appName}`)
     expect(resultBuild.stdout).toContain(`Executing command: go build`)
