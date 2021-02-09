@@ -1,4 +1,4 @@
-package <%= classify(name) %>
+package <%= name %>
 
 import (
 	"testing"
