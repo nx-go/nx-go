@@ -1,15 +1,17 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect'
 import { from, Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { ServeBuilderSchema } from './schema'
 import { runGoCommand } from '../../utils/go-utils'
+import { ServeBuilderSchema } from './schema'
 
 export function runBuilder(options: ServeBuilderSchema, context: BuilderContext): Observable<BuilderOutput> {
   return from(context.getProjectMetadata(context?.target?.project)).pipe(
-    map(() => {
-      const mainFile = `${options.main}`
+    map((project) => {
+      const cwd = `${project.root}`
+      // We strip the project root from the mail file
+      const mainFile = options.main?.replace(`${cwd}/`, '')
 
-      return runGoCommand(context, 'run', [mainFile], { cmd: options.cmd })
+      return runGoCommand(context, 'run', [mainFile], { cmd: options.cmd, cwd })
     }),
   )
 }
