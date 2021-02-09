@@ -2,6 +2,7 @@ import { checkFilesExist, ensureNxProject, readJson, runNxCommandAsync, uniq } f
 describe('application e2e', () => {
   it('should create application', async (done) => {
     const appName = uniq('app')
+    const libName = uniq('lib')
     ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
 
@@ -24,6 +25,8 @@ describe('application e2e', () => {
     expect(resultTestSkip.stdout).toContain(`Executing command: go test -v ./...`)
     expect(resultTestSkip.stdout).not.toContain(` -cover -race `)
 
+    await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName} --directory=${appName}`)
+    expect(() => checkFilesExist(`libs/${appName}/${libName}/${libName}.go`)).not.toThrow()
     done()
   })
 

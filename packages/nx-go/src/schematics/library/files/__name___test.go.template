@@ -1,0 +1,12 @@
+package <%= classify(name) %>
+
+import (
+	"testing"
+)
+
+func Test<%= classify(name) %>(t *testing.T) {
+	result := <%= classify(name) %>("world")
+	if result != "<%= classify(name) %> world" {
+		t.Error("Expected <%= classify(name) %> to append 'world'")
+	}
+}
