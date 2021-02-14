@@ -25,8 +25,9 @@ describe('application e2e', () => {
     expect(resultTestSkip.stdout).toContain(`Executing command: go test -v ./...`)
     expect(resultTestSkip.stdout).not.toContain(` -cover -race `)
 
+    console.log(`generate @nx-go/nx-go:library ${libName} --directory=${appName}`)
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName} --directory=${appName}`)
-    expect(() => checkFilesExist(`libs/${appName}/${libName}/${libName}.go`)).not.toThrow()
+    expect(() => checkFilesExist(`libs/${appName}/${libName}/${appName}-${libName}.go`)).not.toThrow()
     done()
   })
 

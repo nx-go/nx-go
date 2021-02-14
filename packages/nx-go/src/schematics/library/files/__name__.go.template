@@ -1,6 +1,0 @@
-package <%= name %>
-
-func <%= classify(name) %>(name string) string {
-	result := "<%= classify(name) %> " + name
-	return result
-}
