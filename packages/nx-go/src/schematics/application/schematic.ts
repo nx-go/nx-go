@@ -8,6 +8,7 @@ import {
   toFileName,
   updateWorkspace,
 } from '@nrwl/workspace'
+import { readJSONSync } from 'fs-extra'
 import { join, normalize } from 'path'
 import { ApplicationSchematicSchema } from './schema'
 
@@ -17,6 +18,7 @@ import { ApplicationSchematicSchema } from './schema'
 const projectType = ProjectType.Application
 
 interface NormalizedSchema extends ApplicationSchematicSchema {
+  npmScope: string
   projectName: string
   projectRoot: string
   projectDirectory: string
@@ -26,6 +28,7 @@ interface NormalizedSchema extends ApplicationSchematicSchema {
 
 function normalizeOptions(options: ApplicationSchematicSchema): NormalizedSchema {
   const name = toFileName(options.name)
+  const nxJson = readJSONSync(join(process.cwd(), 'nx.json')) || {}
   const projectDirectory = options.directory ? `${toFileName(options.directory)}/${name}` : name
   const projectName = projectDirectory.replace(new RegExp('/', 'g'), '-')
   const projectRoot = `${projectRootDir(projectType)}/${projectDirectory}`
@@ -33,6 +36,7 @@ function normalizeOptions(options: ApplicationSchematicSchema): NormalizedSchema
 
   return {
     ...options,
+    npmScope: nxJson.npmScope,
     projectName,
     projectRoot,
     projectDirectory,
@@ -60,7 +64,7 @@ function createGoMod(options: NormalizedSchema): Rule {
       const modFile = 'go.mod'
       if (!tree.exists(`${modFile}`)) {
         context.logger.info(`Creating ${modFile} in workspace root`)
-        tree.create(`${modFile}`, `module ${options.name}\n`)
+        tree.create(`${modFile}`, `module ${options.npmScope}\n`)
       }
     }
   }

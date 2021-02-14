@@ -27,13 +27,15 @@
   },
   "private": true,
   "dependencies": {
-    "@nrwl/nx-cloud": "^10.0.0"
+    "@nrwl/nx-cloud": "^10.0.0",
+    "fs-extra": "^9.1.0"
   },
   "devDependencies": {
     "@nrwl/eslint-plugin-nx": "10.0.6",
     "@nrwl/jest": "10.0.6",
     "@nrwl/nx-plugin": "10.0.6",
     "@nrwl/workspace": "10.0.6",
+    "@types/fs-extra": "^9.0.7",
     "@types/jest": "25.1.4",
     "@types/node": "~8.9.4",
     "@typescript-eslint/eslint-plugin": "2.19.2",

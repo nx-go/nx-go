@@ -8,5 +8,8 @@
   "bugs": {
     "url": "https://github.com/nx-go/nx-go/issues"
   },
+  "dependencies": {
+    "fs-extra": "^9.1.0"
+  },
   "license": "MIT"
 }

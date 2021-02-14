@@ -1,4 +1,4 @@
-import { checkFilesExist, ensureNxProject, readJson, runNxCommandAsync, uniq } from '@nrwl/nx-plugin/testing'
+import { checkFilesExist, ensureNxProject, readFile, readJson, runNxCommandAsync, uniq } from '@nrwl/nx-plugin/testing'
 describe('application e2e', () => {
   it('should create application', async (done) => {
     const appName = uniq('app')
@@ -8,6 +8,7 @@ describe('application e2e', () => {
 
     expect(() => checkFilesExist(`apps/${appName}/main.go`)).not.toThrow()
     expect(() => checkFilesExist(`go.mod`)).not.toThrow()
+    expect(readFile(`go.mod`)).toContain('module proj')
 
     const resultBuild = await runNxCommandAsync(`build ${appName}`)
     expect(resultBuild.stdout).toContain(`Executing command: go build`)
@@ -25,7 +26,6 @@ describe('application e2e', () => {
     expect(resultTestSkip.stdout).toContain(`Executing command: go test -v ./...`)
     expect(resultTestSkip.stdout).not.toContain(` -cover -race `)
 
-    console.log(`generate @nx-go/nx-go:library ${libName} --directory=${appName}`)
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName} --directory=${appName}`)
     expect(() => checkFilesExist(`libs/${appName}/${libName}/${appName}-${libName}.go`)).not.toThrow()
     done()
