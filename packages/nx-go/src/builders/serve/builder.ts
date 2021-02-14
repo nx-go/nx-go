@@ -7,8 +7,8 @@ import { ServeBuilderSchema } from './schema'
 export function runBuilder(options: ServeBuilderSchema, context: BuilderContext): Observable<BuilderOutput> {
   return from(context.getProjectMetadata(context?.target?.project)).pipe(
     map((project) => {
-      const cwd = `${project.root}`
-      // We strip the project root from the mail file
+      const cwd = `${options.cwd || project.root}`
+      // We strip the project root from the main file
       const mainFile = options.main?.replace(`${cwd}/`, '')
 
       return runGoCommand(context, 'run', [mainFile], { cmd: options.cmd, cwd })

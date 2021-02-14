@@ -71,6 +71,7 @@ Find the key `projects.<app-name>.architect.serve.options` and set the `cmd` par
           "builder": "@nx-go/nx-go:serve",
           "options": {
             "cmd": "gow",
+            "cwd": ".", // Set working dir to project root so it picks up changes in `libs/*`
             "main": "apps/api/main.go"
           }
         }
