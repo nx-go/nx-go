@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "NxGoApplication",
+  "$id": "NxGoApplication",
   "title": "",
   "type": "object",
   "properties": {

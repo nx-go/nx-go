@@ -64,8 +64,6 @@
           "builder": "@nrwl/nx-plugin:e2e",
           "options": {
             "target": "nx-go:build",
-            "npmPackageName": "@nx-go/nx-go",
-            "pluginOutputPath": "dist/packages/nx-go",
             "jestConfig": "e2e/nx-go-e2e/jest.config.js",
             "tsSpecConfig": "e2e/nx-go-e2e/tsconfig.spec.json"
           }
