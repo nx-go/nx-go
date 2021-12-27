@@ -1,0 +1,12 @@
+package <%= packageName %>
+
+import (
+	"testing"
+)
+
+func Test<%= className %>(t *testing.T) {
+	result := <%= className %>("works")
+	if result != "<%= className %> works" {
+		t.Error("Expected <%= className %> to append 'works'")
+	}
+}

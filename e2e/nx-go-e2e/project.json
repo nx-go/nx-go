@@ -1,0 +1,16 @@
+{
+  "root": "e2e/nx-go-e2e",
+  "projectType": "application",
+  "sourceRoot": "e2e/nx-go-e2e/src",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/nx-plugin:e2e",
+      "options": {
+        "target": "nx-go:build",
+        "jestConfig": "e2e/nx-go-e2e/jest.config.js"
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["nx-go"]
+}

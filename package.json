@@ -1,65 +1,38 @@
 {
   "name": "nx-go",
-  "version": "1.7.1",
+  "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test",
-    "lint": "nx workspace-lint && nx lint",
-    "e2e": "nx e2e",
-    "affected:apps": "nx affected:apps",
-    "affected:libs": "nx affected:libs",
-    "affected:build": "nx affected:build",
-    "affected:e2e": "nx affected:e2e",
-    "affected:test": "nx affected:test",
-    "affected:lint": "nx affected:lint",
-    "affected:dep-graph": "nx affected:dep-graph",
-    "affected": "nx affected",
-    "format": "nx format:write",
-    "format:write": "nx format:write",
-    "format:check": "nx format:check",
-    "update": "nx migrate latest",
-    "workspace-schematic": "nx workspace-schematic",
-    "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "test": "nx test"
   },
   "private": true,
-  "dependencies": {
-    "@nrwl/nx-cloud": "^10.0.0",
-    "fs-extra": "^9.1.0"
-  },
   "devDependencies": {
-    "@nrwl/eslint-plugin-nx": "10.0.6",
-    "@nrwl/jest": "10.0.6",
-    "@nrwl/nx-plugin": "10.0.6",
-    "@nrwl/workspace": "10.0.6",
-    "@types/fs-extra": "^9.0.7",
-    "@types/jest": "25.1.4",
-    "@types/node": "~8.9.4",
-    "@typescript-eslint/eslint-plugin": "2.19.2",
-    "@typescript-eslint/parser": "2.19.2",
-    "dotenv": "6.2.0",
-    "eslint": "6.8.0",
-    "eslint-config-prettier": "6.0.0",
-    "husky": "^4.2.5",
-    "jest": "25.2.3",
-    "lint-staged": "^10.2.11",
-    "prettier": "2.0.4",
-    "ts-jest": "25.2.1",
-    "ts-node": "~7.0.0",
-    "tslint": "~6.0.0",
-    "typescript": "~3.9.3"
+    "@nrwl/cli": "13.4.1",
+    "@nrwl/devkit": "13.4.1",
+    "@nrwl/eslint-plugin-nx": "13.4.1",
+    "@nrwl/jest": "13.4.1",
+    "@nrwl/linter": "13.4.1",
+    "@nrwl/node": "13.4.1",
+    "@nrwl/nx-cloud": "^13.0.1",
+    "@nrwl/nx-plugin": "13.4.1",
+    "@nrwl/tao": "13.4.1",
+    "@nrwl/workspace": "13.4.1",
+    "@types/jest": "27.0.2",
+    "@types/node": "14.14.33",
+    "@typescript-eslint/eslint-plugin": "~5.3.0",
+    "@typescript-eslint/parser": "~5.3.0",
+    "eslint": "8.2.0",
+    "eslint-config-prettier": "8.1.0",
+    "jest": "27.2.3",
+    "prettier": "^2.3.1",
+    "ts-jest": "27.0.5",
+    "tslib": "^2.0.0",
+    "typescript": "~4.4.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,json,css,scss,md,ts,html,graphql}": [
-      "yarn run format --uncommitted"
-    ]
+  "dependencies": {
+    "tslib": "^2.0.0"
   }
 }

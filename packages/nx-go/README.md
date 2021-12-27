@@ -2,6 +2,7 @@
   <h1>nx-go</h1>
   <p>Nx plugin to use <a href="https://go.dev">Go</a> in a <a href="https://nx.dev">Nx</a> workspace.</p>
   <img src="https://github.com/nx-go.png" title="nx-go" alt="nx-go logo">
+  <h2>Using nx-go in your company? Consider <a href="https://github.com/sponsors/beeman">sponsoring me</a> and get priority support in the issues.</h2>
 </div>
 
 ## Getting started
@@ -11,14 +12,25 @@ First, make sure you have a Nx Workspace.
 Create a new one using the following command:
 
 ```bash
-yarn create nx-workspace go-playground --preset=empty --cli=nx --nx-cloud true
+pnpm dlx create-nx-workspace go-playground --preset=empty --cli=nx --nx-cloud true
+## Or using yarn
+# yarn create nx-workspace go-playground --preset=empty --cli=nx --nx-cloud true
+## Or using npm
+# npm exec create-nx-workspace go-playground --preset=empty --cli=nx --nx-cloud true
+```
+
+```bash
 cd go-playground
 ```
 
 Next, install the nx-go plugin:
 
 ```bash
-yarn add -D @nx-go/nx-go
+pnpm add -D @nx-go/nx-go
+## Or using yarn
+# yarn add -D @nx-go/nx-go
+## Or using npm
+# npm install -D @nx-go/nx-go
 ```
 
 Create a new application:
@@ -59,23 +71,20 @@ nx serve api
 
 To run the application in watch mode you can use `gow`, after [installing](https://github.com/mitranim/gow#installation) it on your machine.
 
-Find the key `projects.<app-name>.architect.serve.options` and set the `cmd` parameter to `gow`, like so:
+Open the file `apps/<app-name>/project.json` and in the `targets.serve.options` object and set the `cmd` parameter to `gow` and the `cwd` parameter to `.`, like so:
 
-```json
+```json5
 {
-  "projects": {
-    "api": {
-      "architect": {
-        "serve": {
-          "builder": "@nx-go/nx-go:serve",
-          "options": {
-            "cmd": "gow",
-            "main": "apps/api/main.go"
-          }
-        }
-      }
-    }
-  }
+  targets: {
+    serve: {
+      executor: '@nx-go/nx-go:serve',
+      options: {
+        cmd: 'gow', // This is the cmd that will be used
+        cwd: '.', // Set working dir to project root so it picks up changes in `libs/*`
+        main: 'apps/api/main.go',
+      },
+    },
+  },
 }
 ```
 
@@ -121,7 +130,7 @@ COPY . .
 RUN yarn build api
 
 # This is the stage where the final production image is built
-FROM golang:1.14-alpine as final
+FROM golang:1.17-alpine as final
 
 # Copy over artifacts from builder image
 COPY --from=builder /workspace/dist/apps/api /workspace/api

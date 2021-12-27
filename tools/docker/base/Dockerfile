@@ -1,4 +1,4 @@
-FROM node:14.5.0-alpine
+FROM node:16.13.1-alpine
 
 WORKDIR /workspace
 

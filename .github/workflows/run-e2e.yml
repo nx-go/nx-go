@@ -8,19 +8,30 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
+        node-version: [14.x, 16.x]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Use Go 1.14.6
+      - name: Use Go 1.17.5
         uses: actions/setup-go@v2
         with:
-          go-version: 1.14.6
+          go-version: 1.17.5
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies and run test
-        run: |
-          yarn
-          yarn run e2e nx-go-e2e
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Install dependencies
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.24.3
+          run_install: |
+            - args: [--frozen-lockfile, --strict-peer-dependencies]
+      - name: Run e2e test
+        run: pnpm run nx -- e2e nx-go-e2e

@@ -1,6 +1,0 @@
-package <%= underscore(projectName) %>
-
-func <%= classify(projectName) %>(name string) string {
-	result := "<%= classify(projectName) %> " + name
-	return result
-}
