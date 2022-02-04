@@ -14,6 +14,11 @@
       "factory": "./src/generators/library/generator",
       "schema": "./src/generators/library/schema.json",
       "description": "library generator"
+    },
+    "setup-nx-go-plugin": {
+      "factory": "./src/generators/setup-nx-go-plugin/generator",
+      "schema": "./src/generators/setup-nx-go-plugin/schema.json",
+      "description": "Adds nx-go as dependency graph plugin"
     }
   }
 }
