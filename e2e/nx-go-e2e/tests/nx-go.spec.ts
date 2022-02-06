@@ -1,4 +1,16 @@
-import { checkFilesExist, ensureNxProject, readFile, readJson, runNxCommandAsync, uniq } from '@nrwl/nx-plugin/testing'
+import {
+  checkFilesExist,
+  ensureNxProject,
+  readFile,
+  readJson,
+  runNxCommandAsync,
+  tmpProjPath,
+  uniq,
+  updateFile,
+} from '@nrwl/nx-plugin/testing'
+import { unlinkSync } from 'fs'
+import { join } from 'path'
+import { replaceFolder } from '../utils/folder'
 
 describe('application e2e', () => {
   it('should create application', async () => {
@@ -49,5 +61,48 @@ describe('application e2e', () => {
       const projectJson = readJson(`apps/${plugin}/project.json`)
       expect(projectJson.tags).toEqual(['e2etag', 'e2ePackage'])
     })
+  })
+})
+
+describe('go-package-graph', () => {
+  it('should work with affected commands', async () => {
+    const appName = uniq('app')
+    const libName = uniq('lib')
+    ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+    // Need to copy the plugin as linking it throws:
+    // 'Couldn't find a package.json for Nx plugin:@nx-go/nx-go'
+    unlinkSync(tmpProjPath('node_modules/@nx-go/nx-go'))
+    replaceFolder(join(__dirname, '../../../dist/packages/nx-go'), tmpProjPath('node_modules/@nx-go/nx-go'))
+
+    await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
+    await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`)
+    await runNxCommandAsync(`generate @nx-go/nx-go:setup-nx-go-plugin`)
+
+    const captilizedLibName = libName[0].toUpperCase() + libName.substring(1)
+
+    updateFile(
+      join('apps', appName, 'main.go'),
+      `package main
+  
+      import (
+        "fmt"
+  
+        "proj/libs/${libName}"
+      )
+  
+      func main() {
+        fmt.Println(${libName}.${captilizedLibName}("${appName}"))
+      }`,
+    )
+
+    const { stdout } = await runNxCommandAsync('print-affected')
+    const { projectGraph } = JSON.parse(stdout)
+    expect(projectGraph).toBeDefined()
+    expect(projectGraph.dependencies).toBeDefined()
+    expect(projectGraph.dependencies[appName]).toBeDefined()
+
+    const appDependencies = projectGraph.dependencies[appName]
+    expect(appDependencies.length).toBe(1)
+    expect(appDependencies[0].target).toBe(libName)
   })
 })
