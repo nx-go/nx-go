@@ -95,13 +95,14 @@ describe('go-package-graph', () => {
       }`,
     )
 
-    const { stdout } = await runNxCommandAsync('print-affected')
-    const { projectGraph } = JSON.parse(stdout)
-    expect(projectGraph).toBeDefined()
-    expect(projectGraph.dependencies).toBeDefined()
-    expect(projectGraph.dependencies[appName]).toBeDefined()
+    await runNxCommandAsync('dep-graph --file=output.json')
+    
+    const { graph } = readJson('output.json')
+    expect(graph).toBeDefined()
+    expect(graph.dependencies).toBeDefined()
+    expect(graph.dependencies[appName]).toBeDefined()
 
-    const appDependencies = projectGraph.dependencies[appName]
+    const appDependencies = graph.dependencies[appName]
     expect(appDependencies.length).toBe(1)
     expect(appDependencies[0].target).toBe(libName)
   })
