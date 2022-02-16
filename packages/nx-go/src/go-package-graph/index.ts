@@ -40,18 +40,24 @@ export const processProjectGraph = (graph: ProjectGraph, context: ProjectGraphPr
  * @returns
  */
 const getGoDependencies = (workspaceRootPath: string, projectRootLookup: Map<string, string>, file: string) => {
-  const goPackageDataJson = execSync('go list -json ./' + file, { encoding: 'utf-8', cwd: workspaceRootPath })
-  const goPackage: GoPackage = JSON.parse(goPackageDataJson)
-  const isTestFile = basename(file, '.go').endsWith('_test')
+  try {
+    const goPackageDataJson = execSync('go list -json ./' + file, { encoding: 'utf-8', cwd: workspaceRootPath })
+    const goPackage: GoPackage = JSON.parse(goPackageDataJson)
+    const isTestFile = basename(file, '.go').endsWith('_test')
 
-  // Use the correct imports list depending if the file is a test file.
-  const listOfImports = (!isTestFile ? goPackage.Imports : goPackage.TestImports) ?? []
+    // Use the correct imports list depending if the file is a test file.
+    const listOfImports = (!isTestFile ? goPackage.Imports : goPackage.TestImports) ?? []
 
-  return listOfImports
-    .filter((d) => d.startsWith(goPackage.Module.Path))
-    .map((d) => d.substring(goPackage.Module.Path.length + 1))
-    .map((rootDir) => projectRootLookup.get(rootDir))
-    .filter((projectName) => projectName)
+    return listOfImports
+      .filter((d) => d.startsWith(goPackage.Module.Path))
+      .map((d) => d.substring(goPackage.Module.Path.length + 1))
+      .map((rootDir) => projectRootLookup.get(rootDir))
+      .filter((projectName) => projectName)
+  } catch (ex) {
+    console.error(`Error processing ${file}`)
+    console.error(ex)
+    return [] // Return an empty array so that we can process other files
+  }
 }
 
 /**
