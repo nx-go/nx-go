@@ -1,6 +1,6 @@
 import { addProjectConfiguration, formatFiles, getWorkspaceLayout, Tree } from '@nrwl/devkit'
 import { join, normalize } from 'path'
-import { addFiles, createGoMod, normalizeOptions } from '../../utils'
+import { addFiles, createGoMod, normalizeOptions, toPosixPath } from '../../utils'
 import { ApplicationGeneratorSchema } from './schema'
 
 export default async function (tree: Tree, options: ApplicationGeneratorSchema) {
@@ -8,8 +8,8 @@ export default async function (tree: Tree, options: ApplicationGeneratorSchema) 
   const sourceRoot = normalizedOptions.projectRoot
 
   const targetOptions = {
-    outputPath: join(normalize('dist'), sourceRoot),
-    main: join(sourceRoot, 'main.go'),
+    outputPath: toPosixPath(join(normalize('dist'), sourceRoot)),
+    main: toPosixPath(join(sourceRoot, 'main.go')),
   }
 
   addProjectConfiguration(tree, normalizedOptions.projectName, {
@@ -24,7 +24,7 @@ export default async function (tree: Tree, options: ApplicationGeneratorSchema) 
       serve: {
         executor: '@nx-go/nx-go:serve',
         options: {
-          main: join(sourceRoot, 'main.go'),
+          main: toPosixPath(join(sourceRoot, 'main.go')),
         },
       },
       test: {
