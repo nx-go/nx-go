@@ -11,5 +11,8 @@
   "dependencies": {
     "fs-extra": "^9.1.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "nx-migrations": {
+    "migrations": "./migrations.json"
+  }
 }

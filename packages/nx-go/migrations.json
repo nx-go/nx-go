@@ -1,0 +1,10 @@
+{
+  "generators": {
+    "add-go-mod-to-implicit-deps": {
+      "version": "2.3.0",
+      "description": "add-go-mod-to-implicit-deps",
+      "cli": "nx",
+      "implementation": "./src/migrations/add-go-mod-to-implicit-deps/add-go-mod-to-implicit-deps"
+    }
+  }
+}
