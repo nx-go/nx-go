@@ -1,8 +1,8 @@
-import { readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration, WorkspaceConfiguration } from '@nrwl/devkit'
+import { readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nrwl/devkit'
 
 /**
- * Ensures that gp.mod is an implicit dependency so that changes to go.mod triggers
- * projects to be flagged as affeceted
+ * Ensures that go.mod is an implicit dependency so that changes to go.mod triggers
+ * projects to be flagged as affected
  */
 export const ensureGoModDependency = (tree: Tree) => {
   if (!tree.exists('go.mod')) {

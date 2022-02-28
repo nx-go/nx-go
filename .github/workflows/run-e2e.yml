@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Use Go 1.17.5
         uses: actions/setup-go@v2
         with:
@@ -33,5 +35,9 @@ jobs:
           version: 6.24.3
           run_install: |
             - args: [--frozen-lockfile, --strict-peer-dependencies]
+      - name: Run format check
+        run: pnpm run format:check -- --base=remotes/origin/main
+      - name: Run linter
+        run: pnpm run lint
       - name: Run e2e test
         run: pnpm run nx -- e2e nx-go-e2e
