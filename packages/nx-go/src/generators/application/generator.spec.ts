@@ -33,10 +33,10 @@ describe('application generator', () => {
     }
   })
 
-  it('should use posix-style paths', async() => {
-    await generator(appTree, options);
-    const { targets } = readProjectConfiguration(appTree, 'test');
-    expect(targets).toBeDefined();
+  it('should use posix-style paths', async () => {
+    await generator(appTree, options)
+    const { targets } = readProjectConfiguration(appTree, 'test')
+    expect(targets).toBeDefined()
     expect(targets.build?.options?.outputPath).toBe('dist/apps/test')
     expect(targets.build?.options?.main).toBe('apps/test/main.go')
     expect(targets.serve?.options?.main).toBe('apps/test/main.go')
