@@ -96,7 +96,7 @@ describe('go-package-graph', () => {
     )
 
     await runNxCommandAsync('dep-graph --file=output.json')
-    
+
     const { graph } = readJson('output.json')
     expect(graph).toBeDefined()
     expect(graph.dependencies).toBeDefined()
