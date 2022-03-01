@@ -8,7 +8,7 @@ const options: ServeExecutorSchema = {
   cmd: '',
   cwd: '',
   main: '',
-  outputPath: '',
+  arguments: [],
 }
 
 describe('Serve Executor', () => {
@@ -24,6 +24,12 @@ describe('Serve Executor', () => {
 
   it('can run', async () => {
     const output = await executor(options, null)
+    expect(output.success).toBe(true)
+  })
+
+  it('can run with command line arguments', async () => {
+    const opts = { ...options, arguments: ['first', '--second', '-third'] }
+    const output = await executor(opts, null)
     expect(output.success).toBe(true)
   })
 })
