@@ -4,6 +4,25 @@
   "title": "Build executor",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "description": "The output path of the generated files",
+      "default": ""
+    },
+    "main": {
+      "type": "string",
+      "description": "Name of the file containing the main() function",
+      "default": "main.go"
+    },
+    "arguments": {
+      "description": "Command line arguments for the application",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
   "required": []
 }

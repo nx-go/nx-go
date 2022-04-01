@@ -4,7 +4,7 @@ import { BuildExecutorSchema } from './schema'
 jest.mock('../../utils')
 import * as utils from '../../utils'
 
-const options: BuildExecutorSchema = { main: '', outputPath: '' }
+const options: BuildExecutorSchema = { main: '', outputPath: '', arguments: [] }
 
 describe('Build Executor', () => {
   beforeEach(async () => {

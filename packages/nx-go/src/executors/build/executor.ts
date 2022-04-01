@@ -6,5 +6,5 @@ export default async function runExecutor(options: BuildExecutorSchema, context:
   const mainFile = `${options.main}`
   const output = `-o ${options.outputPath}${process.platform === 'win32' ? '.exe' : ''}`
 
-  return runGoCommand(context, 'build', [output, mainFile])
+  return runGoCommand(context, 'build', [output, mainFile, ...options.arguments])
 }
