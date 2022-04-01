@@ -7,7 +7,7 @@
   "properties": {
     "outputPath": {
       "type": "string",
-      "description": "The output path of the generated files",
+      "description": "The output path of the resulting executable",
       "default": ""
     },
     "main": {
@@ -15,8 +15,16 @@
       "description": "Name of the file containing the main() function",
       "default": "main.go"
     },
-    "arguments": {
-      "description": "Command line arguments for the application",
+    "flags": {
+      "description": "Build flags to be passed to the go command",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "env": {
+      "description": "General-purpose environment variables to be used by the go command",
       "type": "array",
       "items": {
         "type": "string"

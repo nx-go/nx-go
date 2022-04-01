@@ -4,7 +4,9 @@ import { BuildExecutorSchema } from './schema'
 
 export default async function runExecutor(options: BuildExecutorSchema, context: ExecutorContext) {
   const mainFile = `${options.main}`
-  const output = `-o ${options.outputPath}${process.platform === 'win32' ? '.exe' : ''}`
+  const output = `-o ${options.outputPath}`
 
-  return runGoCommand(context, 'build', [output, mainFile, ...options.arguments])
+  const cmd = [...options.env, 'go'].join(' ')
+
+  return runGoCommand(context, 'build', [...options.flags, output, mainFile], { cmd })
 }

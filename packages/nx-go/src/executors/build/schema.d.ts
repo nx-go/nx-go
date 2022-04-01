@@ -1,5 +1,6 @@
 export interface BuildExecutorSchema {
   outputPath: string
   main: string
-  arguments: string[]
+  flags: string[]
+  env: string[]
 }
