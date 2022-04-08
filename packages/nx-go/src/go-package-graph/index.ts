@@ -41,6 +41,8 @@ export const processProjectGraph = (graph: ProjectGraph, context: ProjectGraphPr
  */
 const getGoDependencies = (workspaceRootPath: string, projectRootLookup: Map<string, string>, file: string) => {
   try {
+    const goModuleJSON = execSync('go list -m -json', { encoding: 'utf-8', cwd: workspaceRootPath })
+    const goModule: GoModule = JSON.parse(goModuleJSON)
     const goPackageDataJson = execSync('go list -json ./' + file, { encoding: 'utf-8', cwd: workspaceRootPath })
     const goPackage: GoPackage = JSON.parse(goPackageDataJson)
     const isTestFile = basename(file, '.go').endsWith('_test')
@@ -49,8 +51,8 @@ const getGoDependencies = (workspaceRootPath: string, projectRootLookup: Map<str
     const listOfImports = (!isTestFile ? goPackage.Imports : goPackage.TestImports) ?? []
 
     return listOfImports
-      .filter((d) => d.startsWith(goPackage.Module.Path))
-      .map((d) => d.substring(goPackage.Module.Path.length + 1))
+      .filter((d) => d.startsWith(goModule.Path))
+      .map((d) => d.substring(goModule.Path.length + 1))
       .map((rootDir) => projectRootLookup.get(rootDir))
       .filter((projectName) => projectName)
   } catch (ex) {
@@ -65,9 +67,17 @@ const getGoDependencies = (workspaceRootPath: string, projectRootLookup: Map<str
  */
 interface GoPackage {
   Deps?: string[]
-  Module: {
-    Path: string
+  Module?: {
+    Path?: string
   }
   Imports?: string[]
   TestImports?: string[]
+}
+
+interface GoModule {
+  Path: string
+  Dir?: string
+  GoMod?: string
+  GoVersion?: string
+  Main?: boolean
 }
