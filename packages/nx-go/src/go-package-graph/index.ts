@@ -41,7 +41,11 @@ export const processProjectGraph = (graph: ProjectGraph, context: ProjectGraphPr
  */
 const getGoDependencies = (workspaceRootPath: string, projectRootLookup: Map<string, string>, file: string) => {
   try {
-    const goModuleJSON = execSync('go list -m -json', { encoding: 'utf-8', cwd: workspaceRootPath })
+    const goModuleJSON = execSync('go list -m -json', {
+      encoding: 'utf-8',
+      cwd: workspaceRootPath,
+      env: { GOWORK: 'off' },
+    })
     const goModule: GoModule = JSON.parse(goModuleJSON)
     const goPackageDataJson = execSync('go list -json ./' + file, { encoding: 'utf-8', cwd: workspaceRootPath })
     const goPackage: GoPackage = JSON.parse(goPackageDataJson)
