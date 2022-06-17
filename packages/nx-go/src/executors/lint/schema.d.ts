@@ -1,1 +1,4 @@
-export interface LintExecutorSchema {} // eslint-disable-line
+export interface LintExecutorSchema {
+  linter?: string
+  args?: string
+} // eslint-disable-line
