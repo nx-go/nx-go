@@ -1,6 +1,6 @@
 import { addProjectConfiguration, formatFiles, getWorkspaceLayout, Tree } from '@nrwl/devkit'
 import { join, normalize } from 'path'
-import { addFiles, createGoMod, normalizeOptions, toPosixPath } from '../../utils'
+import { addFiles, createGoMod, normalizeOptions, toPosixPath, updateGoWork } from '../../utils'
 import { ApplicationGeneratorSchema } from './schema'
 
 export default async function (tree: Tree, options: ApplicationGeneratorSchema) {
@@ -37,6 +37,9 @@ export default async function (tree: Tree, options: ApplicationGeneratorSchema) 
     tags: normalizedOptions.parsedTags,
   })
   addFiles(tree, join(__dirname, 'files'), normalizedOptions)
+
   createGoMod(tree, normalizedOptions)
+  updateGoWork(tree, normalizedOptions)
+
   await formatFiles(tree)
 }
