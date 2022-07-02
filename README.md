@@ -59,6 +59,29 @@ Lint the application using the `go fmt` command.
 nx lint api
 ```
 
+#### Setting up a custom linter
+
+You can define a custom linter that will execute instead of the default `go fmt`.
+
+The lint executor provides two options to configure the desired linter:
+
+```ts
+interface LintOptions {
+  linter: string
+  args: string
+}
+```
+
+**linter:** is the command to execute (example: `revive`)
+
+**args:** these are additional arguments to be supplied to the linter (example: `-config revive.toml`)
+
+The examples above will result in the following command that will be executed:
+
+```bash
+revive -config revive.toml ./...
+```
+
 ### Serving the application
 
 Serves the application using the `go run` command.

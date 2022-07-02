@@ -2,8 +2,17 @@
   "$schema": "http://json-schema.org/schema",
   "cli": "nx",
   "title": "Lint executor",
-  "description": "",
+  "description": "Lints the code for the Go project.",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "linter": {
+      "type": "string",
+      "description": "The command to execute when running the lint executor."
+    },
+    "args": {
+      "type": "string",
+      "description": "Additional arguments to the linter"
+    }
+  },
   "required": []
 }

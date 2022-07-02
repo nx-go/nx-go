@@ -26,9 +26,6 @@ describe('application e2e', () => {
     const resultBuild = await runNxCommandAsync(`build ${appName}`)
     expect(resultBuild.stdout).toContain(`Executing command: go build`)
 
-    const resultLint = await runNxCommandAsync(`lint ${appName}`)
-    expect(resultLint.stdout).toContain(`Executing command: go fmt ./...`)
-
     const resultServe = await runNxCommandAsync(`serve ${appName}`)
     expect(resultServe.stdout).toContain(`Executing command: go run main.go`)
 
@@ -83,13 +80,13 @@ describe('go-package-graph', () => {
     updateFile(
       join('apps', appName, 'main.go'),
       `package main
-  
+
       import (
         "fmt"
-  
+
         "proj/libs/${libName}"
       )
-  
+
       func main() {
         fmt.Println(${libName}.${captilizedLibName}("${appName}"))
       }`,
@@ -105,5 +102,50 @@ describe('go-package-graph', () => {
     const appDependencies = graph.dependencies[appName]
     expect(appDependencies.length).toBe(1)
     expect(appDependencies[0].target).toBe(libName)
+  })
+})
+
+describe('lint target', () => {
+  let appName: string = ''
+  beforeEach(async () => {
+    appName = uniq('app')
+    ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+    await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
+  })
+  it('should use go fmt by default', async () => {
+    const testFile = `package main
+    import "fmt"
+    func main() {fmt.Println("test");}`
+    updateFile(`apps/${appName}/main.go`, testFile)
+
+    await runNxCommandAsync(`lint ${appName}`)
+
+    const formatted = readFile(`apps/${appName}/main.go`)
+
+    expect(formatted).not.toBe(testFile)
+  })
+
+  it('should work with go vet', async () => {
+    const projectConfig = JSON.parse(readFile(`apps/${appName}/project.json`))
+    const linterConfig = projectConfig.targets?.lint
+    expect(linterConfig).toBeDefined()
+    linterConfig.options = {
+      linter: 'go vet',
+    }
+
+    updateFile(`apps/${appName}/project.json`, JSON.stringify(projectConfig))
+    await runNxCommandAsync(`lint ${appName}`)
+  })
+
+  it('should fail with an invalid linter', async () => {
+    const projectConfig = JSON.parse(readFile(`apps/${appName}/project.json`))
+    const linterConfig = projectConfig.targets?.lint
+    expect(linterConfig).toBeDefined()
+    linterConfig.options = {
+      linter: 'go wrong',
+    }
+
+    updateFile(`apps/${appName}/project.json`, JSON.stringify(projectConfig))
+    await expect(runNxCommandAsync(`lint ${appName}`)).rejects.toThrow()
   })
 })
