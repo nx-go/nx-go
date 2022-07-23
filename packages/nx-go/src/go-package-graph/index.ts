@@ -24,11 +24,9 @@ export const processProjectGraph = (graph: ProjectGraph, context: ProjectGraphPr
         dependencies: getGoDependencies(workspaceRootPath, goModules, projectRootLookupMap, file),
       }))
       .filter((data) => data.dependencies && data.dependencies.length > 0)
-      .forEach(({ projectName, file, dependencies }) => {
-        for (const dependency of dependencies) {
-          builder.addExplicitDependency(projectName, file, dependency)
-        }
-      })
+      .forEach(({ projectName, file, dependencies }) =>
+        dependencies.forEach((dependency) => builder.addExplicitDependency(projectName, file, dependency)),
+      )
   }
 
   return builder.getUpdatedProjectGraph()
@@ -73,24 +71,16 @@ const getGoDependencies = (
  * Parses go modules in a way that work with Go workspaces if they are used.
  * @param workspaceRootPath
  */
-const getGoModules = (workspaceRootPath: string) => {
+const getGoModules = (workspaceRootPath: string): GoModule[] => {
   const goModuleJSON = execSync('go list -m -json', { encoding: 'utf-8', cwd: workspaceRootPath })
-  const modules: GoModule[] = []
-  const exp = /}\r?\n{/
 
-  let jsonString = goModuleJSON
-  let idx = jsonString.search(exp)
-  while (idx !== -1) {
-    const toParse = jsonString.substring(0, idx + 1)
-    modules.push(JSON.parse(toParse))
-    jsonString = jsonString.substring(idx + 1).trimStart()
-    idx = jsonString.search(exp)
-  }
-  modules.push(JSON.parse(jsonString))
   // Sort and reverse the modules so when looking up a go import we will encounter the most specific path first
-  modules.sort((a, b) => a.Path.localeCompare(b.Path))
-  modules.reverse()
-  return modules
+  return goModuleJSON
+    .split('}')
+    .filter((block) => block.trim().length > 0)
+    .map((toParse) => JSON.parse(toParse + '}'))
+    .sort((a, b) => a.Path.localeCompare(b.Path))
+    .reverse()
 }
 /**
  * Gets the project name for the go import by getting the relative path for the import with in the go module system
@@ -111,6 +101,10 @@ const getProjectNameForGoImport = (
   const relativeModuleDir = module.Dir.substring(workspaceRootPath.length + 1)
   let projectPath = relativeModuleDir ? relativeModuleDir + '/' + relativeImportPath : relativeImportPath
   while (projectPath !== '.') {
+    if (projectPath.endsWith('/')) {
+      projectPath = projectPath.slice(0, -1)
+    }
+
     const projectName = projectRootLookup.get(projectPath)
     if (projectName) {
       return projectName

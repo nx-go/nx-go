@@ -16,7 +16,7 @@ export function runGoCommand(
 
   try {
     console.log(`Executing command: ${execute}`)
-    const logs = execSync(execute, { cwd, stdio: [0, 1, 2] })
+    const logs = execSync(execute, { cwd })
     return { success: true, logs }
   } catch (e) {
     console.error(`Failed to execute command: ${execute}`, e)
