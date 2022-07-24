@@ -27,11 +27,11 @@ function updateGoWorkUses(fileContent: string, newProject: string): string {
 export function updateGoWork(tree: Tree, options: NormalizedSchema) {
   if (options.useGoWork) {
     if (!tree.exists(GO_WORK_FILE)) {
-      if (!canUseWokspaces()) {
+      if (!options.skipVersionCheck && !canUseWokspaces()) {
         throw new Error('Your version of go does not support workspaces')
       }
 
-      const [major, minor] = getGoVersion()
+      const [major, minor] = options.skipVersionCheck ? ['1', '18'] : getGoVersion().split('.')
 
       tree.write(GO_WORK_FILE, `go ${major}.${minor}\n\nuse (\n    ${options.projectRoot}\n)\n`)
       return

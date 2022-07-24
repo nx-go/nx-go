@@ -25,7 +25,7 @@ export function normalizeOptions(
   const projectRoot = `${projectBase}/${projectDirectory}`
   const parsedTags = options.tags ? options.tags.split(',').map((s) => s.trim()) : []
 
-  const useGoWork = shouldUseGoWork(tree, !!options.useGoWork)
+  const useGoWork = options.skipVersionCheck ? !!options.useGoWork : shouldUseGoWork(tree, !!options.useGoWork)
 
   return {
     ...options,
@@ -36,5 +36,6 @@ export function normalizeOptions(
     skipGoMod: !!options.skipGoMod,
     npmScope: nxJson.npmScope,
     useGoWork,
+    skipVersionCheck: !!options.skipVersionCheck,
   }
 }

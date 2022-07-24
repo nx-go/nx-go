@@ -8,4 +8,5 @@ export interface NormalizedSchema extends ApplicationGeneratorSchema {
   parsedTags: string[]
   skipGoMod?: boolean
   useGoWork?: boolean
+  skipVersionCheck?: boolean
 }

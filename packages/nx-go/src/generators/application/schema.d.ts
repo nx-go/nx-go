@@ -4,4 +4,5 @@ export interface ApplicationGeneratorSchema {
   directory?: string
   skipGoMod?: boolean
   useGoWork?: boolean
+  skipVersionCheck?: boolean
 }
