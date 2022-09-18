@@ -74,13 +74,15 @@ const getGoDependencies = (
 const getGoModules = (workspaceRootPath: string): GoModule[] => {
   const goModuleJSON = execSync('go list -m -json', { encoding: 'utf-8', cwd: workspaceRootPath })
 
-  // Sort and reverse the modules so when looking up a go import we will encounter the most specific path first
-  return goModuleJSON
-    .split('}')
-    .filter((block) => block.trim().length > 0)
-    .map((toParse) => JSON.parse(toParse + '}'))
-    .sort((a, b) => a.Path.localeCompare(b.Path))
-    .reverse()
+  return (
+    goModuleJSON
+      .split('}')
+      .filter((block) => block.trim().length > 0)
+      .map((toParse) => JSON.parse(toParse + '}'))
+      // Sort and reverse the modules so when looking up a go import we will encounter the most specific path first
+      .sort((a, b) => a.Path.localeCompare(b.Path))
+      .reverse()
+  )
 }
 /**
  * Gets the project name for the go import by getting the relative path for the import with in the go module system
