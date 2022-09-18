@@ -21,6 +21,7 @@ describe('application e2e', () => {
 
     expect(() => checkFilesExist(`apps/${appName}/main.go`)).not.toThrow()
     expect(() => checkFilesExist(`go.mod`)).not.toThrow()
+    expect(() => checkFilesExist(`go.work`)).toThrow()
     expect(readFile(`go.mod`)).toContain('module proj')
 
     const resultBuild = await runNxCommandAsync(`build ${appName}`)
@@ -47,6 +48,7 @@ describe('application e2e', () => {
       ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
       await runNxCommandAsync(`generate @nx-go/nx-go:application ${plugin} --useGoWork --skipVersionCheck`)
       expect(() => checkFilesExist(`go.work`)).not.toThrow()
+      expect(() => checkFilesExist(`go.mod`)).toThrow()
     })
   })
 
