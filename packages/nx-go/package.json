@@ -1,6 +1,6 @@
 {
   "name": "@nx-go/nx-go",
-  "version": "2.6.0",
+  "version": "2.7.0-rc.0",
   "main": "src/index.js",
   "generators": "./generators.json",
   "executors": "./executors.json",
