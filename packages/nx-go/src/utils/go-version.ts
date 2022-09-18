@@ -1,11 +1,11 @@
-import { runGoCommand } from './run-go-command.helper'
+import { execSync } from 'child_process'
 
 const GO_VERSION_REGEX = /go(?<version>\S+) /
 
 export function getGoVersion() {
-  const { success, logs } = runGoCommand(null, 'version')
-  if (success) {
-    return GO_VERSION_REGEX.exec(logs.toString()).groups.version
+  const output = execSync('go version')
+  if (output) {
+    return GO_VERSION_REGEX.exec(output.toString()).groups.version
   } else {
     throw new Error('Fail to retrieve Go version')
   }

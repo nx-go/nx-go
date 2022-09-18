@@ -3,10 +3,10 @@ import { execSync } from 'child_process'
 
 export function runGoCommand(
   context: ExecutorContext,
-  command: 'build' | 'fmt' | 'run' | 'test' | 'version',
-  params: string[] = [],
+  command: 'build' | 'fmt' | 'run' | 'test',
+  params: string[],
   options: { cwd?: string; cmd?: string } = {},
-): { success: boolean; logs: Buffer } {
+): { success: boolean } {
   // Take the parameters or set defaults
   const cmd = options.cmd || 'go'
   const cwd = options.cwd || process.cwd()
@@ -16,10 +16,10 @@ export function runGoCommand(
 
   try {
     console.log(`Executing command: ${execute}`)
-    const logs = execSync(execute, { cwd })
-    return { success: true, logs }
+    execSync(execute, { cwd, stdio: [0, 1, 2] })
+    return { success: true }
   } catch (e) {
     console.error(`Failed to execute command: ${execute}`, e)
-    return { success: false, logs: Buffer.of() }
+    return { success: false }
   }
 }
