@@ -1,8 +1,8 @@
 import { Tree } from '@nrwl/devkit'
-import { NormalizedSchema } from './normalized-schema.interface'
-import { getGoVersion } from './go-version'
+import { canUseGoWork } from './can-use-go.work'
 import { GO_WORK_FILE } from './constants'
-import { canUseWorkspaces } from './workspace.helper'
+import { getGoVersion } from './go-version'
+import { NormalizedSchema } from './normalized-schema.interface'
 
 const MODULES_REGEX = /use\s+\((?<modules>[^)]*)\)/g
 
@@ -27,7 +27,7 @@ function updateGoWorkUses(fileContent: string, newProject: string): string {
 export function updateGoWork(tree: Tree, options: NormalizedSchema) {
   if (options.useGoWork) {
     if (!tree.exists(GO_WORK_FILE)) {
-      if (!options.skipVersionCheck && !canUseWorkspaces()) {
+      if (!options.skipVersionCheck && !canUseGoWork()) {
         throw new Error('Your version of go does not support workspaces')
       }
 

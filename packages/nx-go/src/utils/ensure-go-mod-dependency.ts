@@ -5,7 +5,7 @@ import { GO_MOD_FILE } from './constants'
  * Ensures that go.mod is an implicit dependency so that changes to go.mod triggers
  * projects to be flagged as affected
  */
-export const ensureGoModDependency = (tree: Tree) => {
+export function ensureGoModDependency(tree: Tree) {
   if (!tree.exists(GO_MOD_FILE)) {
     return
   }

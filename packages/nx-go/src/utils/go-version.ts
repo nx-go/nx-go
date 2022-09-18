@@ -2,7 +2,7 @@ import { runGoCommand } from './run-go-command.helper'
 
 const GO_VERSION_REGEX = /go(?<version>\S+) /
 
-export const getGoVersion = () => {
+export function getGoVersion() {
   const { success, logs } = runGoCommand(null, 'version', [])
   if (success) {
     return GO_VERSION_REGEX.exec(logs.toString()).groups.version
@@ -11,11 +11,11 @@ export const getGoVersion = () => {
   }
 }
 
-const versionAsNum = (version: string | undefined) => {
+function versionAsNum(version: string | undefined) {
   return parseInt(version) || 0
 }
 
-export const isVersionAfter = (version: string, refVersion: string) => {
+export function isVersionAfter(version: string, refVersion: string) {
   const [sMajor, sMinor, sPatch] = version.split('.')
   const [sRefMajor, sRefMinor, sRefPatch] = refVersion.split('.')
 

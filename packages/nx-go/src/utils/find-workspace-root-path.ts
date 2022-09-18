@@ -1,12 +1,13 @@
-import { dirname, join } from 'path'
 import { existsSync } from 'fs'
+import { dirname, join } from 'path'
+
 /**
  * Finds the absolute path for the root path of the workspace.
  *
  * This is useful when modules are executed from Nx processes in the node_modules
  * folder like when running as a graph plugin
  */
-export const findNxWorkspaceRootPath = () => {
+export function findNxWorkspaceRootPath() {
   let workingDirectory = process.cwd()
   // eslint-disable-next-line no-constant-condition
   while (true) {

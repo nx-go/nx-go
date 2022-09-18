@@ -1,17 +1,7 @@
-import { names, Tree, readJson } from '@nrwl/devkit'
+import { names, readJson, Tree } from '@nrwl/devkit'
 import { ApplicationGeneratorSchema } from '../generators/application/schema'
 import { NormalizedSchema } from './normalized-schema.interface'
-import { GO_MOD_FILE, GO_WORK_FILE } from './constants'
-
-function shouldUseGoWork(tree: Tree, option: boolean) {
-  if (tree.exists(GO_WORK_FILE)) {
-    return true
-  }
-  if (tree.exists(GO_MOD_FILE)) {
-    return false
-  }
-  return option
-}
+import { shouldUseGoWork } from './should-use-go.work'
 
 export function normalizeOptions(
   tree: Tree,
