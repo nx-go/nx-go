@@ -3,7 +3,7 @@ import { runGoCommand } from './run-go-command.helper'
 const GO_VERSION_REGEX = /go(?<version>\S+) /
 
 export function getGoVersion() {
-  const { success, logs } = runGoCommand(null, 'version', [])
+  const { success, logs } = runGoCommand(null, 'version')
   if (success) {
     return GO_VERSION_REGEX.exec(logs.toString()).groups.version
   } else {

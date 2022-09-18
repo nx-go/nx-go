@@ -4,7 +4,7 @@ import { execSync } from 'child_process'
 export function runGoCommand(
   context: ExecutorContext,
   command: 'build' | 'fmt' | 'run' | 'test' | 'version',
-  params: string[],
+  params: string[] = [],
   options: { cwd?: string; cmd?: string } = {},
 ): { success: boolean; logs: Buffer } {
   // Take the parameters or set defaults
