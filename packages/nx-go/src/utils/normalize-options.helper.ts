@@ -1,6 +1,7 @@
-import { names, Tree, readJson } from '@nrwl/devkit'
+import { names, readJson, Tree } from '@nrwl/devkit'
 import { ApplicationGeneratorSchema } from '../generators/application/schema'
 import { NormalizedSchema } from './normalized-schema.interface'
+import { shouldUseGoWork } from './should-use-go.work'
 
 export function normalizeOptions(
   tree: Tree,
@@ -14,6 +15,8 @@ export function normalizeOptions(
   const projectRoot = `${projectBase}/${projectDirectory}`
   const parsedTags = options.tags ? options.tags.split(',').map((s) => s.trim()) : []
 
+  const useGoWork = options.skipVersionCheck ? !!options.useGoWork : shouldUseGoWork(tree, !!options.useGoWork)
+
   return {
     ...options,
     projectName,
@@ -22,5 +25,7 @@ export function normalizeOptions(
     parsedTags,
     skipGoMod: !!options.skipGoMod,
     npmScope: nxJson.npmScope,
+    useGoWork,
+    skipVersionCheck: !!options.skipVersionCheck,
   }
 }

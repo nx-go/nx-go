@@ -28,6 +28,16 @@
       "type": "boolean",
       "description": "Skip creation of go.mod.",
       "default": false
+    },
+    "useGoWork": {
+      "type": "boolean",
+      "description": "Use a go.work file at root instead of go.mod",
+      "default": false
+    },
+    "skipVersionCheck": {
+      "type": "boolean",
+      "description": "Skip the version verification if used with --useGoWork",
+      "default": false
     }
   },
   "required": ["name"]

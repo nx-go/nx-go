@@ -3,4 +3,6 @@ export interface ApplicationGeneratorSchema {
   tags?: string
   directory?: string
   skipGoMod?: boolean
+  useGoWork?: boolean
+  skipVersionCheck?: boolean
 }
