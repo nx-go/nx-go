@@ -4,6 +4,27 @@
   "title": "Build executor",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "cmd": {
+      "type": "string",
+      "description": "Name of the go binary (usually 'go')",
+      "default": "go"
+    },
+    "cwd": {
+      "type": "string",
+      "description": "Working directory from which to run the application",
+      "default": ""
+    },
+    "outputPath": {
+      "type": "string",
+      "description": "The path for the build output. Will get a .exe suffix on win32",
+      "default": ""
+    },
+    "main": {
+      "type": "string",
+      "description": "Name of the file containing the main() function",
+      "default": "main.go"
+    }
+  },
   "required": []
 }
