@@ -3,6 +3,7 @@ import {
   ensureNxProject,
   readFile,
   readJson,
+  runCommand,
   runNxCommandAsync,
   uniq,
   updateFile,
@@ -81,6 +82,14 @@ describe('go-package-graph', () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`)
     await runNxCommandAsync(`generate @nx-go/nx-go:setup-nx-go-plugin`)
+
+    // Snippet from https://github.com/nrwl/nx/blob/d7536aa7e3e1d87fe80f99e5255533572db0d79d/e2e/nx-run/src/affected-graph.test.ts#L403
+    runCommand(`git init`)
+    runCommand(`git config user.email "test@test.com"`)
+    runCommand(`git config user.name "Test"`)
+    runCommand(`git config commit.gpgsign false`)
+    runCommand(`git add . && git commit -am "initial commit" && git checkout -b main`)
+    // End Snippet
 
     const captilizedLibName = libName[0].toUpperCase() + libName.substring(1)
 
