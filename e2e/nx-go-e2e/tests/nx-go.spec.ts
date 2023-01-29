@@ -4,13 +4,10 @@ import {
   readFile,
   readJson,
   runNxCommandAsync,
-  tmpProjPath,
   uniq,
   updateFile,
 } from '@nrwl/nx-plugin/testing'
-import { unlinkSync } from 'fs'
 import { join } from 'path'
-import { replaceFolder } from '../utils/folder'
 
 describe('application e2e', () => {
   it('should create application', async () => {
@@ -77,10 +74,9 @@ describe('go-package-graph', () => {
     const appName = uniq('app')
     const libName = uniq('lib')
     ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
-    // Need to copy the plugin as linking it throws:
-    // 'Couldn't find a package.json for Nx plugin:@nx-go/nx-go'
-    unlinkSync(tmpProjPath('node_modules/@nx-go/nx-go'))
-    replaceFolder(join(__dirname, '../../../dist/packages/nx-go'), tmpProjPath('node_modules/@nx-go/nx-go'))
+
+    //Ensure the Daemon is running before we start interacting with the workspace
+    await runNxCommandAsync('daemon start')
 
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`)
