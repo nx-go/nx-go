@@ -1,5 +1,5 @@
 import { ProjectGraph, ProjectGraphBuilder, ProjectGraphProcessorContext } from '@nrwl/devkit'
-import { basename, dirname, extname } from 'path'
+import { dirname, extname } from 'path'
 import { execSync } from 'child_process'
 import { findNxWorkspaceRootPath } from '../utils/find-workspace-root-path'
 
@@ -12,6 +12,12 @@ export const processProjectGraph = (graph: ProjectGraph, context: ProjectGraphPr
     projectRootLookupMap.set(graph.nodes[projectName].data.root, projectName)
   }
 
+  const fileImportsInfoJsonStr = execSync(`go run ${__dirname}/get-go-imports.go .`, {
+    encoding: 'utf-8',
+    cwd: workspaceRootPath,
+  })
+  const fileImportsMap = JSON.parse(fileImportsInfoJsonStr)
+
   const builder = new ProjectGraphBuilder(graph)
   // Define dependencies using the context of files that were changed to minimize work
   // between each run.
@@ -21,7 +27,7 @@ export const processProjectGraph = (graph: ProjectGraph, context: ProjectGraphPr
       .map(({ file }) => ({
         projectName,
         file,
-        dependencies: getGoDependencies(workspaceRootPath, goModules, projectRootLookupMap, file),
+        dependencies: getGoDependencies(workspaceRootPath, goModules, projectRootLookupMap, file, fileImportsMap[file]),
       }))
       .filter((data) => data.dependencies && data.dependencies.length > 0)
       .forEach(({ projectName, file, dependencies }) =>
@@ -38,6 +44,7 @@ export const processProjectGraph = (graph: ProjectGraph, context: ProjectGraphPr
  * @param goModules
  * @param projectRootLookup
  * @param file
+ * @param imports
  * @returns
  */
 const getGoDependencies = (
@@ -45,16 +52,15 @@ const getGoDependencies = (
   goModules: GoModule[],
   projectRootLookup: Map<string, string>,
   file: string,
+  imports: string[],
 ) => {
   try {
-    const goPackageDataJson = execSync('go list -json ./' + file, { encoding: 'utf-8', cwd: workspaceRootPath })
-    const goPackage: GoPackage = JSON.parse(goPackageDataJson)
-    const isTestFile = basename(file, '.go').endsWith('_test')
+    if (!imports) {
+      console.error(`Could not locate imports for ${file}`)
+      return []
+    }
 
-    // Use the correct imports list even if the file is a test file.
-    const listOfImports = (!isTestFile ? goPackage.Imports : goPackage.TestImports) ?? []
-
-    return listOfImports
+    return imports
       .map((goImport) => ({ goImport, goModule: goModules.find((m) => goImport.startsWith(m.Path)) }))
       .filter((importInfo) => importInfo.goModule)
       .map(({ goImport, goModule }) =>
@@ -114,18 +120,6 @@ const getProjectNameForGoImport = (
     projectPath = dirname(projectPath)
   }
   return null
-}
-
-/**
- * GoPackage shape needed by the code
- */
-interface GoPackage {
-  Deps?: string[]
-  Module?: {
-    Path?: string
-  }
-  Imports?: string[]
-  TestImports?: string[]
 }
 
 interface GoModule {
