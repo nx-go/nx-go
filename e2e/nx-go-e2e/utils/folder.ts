@@ -1,13 +1,5 @@
-import { directoryExists } from '@nrwl/nx-plugin/testing'
-import { copyFileSync, mkdirSync, readdirSync, statSync, unlink, unlinkSync } from 'fs'
+import { copyFileSync, mkdirSync, readdirSync, statSync, unlinkSync } from 'fs'
 import { join } from 'path'
-
-export const replaceFolder = (src: string, dest: string) => {
-  if (directoryExists(dest)) {
-    removeDirectory(dest)
-  }
-  copyDirectory(src, dest)
-}
 
 const removeDirectory = (dirPath: string) => {
   const names = readdirSync(dirPath)
