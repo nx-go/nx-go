@@ -39,6 +39,17 @@ Create a new application:
 nx g @nx-go/nx-go:app api
 ```
 
+### Enable nx-go plugin for dependency graphing
+
+nx-go includes a plugin that will build the dependency graph of go modules within
+your nx workspace. This is not enabled by default and must be enabled explicitly.
+
+To enable the nx-go plugin for the dependency graph run the following command:
+
+```shell
+nx generate @nx-go/nx-go:setup-nx-go-plugin
+```
+
 ## Usage
 
 You can now run the Nx workspace commands:
