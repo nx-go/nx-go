@@ -1,5 +1,5 @@
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing'
-import { Tree, readWorkspaceConfiguration, updateWorkspaceConfiguration } from '@nrwl/devkit'
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
+import { Tree, readWorkspaceConfiguration, updateWorkspaceConfiguration } from '@nx/devkit'
 
 import generator from './generator'
 

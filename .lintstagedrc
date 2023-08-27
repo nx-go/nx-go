@@ -1,5 +1,3 @@
 {
-  "*.{js,json,yaml,yml,css,scss,md,ts,html,graphql}": [
-    "pnpm run format"
-  ]
+  "*.{js,json,yaml,yml,css,scss,md,ts,html,graphql}": ["pnpm run format"]
 }

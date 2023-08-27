@@ -1,4 +1,4 @@
-import { readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nrwl/devkit'
+import { readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nx/devkit'
 import { GO_MOD_FILE } from './constants'
 
 /**

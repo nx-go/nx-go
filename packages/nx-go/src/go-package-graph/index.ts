@@ -1,4 +1,4 @@
-import { ProjectGraph, ProjectGraphBuilder, ProjectGraphProcessorContext } from '@nrwl/devkit'
+import { ProjectGraph, ProjectGraphBuilder, ProjectGraphProcessorContext } from '@nx/devkit'
 import { basename, dirname, extname } from 'path'
 import { execSync } from 'child_process'
 import { findNxWorkspaceRootPath } from '../utils/find-workspace-root-path'

@@ -7,7 +7,7 @@ import {
   runNxCommandAsync,
   uniq,
   updateFile,
-} from '@nrwl/nx-plugin/testing'
+} from '@nx/plugin/testing'
 import { join } from 'path'
 
 describe('application e2e', () => {

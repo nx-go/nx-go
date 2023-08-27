@@ -1,4 +1,4 @@
-import { formatFiles, readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nrwl/devkit'
+import { formatFiles, readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nx/devkit'
 
 export default async function (tree: Tree) {
   const workspaceConfig = readWorkspaceConfiguration(tree)

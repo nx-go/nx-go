@@ -1,4 +1,4 @@
-import { names, readJson, Tree } from '@nrwl/devkit'
+import { names, readJson, Tree } from '@nx/devkit'
 import { ApplicationGeneratorSchema } from '../generators/application/schema'
 import { NormalizedSchema } from './normalized-schema.interface'
 import { shouldUseGoWork } from './should-use-go.work'

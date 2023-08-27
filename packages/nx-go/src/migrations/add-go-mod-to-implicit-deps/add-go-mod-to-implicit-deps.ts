@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Tree } from '@nrwl/devkit'
+import { Tree } from '@nx/devkit'
 import { ensureGoModDependency } from '../../utils/ensure-go-mod-dependency'
 import { GO_MOD_FILE } from '../../utils/constants'
 
