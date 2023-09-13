@@ -4,6 +4,31 @@
   "title": "Build executor",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "description": "The output path of the resulting executable",
+      "default": null
+    },
+    "main": {
+      "type": "string",
+      "description": "Path to the file containing the main() function",
+      "default": null
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": { "string": "string" },
+      "description": "Environment variables to set when running the executor",
+      "default": null
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Flags to pass to the go compiler",
+      "default": null
+    }
+  },
   "required": []
 }

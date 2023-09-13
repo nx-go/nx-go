@@ -3,14 +3,12 @@ import {
   ensureNxProject,
   readFile,
   readJson,
+  runCommand,
   runNxCommandAsync,
-  tmpProjPath,
   uniq,
   updateFile,
 } from '@nrwl/nx-plugin/testing'
-import { unlinkSync } from 'fs'
 import { join } from 'path'
-import { replaceFolder } from '../utils/folder'
 
 describe('application e2e', () => {
   it('should create application', async () => {
@@ -77,14 +75,21 @@ describe('go-package-graph', () => {
     const appName = uniq('app')
     const libName = uniq('lib')
     ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
-    // Need to copy the plugin as linking it throws:
-    // 'Couldn't find a package.json for Nx plugin:@nx-go/nx-go'
-    unlinkSync(tmpProjPath('node_modules/@nx-go/nx-go'))
-    replaceFolder(join(__dirname, '../../../dist/packages/nx-go'), tmpProjPath('node_modules/@nx-go/nx-go'))
+
+    //Ensure the Daemon is running before we start interacting with the workspace
+    await runNxCommandAsync('daemon start')
 
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`)
     await runNxCommandAsync(`generate @nx-go/nx-go:setup-nx-go-plugin`)
+
+    // Snippet from https://github.com/nrwl/nx/blob/d7536aa7e3e1d87fe80f99e5255533572db0d79d/e2e/nx-run/src/affected-graph.test.ts#L403
+    runCommand(`git init`)
+    runCommand(`git config user.email "test@test.com"`)
+    runCommand(`git config user.name "Test"`)
+    runCommand(`git config commit.gpgsign false`)
+    runCommand(`git add . && git commit -am "initial commit" && git checkout -b main`)
+    // End Snippet
 
     const captilizedLibName = libName[0].toUpperCase() + libName.substring(1)
 
