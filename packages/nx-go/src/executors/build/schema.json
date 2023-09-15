@@ -13,6 +13,12 @@
       "x-completion-glob": "main.go",
       "x-priority": "important"
     },
+    "compiler": {
+      "type": "string",
+      "enum": ["go", "tinygo"],
+      "description": "The Go compiler to use",
+      "default": "go"
+    },
     "outputPath": {
       "type": "string",
       "description": "The output path of the resulting executable"

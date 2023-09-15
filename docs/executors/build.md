@@ -8,6 +8,10 @@ Builds a project with `go build` cli command.
 
 - (string): Path to the file containing the main() function
 
+### compiler
+
+- (string): The Go compiler to use (possible values: 'go', 'tinygo')
+
 ### outputPath
 
 - (string): The output path of the resulting executable
