@@ -1,4 +1,4 @@
-import { names, readJson, Tree } from '@nrwl/devkit'
+import { names, readJson, readNxJson, Tree } from '@nx/devkit'
 import { ApplicationGeneratorSchema } from '../generators/application/schema'
 import { NormalizedSchema } from './normalized-schema.interface'
 import { shouldUseGoWork } from './should-use-go.work'
@@ -8,7 +8,7 @@ export function normalizeOptions(
   projectBase: string,
   options: ApplicationGeneratorSchema,
 ): NormalizedSchema {
-  const nxJson = readJson(tree, 'nx.json')
+  const pJson = readJson(tree, 'package.json')
   const name = names(options.name).fileName
   const projectDirectory = options.directory ? `${names(options.directory).fileName}/${name}` : name
   const projectName = projectDirectory.replace(new RegExp('/', 'g'), '-')
@@ -24,7 +24,7 @@ export function normalizeOptions(
     projectDirectory,
     parsedTags,
     skipGoMod: !!options.skipGoMod,
-    npmScope: nxJson.npmScope,
+    npmScope: pJson.name.split('/')[0].replace('@', ''),
     useGoWork,
     skipVersionCheck: !!options.skipVersionCheck,
   }

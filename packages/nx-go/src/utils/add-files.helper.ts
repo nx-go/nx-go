@@ -1,4 +1,4 @@
-import { generateFiles, names, offsetFromRoot, Tree } from '@nrwl/devkit'
+import { generateFiles, names, offsetFromRoot, Tree } from '@nx/devkit'
 import { NormalizedSchema } from './normalized-schema.interface'
 
 export function addFiles(tree: Tree, srcFolder: string, options: NormalizedSchema) {

@@ -1,4 +1,4 @@
-import { Tree } from '@nrwl/devkit'
+import { Tree } from '@nx/devkit'
 import { canUseGoWork } from './can-use-go.work'
 import { GO_WORK_FILE } from './constants'
 import { getGoVersion } from './go-version'

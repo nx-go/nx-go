@@ -1,4 +1,4 @@
-import { addProjectConfiguration, formatFiles, getWorkspaceLayout, Tree } from '@nrwl/devkit'
+import { addProjectConfiguration, formatFiles, getWorkspaceLayout, Tree } from '@nx/devkit'
 import { join, normalize } from 'path'
 import { addFiles, createGoMod, normalizeOptions, toPosixPath, updateGoWork } from '../../utils'
 import { ApplicationGeneratorSchema } from './schema'

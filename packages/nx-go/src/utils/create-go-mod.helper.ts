@@ -1,4 +1,4 @@
-import { Tree } from '@nrwl/devkit'
+import { Tree } from '@nx/devkit'
 import { join } from 'path'
 import { GO_MOD_FILE } from './constants'
 import { ensureGoModDependency } from './ensure-go-mod-dependency'

@@ -1,4 +1,4 @@
-import { ExecutorContext } from '@nrwl/devkit'
+import { ExecutorContext } from '@nx/devkit'
 import { LintExecutorSchema } from './schema'
 import { execSync } from 'child_process'
 

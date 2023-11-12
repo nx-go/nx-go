@@ -1,4 +1,4 @@
-import { Tree } from '@nrwl/devkit'
+import { Tree } from '@nx/devkit'
 import { GO_MOD_FILE, GO_WORK_FILE } from './constants'
 
 export function shouldUseGoWork(tree: Tree, option: boolean) {

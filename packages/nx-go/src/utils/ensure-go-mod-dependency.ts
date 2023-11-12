@@ -1,19 +1,24 @@
-import { readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nrwl/devkit'
+import { readNxJson, Tree, updateNxJson } from '@nx/devkit'
 import { GO_MOD_FILE } from './constants'
 
 /**
- * Ensures that go.mod is an implicit dependency so that changes to go.mod triggers
+ * Ensures that go.mod is included as a sharedGlobal, so that changes to go.mod triggers
  * projects to be flagged as affected
  */
 export function ensureGoModDependency(tree: Tree) {
   if (!tree.exists(GO_MOD_FILE)) {
     return
   }
-  const workspaceConfig = readWorkspaceConfiguration(tree)
-  const dependencies = workspaceConfig.implicitDependencies ?? {}
-  if (!dependencies[GO_MOD_FILE]) {
-    dependencies[GO_MOD_FILE] = '*'
-    workspaceConfig.implicitDependencies = dependencies
-    updateWorkspaceConfiguration(tree, workspaceConfig)
+
+  const goModSharedGlobalsEntry = `{workspaceRoot}/${GO_MOD_FILE}`
+  const workspaceConfig = readNxJson(tree)
+
+  const namedInputs = workspaceConfig.namedInputs
+  if (!(namedInputs?.['sharedGlobals'] ?? []).find((dep) => dep === goModSharedGlobalsEntry)) {
+    workspaceConfig.namedInputs = {
+      ...namedInputs,
+      sharedGlobals: [...(namedInputs?.['sharedGlobals'] ?? []), goModSharedGlobalsEntry],
+    }
+    updateNxJson(tree, workspaceConfig)
   }
 }

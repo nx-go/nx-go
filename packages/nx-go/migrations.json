@@ -5,6 +5,12 @@
       "description": "add-go-mod-to-implicit-deps",
       "cli": "nx",
       "implementation": "./src/migrations/add-go-mod-to-implicit-deps/add-go-mod-to-implicit-deps"
+    },
+    "add-go-mod-to-shared-globals": {
+      "version": "3.0.0",
+      "description": "add-go-mod-to-shared-globals",
+      "cli": "nx",
+      "implementation": "./src/migrations/add-go-mod-to-shared-globals/add-go-mod-to-shared-globals"
     }
   }
 }

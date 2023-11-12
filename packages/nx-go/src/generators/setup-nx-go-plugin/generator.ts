@@ -1,7 +1,7 @@
-import { formatFiles, readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nrwl/devkit'
+import { formatFiles, readNxJson, Tree, updateNxJson } from '@nx/devkit'
 
 export default async function (tree: Tree) {
-  const workspaceConfig = readWorkspaceConfiguration(tree)
+  const workspaceConfig = readNxJson(tree)
   if (workspaceConfig.plugins?.includes('@nx-go/nx-go')) {
     return
   }
@@ -10,6 +10,6 @@ export default async function (tree: Tree) {
   } else {
     workspaceConfig.plugins = ['@nx-go/nx-go']
   }
-  updateWorkspaceConfiguration(tree, workspaceConfig)
+  updateNxJson(tree, workspaceConfig)
   await formatFiles(tree)
 }

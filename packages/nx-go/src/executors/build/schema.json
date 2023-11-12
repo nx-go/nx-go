@@ -1,6 +1,7 @@
 {
+  "version": 2,
+  "outputCapture": "direct-nodejs",
   "$schema": "http://json-schema.org/schema",
-  "cli": "nx",
   "title": "Build executor",
   "description": "",
   "type": "object",
@@ -17,7 +18,9 @@
     },
     "env": {
       "type": "object",
-      "additionalProperties": { "string": "string" },
+      "additionalProperties": {
+        "string": "string"
+      },
       "description": "Environment variables to set when running the executor",
       "default": null
     },

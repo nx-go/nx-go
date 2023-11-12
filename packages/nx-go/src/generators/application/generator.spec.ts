@@ -1,15 +1,18 @@
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing'
-import { Tree, readProjectConfiguration, readWorkspaceConfiguration } from '@nrwl/devkit'
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
+import { Tree, readProjectConfiguration, readNxJson } from '@nx/devkit'
 
 import generator from './generator'
 import { ApplicationGeneratorSchema } from './schema'
+import { GO_MOD_FILE } from '../../utils/constants'
 
 describe('application generator', () => {
   let appTree: Tree
   const options: ApplicationGeneratorSchema = { name: 'test' }
 
   beforeEach(() => {
-    appTree = createTreeWithEmptyWorkspace()
+    appTree = createTreeWithEmptyWorkspace({
+      layout: 'apps-libs',
+    })
   })
 
   it('should run successfully', async () => {
@@ -18,19 +21,22 @@ describe('application generator', () => {
     expect(config).toBeDefined()
   })
 
-  it('should add go.mod to dependencies if present', async () => {
+  it('should add go.mod to sharedGlobals if present', async () => {
     await generator(appTree, options)
-    const workspaceConfig = readWorkspaceConfiguration(appTree)
-    expect(workspaceConfig.implicitDependencies).toBeDefined()
-    expect(workspaceConfig.implicitDependencies['go.mod']).toBe('*')
+    const workspaceConfig = readNxJson(appTree)
+    expect(workspaceConfig.namedInputs).toBeDefined()
+    expect(workspaceConfig.namedInputs['sharedGlobals']).toEqual(
+      expect.arrayContaining([`{workspaceRoot}/${GO_MOD_FILE}`]),
+    )
   })
 
-  it('should not add go.mod to dependencies if not present', async () => {
+  it('should not add go.mod to sharedGlobals if not present', async () => {
     await generator(appTree, { name: 'test', skipGoMod: true })
-    const workspaceConfig = readWorkspaceConfiguration(appTree)
-    if (workspaceConfig.implicitDependencies) {
-      expect(workspaceConfig.implicitDependencies['go.mod']).toBeUndefined()
-    }
+    const workspaceConfig = readNxJson(appTree)
+
+    expect(workspaceConfig.namedInputs?.['sharedGlobals']).not.toEqual(
+      expect.arrayContaining([`{workspaceRoot}/${GO_MOD_FILE}`]),
+    )
   })
 
   it('should use posix-style paths', async () => {

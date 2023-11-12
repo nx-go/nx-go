@@ -1,3 +1,4 @@
+import { NxJsonConfiguration } from '@nx/devkit'
 import {
   checkFilesExist,
   ensureNxProject,
@@ -7,14 +8,26 @@ import {
   runNxCommandAsync,
   uniq,
   updateFile,
-} from '@nrwl/nx-plugin/testing'
+} from '@nx/plugin/testing'
 import { join } from 'path'
+
+const ensureProjectAndLayout = () => {
+  ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+  const nxJson = readJson<NxJsonConfiguration>('nx.json')
+  nxJson.workspaceLayout = {
+    libsDir: 'libs',
+    appsDir: 'apps',
+  }
+  updateFile('nx.json', JSON.stringify(nxJson))
+}
 
 describe('application e2e', () => {
   it('should create application', async () => {
     const appName = uniq('app')
     const libName = uniq('lib')
-    ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+
+    ensureProjectAndLayout()
+
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
 
     expect(() => checkFilesExist(`apps/${appName}/main.go`)).not.toThrow()
@@ -43,7 +56,9 @@ describe('application e2e', () => {
   describe('--useGoWork', () => {
     it('Should create a go.work file', async () => {
       const plugin = uniq('nx-go')
-      ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+
+      ensureProjectAndLayout()
+
       await runNxCommandAsync(`generate @nx-go/nx-go:application ${plugin} --useGoWork --skipVersionCheck`)
       expect(() => checkFilesExist(`go.work`)).not.toThrow()
       expect(() => checkFilesExist(`go.mod`)).toThrow()
@@ -53,7 +68,9 @@ describe('application e2e', () => {
   describe('--directory', () => {
     it('should create main.go in the specified directory', async () => {
       const plugin = uniq('nx-go')
-      ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+
+      ensureProjectAndLayout()
+
       await runNxCommandAsync(`generate @nx-go/nx-go:application ${plugin} --directory subdir`)
       expect(() => checkFilesExist(`apps/subdir/${plugin}/main.go`)).not.toThrow()
     })
@@ -62,7 +79,9 @@ describe('application e2e', () => {
   describe('--tags', () => {
     it('should add tags to nx.json', async () => {
       const plugin = uniq('nx-go')
-      ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+
+      ensureProjectAndLayout()
+
       await runNxCommandAsync(`generate @nx-go/nx-go:application ${plugin} --tags e2etag,e2ePackage`)
       const projectJson = readJson(`apps/${plugin}/project.json`)
       expect(projectJson.tags).toEqual(['e2etag', 'e2ePackage'])
@@ -74,7 +93,8 @@ describe('go-package-graph', () => {
   it('should work with affected commands', async () => {
     const appName = uniq('app')
     const libName = uniq('lib')
-    ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+
+    ensureProjectAndLayout()
 
     //Ensure the Daemon is running before we start interacting with the workspace
     await runNxCommandAsync('daemon start')
@@ -84,14 +104,14 @@ describe('go-package-graph', () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:setup-nx-go-plugin`)
 
     // Snippet from https://github.com/nrwl/nx/blob/d7536aa7e3e1d87fe80f99e5255533572db0d79d/e2e/nx-run/src/affected-graph.test.ts#L403
-    runCommand(`git init`)
-    runCommand(`git config user.email "test@test.com"`)
-    runCommand(`git config user.name "Test"`)
-    runCommand(`git config commit.gpgsign false`)
-    runCommand(`git add . && git commit -am "initial commit" && git checkout -b main`)
+    runCommand(`git init`, {})
+    runCommand(`git config user.email "test@test.com"`, {})
+    runCommand(`git config user.name "Test"`, {})
+    runCommand(`git config commit.gpgsign false`, {})
+    runCommand(`git add . && git commit -am "initial commit" && git checkout -b main`, {})
     // End Snippet
 
-    const captilizedLibName = libName[0].toUpperCase() + libName.substring(1)
+    const capitalizedLibName = libName[0].toUpperCase() + libName.substring(1)
 
     updateFile(
       join('apps', appName, 'main.go'),
@@ -104,7 +124,7 @@ describe('go-package-graph', () => {
       )
 
       func main() {
-        fmt.Println(${libName}.${captilizedLibName}("${appName}"))
+        fmt.Println(${libName}.${capitalizedLibName}("${appName}"))
       }`,
     )
 
@@ -123,11 +143,15 @@ describe('go-package-graph', () => {
 
 describe('lint target', () => {
   let appName: string = ''
+
   beforeEach(async () => {
     appName = uniq('app')
-    ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go')
+
+    ensureProjectAndLayout()
+
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`)
   })
+
   it('should use go fmt by default', async () => {
     const testFile = `package main
     import "fmt"
