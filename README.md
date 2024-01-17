@@ -78,8 +78,8 @@ The lint executor provides two options to configure the desired linter:
 
 ```ts
 interface LintOptions {
-  linter: string
-  args: string
+  linter: string;
+  args: string;
 }
 ```
 

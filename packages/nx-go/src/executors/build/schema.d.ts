@@ -1,6 +1,1 @@
-export interface BuildExecutorSchema {
-  outputPath?: string
-  main?: string
-  env?: { [key as string]: string }
-  flags?: string[]
-}
+export interface BuildExecutorSchema {} // eslint-disable-line
