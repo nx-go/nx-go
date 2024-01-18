@@ -1,9 +1,34 @@
 {
-  "$schema": "http://json-schema.org/schema",
   "version": 2,
-  "title": "Build executor",
-  "description": "",
+  "outputCapture": "direct-nodejs",
+  "$schema": "http://json-schema.org/schema",
+  "title": "@nx-go/nx-go:build",
+  "description": "Go build options",
   "type": "object",
-  "properties": {},
-  "required": []
+  "properties": {
+    "main": {
+      "type": "string",
+      "description": "Path to the file containing the main() function",
+      "x-completion-type": "file"
+    },
+    "outputPath": {
+      "type": "string",
+      "description": "The output path of the resulting executable"
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Environment variables to set when running the executor"
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Flags to pass to the go compiler"
+    }
+  },
+  "required": ["main"]
 }
