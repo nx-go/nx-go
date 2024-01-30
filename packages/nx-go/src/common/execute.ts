@@ -2,7 +2,7 @@ import { logger } from '@nx/devkit';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-export type GoCommand = 'build' | 'version';
+export type GoCommand = 'build' | 'fmt' | 'version';
 
 export type RunGoOptions = {
   cmd?: string;

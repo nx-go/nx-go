@@ -1,12 +1,15 @@
 import { ExecutorContext, logger } from '@nx/devkit';
-import * as executeFunctions from '../../common/execute';
+import * as commonFunctions from '../../common';
 import executor from './executor';
 import { BuildExecutorSchema } from './schema';
 
 jest.mock('@nx/devkit', () => ({
   logger: { error: jest.fn() },
 }));
-jest.mock('../../common/execute');
+jest.mock('../../common', () => ({
+  execute: jest.fn(),
+  extractProjectRoot: jest.fn(() => 'apps/project'),
+}));
 
 const options: BuildExecutorSchema = {
   main: 'apps/project/main.go',
@@ -14,14 +17,9 @@ const options: BuildExecutorSchema = {
 };
 
 const context: ExecutorContext = {
-  projectName: 'project',
   cwd: 'current-dir',
   root: '',
   isVerbose: false,
-  projectsConfigurations: {
-    projects: { project: { root: 'apps/project' } },
-    version: 1,
-  },
 };
 
 describe('Build Executor', () => {
@@ -33,7 +31,7 @@ describe('Build Executor', () => {
     'should execute build command on platform $platform',
     async ({ platform, outputPath }) => {
       Object.defineProperty(process, 'platform', { value: platform });
-      const spyExecute = jest.spyOn(executeFunctions, 'execute');
+      const spyExecute = jest.spyOn(commonFunctions, 'execute');
       const output = await executor(options, context);
       expect(output.success).toBeTruthy();
       expect(spyExecute).toHaveBeenCalledWith(
@@ -49,7 +47,7 @@ describe('Build Executor', () => {
       { ...options, outputPath: 'custom-path', flags: ['--flag1', '--flag2'] },
       context
     );
-    expect(executeFunctions.execute).toHaveBeenCalledWith(
+    expect(commonFunctions.execute).toHaveBeenCalledWith(
       'build',
       ['-o', 'custom-path', '--flag1', '--flag2', 'apps/project/main.go'],
       expect.anything()
@@ -58,7 +56,7 @@ describe('Build Executor', () => {
 
   it('should fail executor if command fails', async () => {
     const error = new Error('command failed');
-    jest.spyOn(executeFunctions, 'execute').mockImplementation(() => {
+    jest.spyOn(commonFunctions, 'execute').mockImplementation(() => {
       throw error;
     });
     const output = await executor(options, context);

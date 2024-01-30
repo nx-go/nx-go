@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "title": "Lint executor",
+  "description": "Go lint options",
+  "type": "object",
+  "properties": {},
+  "required": []
+}
