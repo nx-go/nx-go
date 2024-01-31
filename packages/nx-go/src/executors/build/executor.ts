@@ -1,5 +1,5 @@
-import { ExecutorContext, logger } from '@nx/devkit';
-import { execute, extractProjectRoot } from '../../common';
+import { ExecutorContext } from '@nx/devkit';
+import { executeCommand, extractProjectRoot } from '../../common';
 import { BuildExecutorSchema } from './schema';
 
 /**
@@ -12,16 +12,10 @@ export default async function runExecutor(
   options: BuildExecutorSchema,
   context: ExecutorContext
 ) {
-  try {
-    await execute('build', buildParams(options, context), {
-      cwd: context.cwd,
-      env: options.env,
-    });
-    return { success: true };
-  } catch (error) {
-    logger.error(error);
-    return { success: false };
-  }
+  return executeCommand('build', buildParams(options, context), {
+    cwd: context.cwd,
+    env: options.env,
+  });
 }
 
 const buildParams = (

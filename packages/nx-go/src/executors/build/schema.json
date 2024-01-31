@@ -1,7 +1,7 @@
 {
   "version": 2,
   "outputCapture": "direct-nodejs",
-  "$schema": "http://json-schema.org/schema",
+  "$schema": "https://json-schema.org/schema",
   "title": "@nx-go/nx-go:build",
   "description": "Go build options",
   "type": "object",
@@ -9,7 +9,9 @@
     "main": {
       "type": "string",
       "description": "Path to the file containing the main() function",
-      "x-completion-type": "file"
+      "x-completion-type": "file",
+      "x-completion-glob": "main.go",
+      "x-priority": "important"
     },
     "outputPath": {
       "type": "string",

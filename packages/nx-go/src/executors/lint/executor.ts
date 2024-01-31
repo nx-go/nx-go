@@ -1,5 +1,5 @@
-import { ExecutorContext, logger } from '@nx/devkit';
-import { execute, extractProjectRoot } from '../../common';
+import { ExecutorContext } from '@nx/devkit';
+import { executeCommand, extractProjectRoot } from '../../common';
 import { LintExecutorSchema } from './schema';
 
 /**
@@ -12,11 +12,5 @@ export default async function runExecutor(
   _: LintExecutorSchema,
   context: ExecutorContext
 ) {
-  try {
-    await execute('fmt', ['./...'], { cwd: extractProjectRoot(context) });
-    return { success: true };
-  } catch (error) {
-    logger.error(error);
-    return { success: false };
-  }
+  return executeCommand('fmt', ['./...'], { cwd: extractProjectRoot(context) });
 }

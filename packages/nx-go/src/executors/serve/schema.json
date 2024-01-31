@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Serve executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "main": {
+      "type": "string",
+      "description": "Path to the file containing the main() function",
+      "x-completion-type": "file",
+      "x-completion-glob": "main.go",
+      "x-priority": "important"
+    },
+    "cwd": {
+      "type": "string",
+      "description": "Working directory from which to run the application",
+      "x-completion-type": "directory"
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Extra args when starting the app"
+    }
+  },
+  "required": ["main"]
+}

@@ -1,13 +1,10 @@
-import { ExecutorContext, logger } from '@nx/devkit';
+import { ExecutorContext } from '@nx/devkit';
 import * as commonFunctions from '../../common';
 import executor from './executor';
 import { BuildExecutorSchema } from './schema';
 
-jest.mock('@nx/devkit', () => ({
-  logger: { error: jest.fn() },
-}));
 jest.mock('../../common', () => ({
-  execute: jest.fn(),
+  executeCommand: jest.fn().mockResolvedValue({ success: true }),
   extractProjectRoot: jest.fn(() => 'apps/project'),
 }));
 
@@ -31,7 +28,7 @@ describe('Build Executor', () => {
     'should execute build command on platform $platform',
     async ({ platform, outputPath }) => {
       Object.defineProperty(process, 'platform', { value: platform });
-      const spyExecute = jest.spyOn(commonFunctions, 'execute');
+      const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
       const output = await executor(options, context);
       expect(output.success).toBeTruthy();
       expect(spyExecute).toHaveBeenCalledWith(
@@ -47,20 +44,10 @@ describe('Build Executor', () => {
       { ...options, outputPath: 'custom-path', flags: ['--flag1', '--flag2'] },
       context
     );
-    expect(commonFunctions.execute).toHaveBeenCalledWith(
+    expect(commonFunctions.executeCommand).toHaveBeenCalledWith(
       'build',
       ['-o', 'custom-path', '--flag1', '--flag2', 'apps/project/main.go'],
       expect.anything()
     );
-  });
-
-  it('should fail executor if command fails', async () => {
-    const error = new Error('command failed');
-    jest.spyOn(commonFunctions, 'execute').mockImplementation(() => {
-      throw error;
-    });
-    const output = await executor(options, context);
-    expect(output.success).toBeFalsy();
-    expect(logger.error).toHaveBeenCalledWith(error);
   });
 });
