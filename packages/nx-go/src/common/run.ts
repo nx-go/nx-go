@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 
-export type GoCommand = 'build' | 'fmt' | 'run' | 'version';
+export type GoCommand = 'build' | 'fmt' | 'run' | 'test' | 'version';
 
 export type RunGoOptions = {
   cmd?: string;
