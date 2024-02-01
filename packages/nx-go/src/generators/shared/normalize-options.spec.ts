@@ -24,6 +24,7 @@ describe('normalizeOptions', () => {
     expect(output.name).toBe('backend-filename');
     expect(output.projectName).toBe('backend');
     expect(output.projectRoot).toBe('/tmp');
+    expect(output.projectType).toBe('application');
     expect(output.directory).toBe('backend-dir');
     expect(output.projectNameAndRootFormat).toBe('as-provided');
     expect(output.parsedTags).toEqual([]);

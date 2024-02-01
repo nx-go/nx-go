@@ -3,40 +3,29 @@ import {
   formatFiles,
   generateFiles,
   joinPathFragments,
+  names,
   Tree,
 } from '@nx/devkit';
 import { addNxPlugin, createGoMod, normalizeOptions } from '../shared';
-import type { ApplicationGeneratorSchema } from './schema';
+import { LibraryGeneratorSchema } from './schema';
 
-export default async function applicationGenerator(
+export default async function libraryGenerator(
   tree: Tree,
-  schema: ApplicationGeneratorSchema
+  schema: LibraryGeneratorSchema
 ) {
   const options = await normalizeOptions(
     tree,
     schema,
-    'application',
-    '@nx-go/nx-go:application'
+    'library',
+    '@nx-go/nx-go:library'
   );
 
-  addProjectConfiguration(tree, schema.name, {
+  addProjectConfiguration(tree, options.name, {
     root: options.projectRoot,
     projectType: options.projectType,
     sourceRoot: options.projectRoot,
     tags: options.parsedTags,
     targets: {
-      build: {
-        executor: '@nx-go/nx-go:build',
-        options: {
-          main: '{projectRoot}/main.go',
-        },
-      },
-      serve: {
-        executor: '@nx-go/nx-go:serve',
-        options: {
-          main: '{projectRoot}/main.go',
-        },
-      },
       test: {
         executor: '@nx-go/nx-go:test',
       },
@@ -46,11 +35,16 @@ export default async function applicationGenerator(
     },
   });
 
+  const projectNames = names(options.projectName);
   generateFiles(
     tree,
     joinPathFragments(__dirname, 'files'),
     options.projectRoot,
-    options
+    {
+      ...options,
+      ...projectNames,
+      packageName: projectNames.fileName.split('-').join('_'),
+    }
   );
 
   if (!schema.skipGoMod) {

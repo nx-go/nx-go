@@ -1,5 +1,5 @@
 import { GeneratorSchema } from '../shared';
 
-export interface ApplicationGeneratorSchema extends GeneratorSchema {
+export interface LibraryGeneratorSchema extends GeneratorSchema {
   skipGoMod?: boolean;
 }

@@ -9,12 +9,14 @@ export interface GeneratorSchema {
   directory?: string;
   projectNameAndRootFormat?: ProjectNameAndRootFormat;
   tags?: string;
+  skipFormat?: boolean;
 }
 
 export interface GeneratorNormalizedSchema extends GeneratorSchema {
   npmScope: string;
   projectName: string;
   projectRoot: string;
+  projectType: ProjectType;
   parsedTags: string[];
 }
 
@@ -45,6 +47,7 @@ export const normalizeOptions = async (
     projectNameAndRootFormat,
     projectName,
     projectRoot,
+    projectType,
     parsedTags,
   };
 };

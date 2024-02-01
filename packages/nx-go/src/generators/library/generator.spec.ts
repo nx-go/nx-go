@@ -1,15 +1,17 @@
 const normalizeOptions = {
-  projectRoot: 'apps/api',
-  projectType: 'application',
-  parsedTags: ['api', 'backend'],
+  name: 'data-access',
+  projectName: 'data-access',
+  projectRoot: 'libs/data-access',
+  projectType: 'library',
+  parsedTags: ['data', 'data-access'],
 };
 
 import type { Tree } from '@nx/devkit';
 import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as shared from '../shared';
-import applicationGenerator from './generator';
-import type { ApplicationGeneratorSchema } from './schema';
+import libraryGenerator from './generator';
+import type { LibraryGeneratorSchema } from './schema';
 
 jest.mock('@nx/devkit', () => ({
   ...jest.requireActual('@nx/devkit'),
@@ -23,60 +25,64 @@ jest.mock('../shared', () => ({
   normalizeOptions: jest.fn().mockReturnValue(normalizeOptions),
 }));
 
-describe('application generator', () => {
+describe('library generator', () => {
   let tree: Tree;
-  const options: ApplicationGeneratorSchema = { name: 'test' };
+  const options: LibraryGeneratorSchema = { name: 'data-access' };
 
   beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
   afterEach(() => jest.clearAllMocks());
 
   it('should write project configuration', async () => {
-    await applicationGenerator(tree, options);
+    await libraryGenerator(tree, options);
     expect(nxDevkit.addProjectConfiguration).toHaveBeenCalledWith(
       tree,
-      'test',
+      'data-access',
       {
-        root: 'apps/api',
-        projectType: 'application',
-        sourceRoot: 'apps/api',
+        root: 'libs/data-access',
+        projectType: 'library',
+        sourceRoot: 'libs/data-access',
         targets: expect.anything(),
-        tags: ['api', 'backend'],
+        tags: ['data', 'data-access'],
       }
     );
   });
 
   it('should generate files', async () => {
-    await applicationGenerator(tree, options);
+    await libraryGenerator(tree, options);
     expect(nxDevkit.generateFiles).toHaveBeenCalledWith(
       tree,
       nxDevkit.joinPathFragments(__dirname, './files'),
-      'apps/api',
-      normalizeOptions
+      'libs/data-access',
+      expect.objectContaining({
+        ...normalizeOptions,
+        packageName: 'data_access',
+        className: 'DataAccess',
+      })
     );
   });
 
   it('should create go mod', async () => {
-    await applicationGenerator(tree, options);
+    await libraryGenerator(tree, options);
     expect(shared.createGoMod).toHaveBeenCalledWith(tree, normalizeOptions);
   });
 
   it('should not create go mod if skipped', async () => {
-    await applicationGenerator(tree, { ...options, skipGoMod: true });
+    await libraryGenerator(tree, { ...options, skipGoMod: true });
     expect(shared.createGoMod).not.toHaveBeenCalled();
   });
 
   it('should add nx plugin', async () => {
-    await applicationGenerator(tree, options);
+    await libraryGenerator(tree, options);
     expect(shared.addNxPlugin).toHaveBeenCalledWith(tree);
   });
 
   it('should format files', async () => {
-    await applicationGenerator(tree, options);
+    await libraryGenerator(tree, options);
     expect(nxDevkit.formatFiles).toHaveBeenCalledWith(tree);
   });
 
   it('should not format files if skipped', async () => {
-    await applicationGenerator(tree, { ...options, skipFormat: true });
+    await libraryGenerator(tree, { ...options, skipFormat: true });
     expect(nxDevkit.formatFiles).not.toHaveBeenCalled();
   });
 });

@@ -5,6 +5,12 @@
       "schema": "./src/generators/application/schema.json",
       "description": "Generate a Go application",
       "aliases": ["app"]
+    },
+    "library": {
+      "factory": "./src/generators/library/generator",
+      "schema": "./src/generators/library/schema.json",
+      "description": "Generate a Go library",
+      "aliases": ["lib"]
     }
   }
 }

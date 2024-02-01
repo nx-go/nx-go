@@ -50,6 +50,16 @@ describe('nx-go', () => {
     expect(() => checkFilesExist(`go.work`)).toThrow();
     expect(readFile(`go.mod`)).toContain('module proj');
   });
+
+  it('should create a library', async () => {
+    const libName = uniq('lib');
+    await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`);
+
+    expect(() => checkFilesExist(`${libName}/${libName}.go`)).not.toThrow();
+    expect(() => checkFilesExist(`go.mod`)).not.toThrow();
+    expect(() => checkFilesExist(`go.work`)).toThrow();
+    expect(readFile(`go.mod`)).toContain('module proj');
+  });
 });
 
 /**
