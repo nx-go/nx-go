@@ -1,11 +1,11 @@
 import { ExecutorContext, logger } from '@nx/devkit';
 import { executeCommand, extractProjectRoot } from './execution';
-import * as runFunctions from './run';
+import * as runFunctions from '../../common/run';
 
 jest.mock('@nx/devkit', () => ({
   logger: { info: jest.fn(), error: jest.fn() },
 }));
-jest.mock('./run', () => ({ run: jest.fn() }));
+jest.mock('../../common/run', () => ({ run: jest.fn() }));
 
 describe('execution', () => {
   describe('Method: extractProjectRoot', () => {

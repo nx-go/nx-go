@@ -1,5 +1,5 @@
 import { ExecutorContext, logger } from '@nx/devkit';
-import { GoCommand, run, RunGoOptions } from './run';
+import { GoCommand, run, RunGoOptions } from '../../common';
 
 /**
  * Extract the project root from the executor context.
@@ -23,7 +23,9 @@ export const executeCommand = async (
 ): Promise<{ success: boolean }> => {
   try {
     logger.info(
-      `Executing command: ${[options.cmd ?? 'go', command, ...params].join(' ')}`
+      `Executing command: ${[options.cmd ?? 'go', command, ...params].join(
+        ' '
+      )}`
     );
     run(command, params, options);
     return { success: true };

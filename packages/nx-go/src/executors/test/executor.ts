@@ -1,5 +1,5 @@
 import { ExecutorContext } from '@nx/devkit';
-import { executeCommand, extractProjectRoot } from '../../common';
+import { executeCommand, extractProjectRoot } from '../shared';
 import { TestExecutorSchema } from './schema';
 
 export default async function runExecutor(

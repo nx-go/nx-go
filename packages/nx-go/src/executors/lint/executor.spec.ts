@@ -1,9 +1,9 @@
 import { ExecutorContext } from '@nx/devkit';
-import * as commonFunctions from '../../common';
+import * as sharedFunctions from '../shared';
 import executor from './executor';
 import { LintExecutorSchema } from './schema';
 
-jest.mock('../../common', () => ({
+jest.mock('../shared', () => ({
   executeCommand: jest.fn().mockResolvedValue({ success: true }),
   extractProjectRoot: jest.fn(() => 'apps/project'),
 }));
@@ -18,7 +18,7 @@ const context: ExecutorContext = {
 
 describe('Lint Executor', () => {
   it('should execute lint command', async () => {
-    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const spyExecute = jest.spyOn(sharedFunctions, 'executeCommand');
     const output = await executor(options, context);
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith('fmt', ['./...'], {
