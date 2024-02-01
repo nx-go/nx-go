@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "@nx-go/nx-go:application",
+  "title": "Go application generator options",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the project to generate.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use?",
+      "x-priority": "important"
+    },
+    "directory": {
+      "type": "string",
+      "description": "A directory where the project is placed.",
+      "alias": "d",
+      "x-priority": "important"
+    },
+    "projectNameAndRootFormat": {
+      "type": "string",
+      "description": "Whether to generate the project name and root directory as provided (`as-provided`) or generate them composing their values and taking the configured layout into account (`derived`).",
+      "enum": ["as-provided", "derived"]
+    },
+    "tags": {
+      "type": "string",
+      "description": "Add tags to the application (used for linting)."
+    },
+    "skipFormat": {
+      "type": "boolean",
+      "description": "Skip formatting files.",
+      "default": false,
+      "x-priority": "internal"
+    },
+    "skipGoMod": {
+      "type": "boolean",
+      "description": "Skip creation of go.mod.",
+      "default": false
+    }
+  },
+  "required": ["name"]
+}

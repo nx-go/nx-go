@@ -11,13 +11,13 @@ export default async function runExecutor(
     [
       '-v',
       './...',
-      ...buildFlagIfNotSkiped('-cover', options.skipCover),
-      ...buildFlagIfNotSkiped('-race', options.skipRace),
+      ...buildFlagIfNotSkipped('-cover', options.skipCover),
+      ...buildFlagIfNotSkipped('-race', options.skipRace),
     ],
     { cwd: extractProjectRoot(context) }
   );
 }
 
-const buildFlagIfNotSkiped = (flag: string, skiped: boolean): string[] => {
-  return skiped ? [] : [flag];
+const buildFlagIfNotSkipped = (flag: string, skipped: boolean): string[] => {
+  return skipped ? [] : [flag];
 };
