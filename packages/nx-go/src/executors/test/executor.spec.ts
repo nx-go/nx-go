@@ -22,8 +22,7 @@ describe('Test Executor', () => {
     const output = await executor(options, context);
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith(
-      'test',
-      ['-v', './...', '-cover', '-race'],
+      ['test', '-v', './...', '-cover', '-race'],
       { cwd: 'apps/project' }
     );
   });
@@ -37,7 +36,6 @@ describe('Test Executor', () => {
     const output = await executor({ ...options, ...config }, context);
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith(
-      'test',
       expect.not.arrayContaining([flag]),
       { cwd: 'apps/project' }
     );

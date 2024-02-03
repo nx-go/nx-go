@@ -17,12 +17,33 @@ const context: ExecutorContext = {
 };
 
 describe('Lint Executor', () => {
-  it('should execute lint command', async () => {
-    const spyExecute = jest.spyOn(sharedFunctions, 'executeCommand');
+  it('should execute lint command with default options', async () => {
     const output = await executor(options, context);
     expect(output.success).toBeTruthy();
-    expect(spyExecute).toHaveBeenCalledWith('fmt', ['./...'], {
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['fmt', './...'],
+      { cwd: 'apps/project' }
+    );
+  });
+
+  it('should execute lint command with custom linter', async () => {
+    const output = await executor({ ...options, linter: 'revive' }, context);
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(['./...'], {
       cwd: 'apps/project',
+      executable: 'revive',
     });
+  });
+
+  it('should execute lint command with custom options', async () => {
+    const output = await executor(
+      { ...options, args: ['--config', 'revive.toml'], linter: 'revive' },
+      context
+    );
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['--config', 'revive.toml', './...'],
+      { cwd: 'apps/project', executable: 'revive' }
+    );
   });
 });

@@ -1,6 +1,6 @@
 import { ExecutorContext, logger } from '@nx/devkit';
-import { executeCommand, extractProjectRoot } from './execution';
 import * as runFunctions from '../../common/run';
+import { executeCommand, extractProjectRoot } from './execution';
 
 jest.mock('@nx/devkit', () => ({
   logger: { info: jest.fn(), error: jest.fn() },
@@ -27,9 +27,13 @@ describe('execution', () => {
   describe('Method: executeCommand', () => {
     it('should execute a successfully command', async () => {
       const spyLoggerInfo = jest.spyOn(logger, 'info');
-      const result = await executeCommand('build', ['--flag1'], { cmd: 'go' });
+      const result = await executeCommand(['build', '--flag1'], {
+        executable: 'go',
+      });
       expect(result.success).toBeTruthy();
-      expect(spyLoggerInfo).toHaveBeenCalledWith('Executing command: go build --flag1');
+      expect(spyLoggerInfo).toHaveBeenCalledWith(
+        'Executing command: go build --flag1'
+      );
     });
 
     it('should execute a failed command', async () => {
@@ -37,12 +41,16 @@ describe('execution', () => {
       const spyLoggerError = jest.spyOn(logger, 'error');
 
       const error = new Error('run error');
-      jest.spyOn(runFunctions, 'run').mockImplementationOnce(() => {throw error; });
-      const result = await executeCommand('version');
+      jest.spyOn(runFunctions, 'run').mockImplementationOnce(() => {
+        throw error;
+      });
+      const result = await executeCommand(['version']);
 
       expect(result.success).toBeFalsy();
       expect(spyLoggerError).toHaveBeenCalledWith(error);
-      expect(spyLoggerInfo).toHaveBeenCalledWith('Executing command: go version');
+      expect(spyLoggerInfo).toHaveBeenCalledWith(
+        'Executing command: go version'
+      );
     });
   });
 });

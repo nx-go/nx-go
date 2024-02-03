@@ -7,8 +7,8 @@ export default async function runExecutor(
   context: ExecutorContext
 ) {
   return executeCommand(
-    'test',
     [
+      'test',
       '-v',
       './...',
       ...buildFlagIfNotSkipped('-cover', options.skipCover),

@@ -12,7 +12,7 @@ export default async function runExecutor(
   options: BuildExecutorSchema,
   context: ExecutorContext
 ) {
-  return executeCommand('build', buildParams(options, context), {
+  return executeCommand(buildParams(options, context), {
     cwd: context.cwd,
     env: options.env,
   });
@@ -23,6 +23,7 @@ const buildParams = (
   context: ExecutorContext
 ): string[] => {
   return [
+    'build',
     '-o',
     buildOutputPath(extractProjectRoot(context), options.outputPath),
     ...(options.flags ?? []),

@@ -4,6 +4,18 @@
   "title": "Lint executor",
   "description": "Go lint options",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "linter": {
+      "type": "string",
+      "description": "The command to execute when running the lint executor."
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Extra args when linting the app"
+    }
+  },
   "required": []
 }

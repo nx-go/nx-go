@@ -28,12 +28,10 @@ describe('Build Executor', () => {
     'should execute build command on platform $platform',
     async ({ platform, outputPath }) => {
       Object.defineProperty(process, 'platform', { value: platform });
-      const spyExecute = jest.spyOn(sharedFunctions, 'executeCommand');
       const output = await executor(options, context);
       expect(output.success).toBeTruthy();
-      expect(spyExecute).toHaveBeenCalledWith(
-        'build',
-        ['-o', outputPath, 'apps/project/main.go'],
+      expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+        ['build', '-o', outputPath, 'apps/project/main.go'],
         { cwd: 'current-dir', env: { hello: 'world' } }
       );
     }
@@ -41,12 +39,11 @@ describe('Build Executor', () => {
 
   it('should execute build command with custom output path and flags', async () => {
     await executor(
-      { ...options, outputPath: 'custom-path', flags: ['--flag1', '--flag2'] },
+      { ...options, outputPath: 'custom-path', flags: ['--flag1'] },
       context
     );
     expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
-      'build',
-      ['-o', 'custom-path', '--flag1', '--flag2', 'apps/project/main.go'],
+      ['build', '-o', 'custom-path', '--flag1', 'apps/project/main.go'],
       expect.anything()
     );
   });

@@ -14,10 +14,10 @@ export default async () => {
   global.stopLocalRegistry = await startLocalRegistry({
     localRegistryTarget,
     storage,
-    verbose: false
+    verbose: false,
   });
-  execSync(
-    'npx nx run-many --targets publish --ver 0.0.0-e2e --tag e2e',
-    { env: process.env, stdio: 'inherit' }
-  );
+  execSync('npx nx run-many --targets publish --ver 0.0.0-e2e --tag e2e', {
+    env: process.env,
+    stdio: 'inherit',
+  });
 };

@@ -1,4 +1,3 @@
-import { joinPathFragments, readJsonFile, workspaceRoot } from '@nx/devkit';
 import {
   checkFilesExist,
   readFile,
@@ -6,10 +5,13 @@ import {
   uniq,
 } from '@nx/plugin/testing';
 import { execSync } from 'child_process';
-import { mkdirSync, rmSync } from 'fs';
-import { dirname, join } from 'path';
+import { rmSync } from 'fs';
+import createTestProject from '../shared/create-test-project';
 
 describe('nx-go', () => {
+  const appName = uniq('app');
+  const libName = uniq('lib');
+
   let projectDirectory: string;
 
   beforeAll(() => {
@@ -26,7 +28,11 @@ describe('nx-go', () => {
 
   afterAll(() => {
     // Cleanup the test project
-    rmSync(projectDirectory, { recursive: true, force: true });
+    try {
+      rmSync(projectDirectory, { recursive: true, force: true });
+    } catch (ignored) {
+      // ignored now, but need a closer look why resources are busy
+    }
   });
 
   async function runNxCommandAsync(command: string) {
@@ -42,7 +48,6 @@ describe('nx-go', () => {
   });
 
   it('should create an application', async () => {
-    const appName = uniq('app');
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`);
 
     expect(() => checkFilesExist(`${appName}/main.go`)).not.toThrow();
@@ -52,7 +57,6 @@ describe('nx-go', () => {
   });
 
   it('should create a library', async () => {
-    const libName = uniq('lib');
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`);
 
     expect(() => checkFilesExist(`${libName}/${libName}.go`)).not.toThrow();
@@ -60,33 +64,38 @@ describe('nx-go', () => {
     expect(() => checkFilesExist(`go.work`)).toThrow();
     expect(readFile(`go.mod`)).toContain('module proj');
   });
+
+  it('should build the application', async () => {
+    const result = await runNxCommandAsync(`build ${appName}`);
+    const ext = process.platform === 'win32' ? '.exe' : '';
+    expect(result.stdout).toContain(
+      `Executing command: go build -o dist/${appName}${ext} ${appName}/main.go`
+    );
+  });
+
+  describe('Linting', () => {
+    it('should execute the default linter', async () => {
+      const result = await runNxCommandAsync(`lint ${appName}`);
+      expect(result.stdout).toContain(`Executing command: go fmt ./...`);
+    });
+
+    it('should use a custom linter', async () => {
+      const result = await runNxCommandAsync(
+        `lint ${appName} --linter="go vet"`
+      );
+      expect(result.stdout).toContain(`Executing command: go vet ./...`);
+    });
+  });
+
+  it('should serve the application', async () => {
+    const result = await runNxCommandAsync(`serve ${appName}`);
+    expect(result.stdout).toContain(`Executing command: go run main.go`);
+  });
+
+  it('should test the application', async () => {
+    const result = await runNxCommandAsync(`test ${appName} --skipRace`);
+    expect(result.stdout).toContain(
+      `Executing command: go test -v ./... -cover`
+    );
+  });
 });
-
-/**
- * Creates a test project with create-nx-workspace and installs the plugin
- * @returns The directory where the test project was created
- */
-function createTestProject() {
-  const projectName = 'proj';
-  const projectDirectory = join(process.cwd(), 'tmp', 'nx-e2e', projectName);
-
-  // Ensure projectDirectory is empty
-  rmSync(projectDirectory, { recursive: true, force: true });
-  mkdirSync(dirname(projectDirectory), { recursive: true });
-
-  // Extract current nx version
-  const pkgJsonPath = joinPathFragments(workspaceRoot, 'package.json');
-  const nxVersion = readJsonFile(pkgJsonPath).devDependencies['nx'];
-
-  execSync(
-    `pnpm dlx create-nx-workspace@${nxVersion} ${projectName} --preset apps --no-nxCloud --no-interactive --pm pnpm`,
-    {
-      cwd: dirname(projectDirectory),
-      stdio: 'inherit',
-      env: process.env,
-    }
-  );
-  console.log(`Created test project in "${projectDirectory}"`);
-
-  return projectDirectory;
-}

@@ -23,7 +23,7 @@ describe('Serve Executor', () => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor(options, context);
     expect(output.success).toBeTruthy();
-    expect(spyExecute).toHaveBeenCalledWith('run', ['hello_world.go'], {
+    expect(spyExecute).toHaveBeenCalledWith(['run', 'hello_world.go'], {
       cwd: 'apps/project',
     });
   });
@@ -36,8 +36,7 @@ describe('Serve Executor', () => {
     );
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith(
-      'run',
-      ['hello_world.go', '--help'],
+      ['run', 'hello_world.go', '--help'],
       { cwd: '/tmp/custom/path' }
     );
   });
@@ -49,7 +48,7 @@ describe('Serve Executor', () => {
       context
     );
     expect(output.success).toBeTruthy();
-    expect(spyExecute).toHaveBeenCalledWith('run', ['hello_world.go'], {
+    expect(spyExecute).toHaveBeenCalledWith(['run', 'hello_world.go'], {
       cwd: 'apps/project',
     });
   });
