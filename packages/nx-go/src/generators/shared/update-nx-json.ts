@@ -1,6 +1,12 @@
 import { readNxJson, Tree, updateNxJson } from '@nx/devkit';
-import { GO_MOD_FILE, NX_PLUGIN_NAME } from '../../constants';
+import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../../constants';
+import { isGoWorkspace } from './go-bridge';
 
+/**
+ * Adds the nx-go plugin to the nx.json if it's not already there.
+ *
+ * @param tree project tree object
+ */
 export const addNxPlugin = (tree: Tree): void => {
   const nxJson = readNxJson(tree);
   if (!nxJson.plugins?.includes(NX_PLUGIN_NAME)) {
@@ -9,21 +15,26 @@ export const addNxPlugin = (tree: Tree): void => {
   }
 };
 
-export const addGoModToSharedGlobals = (tree: Tree): void => {
-  if (!tree.exists(GO_MOD_FILE)) {
-    return;
-  }
+/**
+ * Ensures that go configuration files are included as a sharedGlobal,
+ * so any changes will trigger projects to be flagged as affected.
+ *
+ * @param tree project tree object
+ */
+export const ensureGoConfigInSharedGlobals = (tree: Tree): void => {
+  const useWorkspace = isGoWorkspace(tree);
+  const entries = useWorkspace
+    ? [`{workspaceRoot}/${GO_WORK_FILE}`, `{projectRoot}/${GO_MOD_FILE}`]
+    : [`{workspaceRoot}/${GO_MOD_FILE}`];
 
-  const entry = `{workspaceRoot}/${GO_MOD_FILE}`;
   const nxJson = readNxJson(tree);
-
-  const namedInputs = nxJson.namedInputs;
+  const namedInputs = nxJson.namedInputs ?? {};
   const sharedGlobals = namedInputs['sharedGlobals'] ?? [];
-  if (!sharedGlobals.includes(entry)) {
-    nxJson.namedInputs = {
-      ...namedInputs,
-      sharedGlobals: [...sharedGlobals, entry],
-    };
-    updateNxJson(tree, nxJson);
+
+  if (entries.some((entry) => !sharedGlobals.includes(entry))) {
+    namedInputs.sharedGlobals = Array.from(
+      new Set([...sharedGlobals, ...entries])
+    );
+    updateNxJson(tree, { ...nxJson, namedInputs });
   }
 };

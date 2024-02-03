@@ -1,8 +1,9 @@
-import { names, ProjectType, readJson, Tree } from '@nx/devkit';
+import { names, ProjectType, Tree } from '@nx/devkit';
 import {
   determineProjectNameAndRootOptions,
   ProjectNameAndRootFormat,
 } from '@nx/devkit/src/generators/project-name-and-root-utils';
+import { getProjectScope } from './npm-bridge';
 
 export interface GeneratorSchema {
   name: string;
@@ -26,7 +27,6 @@ export const normalizeOptions = async (
   projectType: ProjectType,
   generator: string
 ): Promise<GeneratorNormalizedSchema> => {
-  const { name: packageName } = readJson(tree, 'package.json');
   const { projectName, projectRoot, projectNameAndRootFormat } =
     await determineProjectNameAndRootOptions(tree, {
       name: options.name,
@@ -43,7 +43,7 @@ export const normalizeOptions = async (
   return {
     ...options,
     name: names(options.name).fileName,
-    npmScope: packageName.split('/')[0].replace('@', ''),
+    npmScope: getProjectScope(tree),
     projectNameAndRootFormat,
     projectName,
     projectRoot,

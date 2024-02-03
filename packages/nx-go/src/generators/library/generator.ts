@@ -2,11 +2,16 @@ import {
   addProjectConfiguration,
   formatFiles,
   generateFiles,
-  joinPathFragments,
   names,
   Tree,
 } from '@nx/devkit';
-import { addNxPlugin, createGoMod, normalizeOptions } from '../shared';
+import { join } from 'path';
+import {
+  addGoWorkDependency,
+  createGoMod,
+  isGoWorkspace,
+  normalizeOptions,
+} from '../shared';
 import { LibraryGeneratorSchema } from './schema';
 
 export default async function libraryGenerator(
@@ -35,24 +40,15 @@ export default async function libraryGenerator(
     },
   });
 
-  const projectNames = names(options.projectName);
-  generateFiles(
-    tree,
-    joinPathFragments(__dirname, 'files'),
-    options.projectRoot,
-    {
-      ...options,
-      ...projectNames,
-      packageName: projectNames.fileName.split('-').join('_'),
-    }
-  );
+  generateFiles(tree, join(__dirname, 'files'), options.projectRoot, {
+    ...options,
+    ...names(options.projectName),
+  });
 
-  if (!schema.skipGoMod) {
-    await createGoMod(tree, options);
-    // TODO handle go workspace (go.work files)
+  if (isGoWorkspace(tree)) {
+    createGoMod(tree, options.npmScope, options.projectRoot);
+    addGoWorkDependency(tree, options.projectRoot);
   }
-
-  addNxPlugin(tree);
 
   if (!schema.skipFormat) {
     await formatFiles(tree);

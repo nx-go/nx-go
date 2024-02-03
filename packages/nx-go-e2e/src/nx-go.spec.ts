@@ -47,22 +47,27 @@ describe('nx-go', () => {
     });
   });
 
+  it('should initialize the workspace', async () => {
+    await runNxCommandAsync(`generate @nx-go/nx-go:init`);
+    expect(() => checkFilesExist(`go.work`)).not.toThrow();
+  });
+
   it('should create an application', async () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`);
 
     expect(() => checkFilesExist(`${appName}/main.go`)).not.toThrow();
-    expect(() => checkFilesExist(`go.mod`)).not.toThrow();
-    expect(() => checkFilesExist(`go.work`)).toThrow();
-    expect(readFile(`go.mod`)).toContain('module proj');
+    expect(() => checkFilesExist(`${appName}/go.mod`)).not.toThrow();
+    expect(readFile(`${appName}/go.mod`)).toContain('module proj');
+    expect(readFile(`go.work`)).toContain(`use ./${appName}`);
   });
 
   it('should create a library', async () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`);
 
     expect(() => checkFilesExist(`${libName}/${libName}.go`)).not.toThrow();
-    expect(() => checkFilesExist(`go.mod`)).not.toThrow();
-    expect(() => checkFilesExist(`go.work`)).toThrow();
-    expect(readFile(`go.mod`)).toContain('module proj');
+    expect(() => checkFilesExist(`${libName}/go.mod`)).not.toThrow();
+    expect(readFile(`${appName}/go.mod`)).toContain('module proj');
+    expect(readFile(`go.work`)).toContain(`use (\n\t./${appName}\n\t./${libName}\n)`);
   });
 
   it('should build the application', async () => {

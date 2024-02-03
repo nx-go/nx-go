@@ -6,6 +6,11 @@
       "description": "Generate a Go application",
       "aliases": ["app"]
     },
+    "init": {
+      "factory": "./src/generators/init/generator",
+      "schema": "./src/generators/init/schema.json",
+      "description": "Initialize Nx workspace with Go support"
+    },
     "library": {
       "factory": "./src/generators/library/generator",
       "schema": "./src/generators/library/schema.json",

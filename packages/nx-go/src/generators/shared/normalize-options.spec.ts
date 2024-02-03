@@ -1,4 +1,5 @@
 import type { Tree } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { normalizeOptions } from './normalize-options';
 
 jest.mock('@nx/devkit', () => ({
@@ -12,11 +13,18 @@ jest.mock('@nx/devkit/src/generators/project-name-and-root-utils', () => ({
     projectNameAndRootFormat: 'as-provided',
   }),
 }));
+jest.mock('./npm-bridge', () => ({
+  getProjectScope: jest.fn().mockReturnValue('nx-go'),
+}));
 
 describe('normalizeOptions', () => {
+  let tree: Tree;
+
+  beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
+
   it('should normalize basic options', async () => {
     const output = await normalizeOptions(
-      {} as Tree,
+      tree,
       { name: 'backend', directory: 'backend-dir' },
       'application',
       'init'
@@ -32,7 +40,7 @@ describe('normalizeOptions', () => {
 
   it('should extract npm scope from package.json', async () => {
     const output = await normalizeOptions(
-      {} as Tree,
+      tree,
       { name: 'backend' },
       'application',
       'init'
@@ -42,7 +50,7 @@ describe('normalizeOptions', () => {
 
   it('should normalize tags', async () => {
     const output = await normalizeOptions(
-      {} as Tree,
+      tree,
       { name: 'backend', tags: 'api,web' },
       'application',
       'init'

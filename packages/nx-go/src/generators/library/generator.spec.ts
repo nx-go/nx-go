@@ -1,5 +1,6 @@
 const normalizeOptions = {
   name: 'data-access',
+  npmScope: 'proj',
   projectName: 'data-access',
   projectRoot: 'libs/data-access',
   projectType: 'library',
@@ -9,6 +10,7 @@ const normalizeOptions = {
 import type { Tree } from '@nx/devkit';
 import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { join } from 'path';
 import * as shared from '../shared';
 import libraryGenerator from './generator';
 import type { LibraryGeneratorSchema } from './schema';
@@ -20,8 +22,9 @@ jest.mock('@nx/devkit', () => ({
   generateFiles: jest.fn(),
 }));
 jest.mock('../shared', () => ({
-  addNxPlugin: jest.fn(),
+  addGoWorkDependency: jest.fn(),
   createGoMod: jest.fn(),
+  isGoWorkspace: jest.fn().mockReturnValue(false),
   normalizeOptions: jest.fn().mockReturnValue(normalizeOptions),
 }));
 
@@ -51,29 +54,39 @@ describe('library generator', () => {
     await libraryGenerator(tree, options);
     expect(nxDevkit.generateFiles).toHaveBeenCalledWith(
       tree,
-      nxDevkit.joinPathFragments(__dirname, './files'),
+      join(__dirname, './files'),
       'libs/data-access',
-      expect.objectContaining({
-        ...normalizeOptions,
-        packageName: 'data_access',
-        className: 'DataAccess',
-      })
+      expect.objectContaining({ ...normalizeOptions, className: 'DataAccess' })
     );
   });
 
-  it('should create go mod', async () => {
+  it('should create Go mod for project if in a Go workspace', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
     await libraryGenerator(tree, options);
-    expect(shared.createGoMod).toHaveBeenCalledWith(tree, normalizeOptions);
+    expect(shared.createGoMod).toHaveBeenCalledWith(
+      tree,
+      'proj',
+      'libs/data-access'
+    );
   });
 
-  it('should not create go mod if skipped', async () => {
-    await libraryGenerator(tree, { ...options, skipGoMod: true });
+  it('should not create Go mod for project if not in a Go workspace', async () => {
+    await libraryGenerator(tree, options);
     expect(shared.createGoMod).not.toHaveBeenCalled();
   });
 
-  it('should add nx plugin', async () => {
+  it('should add Go work dependency if in a Go workspace', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
     await libraryGenerator(tree, options);
-    expect(shared.addNxPlugin).toHaveBeenCalledWith(tree);
+    expect(shared.addGoWorkDependency).toHaveBeenCalledWith(
+      tree,
+      'libs/data-access'
+    );
+  });
+
+  it('should not add Go work dependency if not in a Go workspace', async () => {
+    await libraryGenerator(tree, options);
+    expect(shared.addGoWorkDependency).not.toHaveBeenCalled();
   });
 
   it('should format files', async () => {

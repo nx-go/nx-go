@@ -1,5 +1,3 @@
 import { GeneratorSchema } from '../shared';
 
-export interface ApplicationGeneratorSchema extends GeneratorSchema {
-  skipGoMod?: boolean;
-}
+export type ApplicationGeneratorSchema = GeneratorSchema;

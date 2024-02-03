@@ -1,3 +1,4 @@
-export * from './create-go-mod';
+export * from './go-bridge';
 export * from './normalize-options';
+export * from './npm-bridge';
 export * from './update-nx-json';

@@ -1,4 +1,4 @@
-package <%= projectName %>
+package main
 
 func <%= className %>(name string) string {
 	result := "<%= className %> " + name
