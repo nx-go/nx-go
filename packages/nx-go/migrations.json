@@ -1,0 +1,14 @@
+{
+  "generators": {
+    "add-nx-go-plugin": {
+      "version": "3.0.0-beta.0",
+      "description": "Add Nx Go plugin to Nx workspace configuration",
+      "implementation": "./src/migrations/update-3.0.0/add-nx-go-plugin"
+    },
+    "add-go-config-in-shared-globals": {
+      "version": "3.0.0-beta.0",
+      "description": "Add Go config in shared globals",
+      "implementation": "./src/migrations/update-3.0.0/add-go-config-in-shared-globals"
+    }
+  }
+}
