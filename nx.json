@@ -1,4 +1,6 @@
 {
+  "nxCloudAccessToken": "ZjFiMmE5Y2UtOTQ3Yi00ZmQxLTljNzItMzBkYjAyNmRkMmY5fHJlYWQtd3JpdGU=",
+  "nxCloudUrl": "https://cloud.nx.app",
   "npmScope": "nx-go",
   "affected": {
     "defaultBase": "main"
@@ -18,7 +20,12 @@
       "runner": "@nrwl/nx-cloud",
       "options": {
         "accessToken": "YmMwOWNkM2EtMTI1Yi00NWJiLWE4YzgtNWUwMDM4OGMwMzMzfHJlYWQtd3JpdGU=",
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ]
       }
     }
   },
