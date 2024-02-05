@@ -1,11 +1,14 @@
 import {
   checkFilesExist,
   readFile,
+  readJson,
   runCommandAsync,
   uniq,
+  updateFile,
 } from '@nx/plugin/testing';
 import { execSync } from 'child_process';
 import { rmSync } from 'fs';
+import { join } from 'path';
 import createTestProject from '../shared/create-test-project';
 
 describe('nx-go', () => {
@@ -57,7 +60,7 @@ describe('nx-go', () => {
 
     expect(() => checkFilesExist(`${appName}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`${appName}/go.mod`)).not.toThrow();
-    expect(readFile(`${appName}/go.mod`)).toContain('module proj');
+    expect(readFile(`${appName}/go.mod`)).toContain(`module proj/${appName}`);
     expect(readFile(`go.work`)).toContain(`use ./${appName}`);
   });
 
@@ -66,8 +69,10 @@ describe('nx-go', () => {
 
     expect(() => checkFilesExist(`${libName}/${libName}.go`)).not.toThrow();
     expect(() => checkFilesExist(`${libName}/go.mod`)).not.toThrow();
-    expect(readFile(`${appName}/go.mod`)).toContain('module proj');
-    expect(readFile(`go.work`)).toContain(`use (\n\t./${appName}\n\t./${libName}\n)`);
+    expect(readFile(`${libName}/go.mod`)).toContain(`module proj/${libName}`);
+    expect(readFile(`go.work`)).toContain(
+      `use (\n\t./${appName}\n\t./${libName}\n)`
+    );
   });
 
   it('should build the application', async () => {
@@ -102,5 +107,35 @@ describe('nx-go', () => {
     expect(result.stdout).toContain(
       `Executing command: go test -v ./... -cover`
     );
+  });
+
+  describe('Project graph', () => {
+    it('should create graph with dependencies', async () => {
+      const captilizedLibName = libName[0].toUpperCase() + libName.substring(1);
+      updateFile(
+        join(appName, 'main.go'),
+        `package main
+
+        import (
+          "fmt"
+          "proj/${libName}"
+        )
+
+        func main() {
+          fmt.Println(${libName}.${captilizedLibName}("${appName}"))
+        }`
+      );
+
+      await runNxCommandAsync('dep-graph --file=graph.json');
+      const { graph } = readJson('graph.json');
+
+      expect(graph).toBeDefined();
+      expect(graph.dependencies).toBeDefined();
+      expect(graph.dependencies[appName]).toBeDefined();
+
+      const appDependencies = graph.dependencies[appName];
+      expect(appDependencies.length).toBe(1);
+      expect(appDependencies[0].target).toBe(libName);
+    });
   });
 });

@@ -1,5 +1,6 @@
 const normalizeOptions = {
   name: 'data-access',
+  moduleName: 'dataaccess',
   npmScope: 'proj',
   projectName: 'data-access',
   projectRoot: 'libs/data-access',
@@ -11,7 +12,7 @@ import type { Tree } from '@nx/devkit';
 import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { join } from 'path';
-import * as shared from '../shared';
+import * as shared from '../../utils';
 import libraryGenerator from './generator';
 import type { LibraryGeneratorSchema } from './schema';
 
@@ -21,7 +22,7 @@ jest.mock('@nx/devkit', () => ({
   formatFiles: jest.fn(),
   generateFiles: jest.fn(),
 }));
-jest.mock('../shared', () => ({
+jest.mock('../../utils', () => ({
   addGoWorkDependency: jest.fn(),
   createGoMod: jest.fn(),
   isGoWorkspace: jest.fn().mockReturnValue(false),
@@ -65,7 +66,7 @@ describe('library generator', () => {
     await libraryGenerator(tree, options);
     expect(shared.createGoMod).toHaveBeenCalledWith(
       tree,
-      'proj',
+      'proj/dataaccess',
       'libs/data-access'
     );
   });

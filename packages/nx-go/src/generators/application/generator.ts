@@ -10,7 +10,7 @@ import {
   createGoMod,
   isGoWorkspace,
   normalizeOptions,
-} from '../shared';
+} from '../../utils';
 import type { ApplicationGeneratorSchema } from './schema';
 
 export default async function applicationGenerator(
@@ -54,7 +54,11 @@ export default async function applicationGenerator(
   generateFiles(tree, join(__dirname, 'files'), options.projectRoot, options);
 
   if (isGoWorkspace(tree)) {
-    createGoMod(tree, options.npmScope, options.projectRoot);
+    createGoMod(
+      tree,
+      `${options.npmScope}/${options.moduleName}`,
+      options.projectRoot
+    );
     addGoWorkDependency(tree, options.projectRoot);
   }
 

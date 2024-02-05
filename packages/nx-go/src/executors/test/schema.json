@@ -10,7 +10,7 @@
       "type": "boolean",
       "default": false
     },
-    "skipRace ": {
+    "skipRace": {
       "description": "Whether or not to skip race detector during test execution",
       "type": "boolean",
       "default": false

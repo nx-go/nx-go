@@ -11,7 +11,7 @@ import {
   createGoMod,
   isGoWorkspace,
   normalizeOptions,
-} from '../shared';
+} from '../../utils';
 import { LibraryGeneratorSchema } from './schema';
 
 export default async function libraryGenerator(
@@ -46,7 +46,11 @@ export default async function libraryGenerator(
   });
 
   if (isGoWorkspace(tree)) {
-    createGoMod(tree, options.npmScope, options.projectRoot);
+    createGoMod(
+      tree,
+      `${options.npmScope}/${options.moduleName}`,
+      options.projectRoot
+    );
     addGoWorkDependency(tree, options.projectRoot);
   }
 

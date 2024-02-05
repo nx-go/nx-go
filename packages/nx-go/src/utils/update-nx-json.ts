@@ -1,5 +1,5 @@
 import { readNxJson, Tree, updateNxJson } from '@nx/devkit';
-import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../../constants';
+import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../constants';
 import { isGoWorkspace } from './go-bridge';
 
 /**

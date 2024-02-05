@@ -14,6 +14,7 @@ export interface GeneratorSchema {
 }
 
 export interface GeneratorNormalizedSchema extends GeneratorSchema {
+  moduleName: string;
   npmScope: string;
   projectName: string;
   projectRoot: string;
@@ -40,9 +41,11 @@ export const normalizeOptions = async (
     ? options.tags.split(',').map((s) => s.trim())
     : [];
 
+  const projectNames = names(options.name);
   return {
     ...options,
-    name: names(options.name).fileName,
+    name: projectNames.fileName,
+    moduleName: projectNames.propertyName.toLowerCase(),
     npmScope: getProjectScope(tree),
     projectNameAndRootFormat,
     projectName,

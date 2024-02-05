@@ -1,9 +1,9 @@
 import { ExecutorContext } from '@nx/devkit';
-import * as commonFunctions from '../shared';
+import * as commonFunctions from '../../utils';
 import executor from './executor';
 import { ServeExecutorSchema } from './schema';
 
-jest.mock('../shared', () => ({
+jest.mock('../../utils', () => ({
   executeCommand: jest.fn().mockResolvedValue({ success: true }),
   extractProjectRoot: jest.fn(() => 'apps/project'),
 }));

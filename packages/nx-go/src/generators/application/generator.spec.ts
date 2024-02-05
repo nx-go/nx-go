@@ -1,5 +1,6 @@
 const normalizeOptions = {
   npmScope: 'proj',
+  moduleName: 'api',
   projectRoot: 'apps/api',
   projectType: 'application',
   parsedTags: ['api', 'backend'],
@@ -9,12 +10,12 @@ import type { Tree } from '@nx/devkit';
 import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { join } from 'path';
-import * as shared from '../shared';
+import * as shared from '../../utils';
 import applicationGenerator from './generator';
 import type { ApplicationGeneratorSchema } from './schema';
 
 jest.mock('@nx/devkit');
-jest.mock('../shared', () => ({
+jest.mock('../../utils', () => ({
   addGoWorkDependency: jest.fn(),
   createGoMod: jest.fn(),
   isGoWorkspace: jest.fn().mockReturnValue(false),
@@ -56,7 +57,7 @@ describe('application generator', () => {
   it('should create Go mod for project if in a Go workspace', async () => {
     jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
     await applicationGenerator(tree, options);
-    expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj', 'apps/api');
+    expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj/api', 'apps/api');
   });
 
   it('should not create Go mod for project if not in a Go workspace', async () => {

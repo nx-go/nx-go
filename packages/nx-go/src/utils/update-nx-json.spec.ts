@@ -1,7 +1,7 @@
 import type { NxJsonConfiguration, Tree } from '@nx/devkit';
 import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../../constants';
+import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../constants';
 import * as goBridge from './go-bridge';
 import { addNxPlugin, ensureGoConfigInSharedGlobals } from './update-nx-json';
 

@@ -3,7 +3,10 @@ import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { normalizeOptions } from './normalize-options';
 
 jest.mock('@nx/devkit', () => ({
-  names: jest.fn().mockReturnValue({ fileName: 'backend-filename' }),
+  names: jest.fn().mockReturnValue({
+    fileName: 'backend-filename',
+    propertyName: 'backendFilename',
+  }),
   readJson: jest.fn().mockReturnValue({ name: '@nx-go/backend' }),
 }));
 jest.mock('@nx/devkit/src/generators/project-name-and-root-utils', () => ({
@@ -30,6 +33,7 @@ describe('normalizeOptions', () => {
       'init'
     );
     expect(output.name).toBe('backend-filename');
+    expect(output.moduleName).toBe('backendfilename');
     expect(output.projectName).toBe('backend');
     expect(output.projectRoot).toBe('/tmp');
     expect(output.projectType).toBe('application');

@@ -1,5 +1,11 @@
 import { ExecutorContext, logger } from '@nx/devkit';
-import { run, RunGoOptions } from '../../common';
+import { execSync } from 'child_process';
+
+export type RunGoOptions = {
+  executable?: string;
+  cwd?: string;
+  env?: { [key: string]: string };
+};
 
 /**
  * Extract the project root from the executor context.
@@ -20,9 +26,15 @@ export const executeCommand = async (
   options: RunGoOptions = {}
 ): Promise<{ success: boolean }> => {
   try {
-    const { executable = 'go' } = options;
+    const { executable = 'go', cwd = null, env = {} } = options;
+
     logger.info(`Executing command: ${[executable, ...parameters].join(' ')}`);
-    run(parameters, options);
+    execSync([executable, ...parameters].join(' '), {
+      cwd,
+      env: Object.assign(process.env, env),
+      stdio: [0, 1, 2],
+    });
+
     return { success: true };
   } catch (error) {
     logger.error(error);

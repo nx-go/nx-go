@@ -2,14 +2,14 @@ import type { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as child_process from 'child_process';
 import { join } from 'path';
-import { GO_WORK_FILE } from '../../constants';
+import { GO_WORK_FILE } from '../constants';
 import {
   addGoWorkDependency,
   createGoMod,
   createGoWork,
   getGoVersion,
-  isGoWorkspace,
-  supportsGoWorkspace,
+  isGoWorkspace, parseGoList,
+  supportsGoWorkspace
 } from './go-bridge';
 
 jest.mock('child_process', () => ({
@@ -72,14 +72,31 @@ describe('Go bridge', () => {
     });
   });
 
+  describe('Method: parseGoList', () => {
+    it('should parse Go list with multiple items', () => {
+      const result = parseGoList('use', 'use (./a\n  ./b\n./c  )');
+      expect(result).toEqual(['./a', './b', './c']);
+    });
+
+    it('should parse Go list with only one item', () => {
+      const result = parseGoList('import', 'import "fmt"');
+      expect(result).toEqual(['"fmt"']);
+    });
+
+    it('should parse Go list with no item', () => {
+      const result = parseGoList('use', 'package pkg');
+      expect(result).toEqual([]);
+    });
+  });
+
   describe('Method: createGoMod', () => {
     it('should write go.mod if not exists', () => {
       const spyWrite = jest.spyOn(tree, 'write');
       jest.spyOn(tree, 'exists').mockReturnValue(false);
-      createGoMod(tree, 'pkg', 'libs/data-access');
+      createGoMod(tree, 'moduleName', 'libs/data-access');
       expect(spyWrite).toHaveBeenCalledWith(
         join('libs/data-access', 'go.mod'),
-        'module pkg/libs/data-access\n\ngo 1.21.1\n'
+        'module moduleName\n\ngo 1.21.1\n'
       );
     });
 

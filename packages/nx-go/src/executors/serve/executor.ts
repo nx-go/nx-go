@@ -1,5 +1,5 @@
 import { ExecutorContext } from '@nx/devkit';
-import { executeCommand, extractProjectRoot } from '../shared';
+import { executeCommand, extractProjectRoot } from '../../utils';
 import { ServeExecutorSchema } from './schema';
 
 /**

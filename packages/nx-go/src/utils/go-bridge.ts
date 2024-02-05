@@ -5,10 +5,15 @@ import {
   GO_MOD_FILE,
   GO_WORK_FILE,
   GO_WORK_MINIMUM_VERSION,
-} from '../../constants';
+} from '../constants';
 
-const GO_VERSION_REGEX = /go(?<version>\S+) /;
-const GO_USE_REGEX = /use\s+(\(([^)]*)\)|(\S*))/;
+export type GoListType = 'import' | 'use';
+
+const REGEXS: Record<GoListType | 'version', RegExp> = {
+  import: /import\s+(\(([^)]*)\)|([^\n]*))/,
+  use: /use\s+(\(([^)]*)\)|([^\n]*))/,
+  version: /go(?<version>\S+) /,
+};
 
 /**
  * Retrieves the current Go version using its CLI.
@@ -16,7 +21,7 @@ const GO_USE_REGEX = /use\s+(\(([^)]*)\)|(\S*))/;
 export const getGoVersion = (): string => {
   const rawVersion = execSync('go version');
   if (rawVersion != null) {
-    return GO_VERSION_REGEX.exec(rawVersion.toString()).groups.version;
+    return REGEXS.version.exec(rawVersion.toString()).groups.version;
   }
   throw new Error('Cannot retrieve current Go version');
 };
@@ -39,6 +44,25 @@ export const supportsGoWorkspace = (): boolean => {
 export const isGoWorkspace = (tree: Tree): boolean => tree.exists(GO_WORK_FILE);
 
 /**
+ * Parses a Go list (also support list with only one item).
+ *
+ * @param listType type of list to parse
+ * @param content list to parse as a string
+ */
+export const parseGoList = (
+  listType: GoListType,
+  content: string
+): string[] => {
+  const exec = REGEXS[listType].exec(content);
+  return (
+    (exec?.[2] ?? exec?.[3])
+      ?.trim()
+      .split(/\n+/)
+      .map((line) => line.trim()) ?? []
+  );
+};
+
+/**
  * Creates a go.mod file in the project.
  *
  * @param tree the project tree
@@ -52,7 +76,7 @@ export const createGoMod = (
 ): void => {
   const filePath = folder ? join(folder, GO_MOD_FILE) : GO_MOD_FILE;
   if (!tree.exists(filePath)) {
-    tree.write(filePath, `module ${name}/${folder}\n\ngo ${getGoVersion()}\n`);
+    tree.write(filePath, `module ${name}\n\ngo ${getGoVersion()}\n`);
   }
 };
 
@@ -75,9 +99,7 @@ export const createGoWork = (tree: Tree): void => {
  */
 export const addGoWorkDependency = (tree: Tree, projectRoot: string): void => {
   const goWorkContent = tree.read(GO_WORK_FILE).toString();
-  const useExec = GO_USE_REGEX.exec(goWorkContent);
-  const exisitingModules =
-    (useExec?.[2] ?? useExec?.[3])?.trim().split(/\s+/) ?? [];
+  const exisitingModules = parseGoList('use', goWorkContent);
   const modules = [
     ...new Set([...exisitingModules, `./${projectRoot}`]),
   ].sort();
@@ -92,8 +114,8 @@ export const addGoWorkDependency = (tree: Tree, projectRoot: string): void => {
 
   tree.write(
     GO_WORK_FILE,
-    useExec
-      ? goWorkContent.replace(GO_USE_REGEX, use)
+    exisitingModules.length > 0
+      ? goWorkContent.replace(REGEXS['use'], use)
       : `${goWorkContent}\n${use}\n`
   );
 };

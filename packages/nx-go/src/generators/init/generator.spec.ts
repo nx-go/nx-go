@@ -1,14 +1,14 @@
 import type { Tree } from '@nx/devkit';
 import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import * as shared from '../shared';
+import * as shared from '../../utils';
 import initGenerator from './generator';
 import { InitGeneratorSchema } from './schema';
 
 jest.mock('@nx/devkit', () => ({
   formatFiles: jest.fn(),
 }));
-jest.mock('../shared', () => ({
+jest.mock('../../utils', () => ({
   addNxPlugin: jest.fn(),
   createGoMod: jest.fn(),
   createGoWork: jest.fn(),

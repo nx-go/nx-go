@@ -7,7 +7,7 @@ import {
   ensureGoConfigInSharedGlobals,
   getProjectScope,
   supportsGoWorkspace,
-} from '../shared';
+} from '../../utils';
 import { InitGeneratorSchema } from './schema';
 
 export default async function initGenerator(
