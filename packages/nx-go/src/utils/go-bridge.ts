@@ -27,6 +27,14 @@ export const getGoVersion = (): string => {
 };
 
 /**
+ * Retrieves the current Go version without the patch number.
+ */
+export const getGoShortVersion = (): string => {
+  const [major, minor] = getGoVersion().split('.');
+  return `${major}.${minor}`;
+};
+
+/**
  * Checks if the current Go version supports workspaces.
  */
 export const supportsGoWorkspace = (): boolean => {
@@ -76,7 +84,7 @@ export const createGoMod = (
 ): void => {
   const filePath = folder ? join(folder, GO_MOD_FILE) : GO_MOD_FILE;
   if (!tree.exists(filePath)) {
-    tree.write(filePath, `module ${name}\n\ngo ${getGoVersion()}\n`);
+    tree.write(filePath, `module ${name}\n\ngo ${getGoShortVersion()}\n`);
   }
 };
 
@@ -87,7 +95,7 @@ export const createGoMod = (
  */
 export const createGoWork = (tree: Tree): void => {
   if (!tree.exists(GO_WORK_FILE)) {
-    tree.write(GO_WORK_FILE, `go ${getGoVersion()}\n`);
+    tree.write(GO_WORK_FILE, `go ${getGoShortVersion()}\n`);
   }
 };
 

@@ -7,9 +7,11 @@ import {
   addGoWorkDependency,
   createGoMod,
   createGoWork,
+  getGoShortVersion,
   getGoVersion,
-  isGoWorkspace, parseGoList,
-  supportsGoWorkspace
+  isGoWorkspace,
+  parseGoList,
+  supportsGoWorkspace,
 } from './go-bridge';
 
 jest.mock('child_process', () => ({
@@ -33,6 +35,19 @@ describe('Go bridge', () => {
     it('should throw error if go version not found', () => {
       jest.spyOn(child_process, 'execSync').mockImplementationOnce(() => null);
       expect(() => getGoVersion()).toThrow(
+        'Cannot retrieve current Go version'
+      );
+    });
+  });
+
+  describe('Method: getGoShortVersion', () => {
+    it('should return go version without patch number', () => {
+      expect(getGoShortVersion()).toEqual('1.21');
+    });
+
+    it('should throw error if go version not found', () => {
+      jest.spyOn(child_process, 'execSync').mockImplementationOnce(() => null);
+      expect(() => getGoShortVersion()).toThrow(
         'Cannot retrieve current Go version'
       );
     });
@@ -96,7 +111,7 @@ describe('Go bridge', () => {
       createGoMod(tree, 'moduleName', 'libs/data-access');
       expect(spyWrite).toHaveBeenCalledWith(
         join('libs/data-access', 'go.mod'),
-        'module moduleName\n\ngo 1.21.1\n'
+        'module moduleName\n\ngo 1.21\n'
       );
     });
 
@@ -113,7 +128,7 @@ describe('Go bridge', () => {
       const spyWrite = jest.spyOn(tree, 'write');
       jest.spyOn(tree, 'exists').mockReturnValue(false);
       createGoWork(tree);
-      expect(spyWrite).toHaveBeenCalledWith(GO_WORK_FILE, 'go 1.21.1\n');
+      expect(spyWrite).toHaveBeenCalledWith(GO_WORK_FILE, 'go 1.21\n');
     });
 
     it('should not write go.work if exists', async () => {
@@ -128,13 +143,15 @@ describe('Go bridge', () => {
     const setNextGoWorkContent = (content: string) =>
       jest
         .spyOn(tree, 'read')
-        .mockReturnValueOnce(Buffer.from(content, 'utf-8') as unknown as string);
+        .mockReturnValueOnce(
+          Buffer.from(content, 'utf-8') as unknown as string
+        );
 
     it.each`
-      content                                          | newContent
-      ${'go 1.21.1\n'}                                 | ${'go 1.21.1\n\nuse ./new-app\n'}
-      ${'go 1.21.1\n\nuse ./app1\n'}                   | ${'go 1.21.1\n\nuse (\n\t./app1\n\t./new-app\n)\n'}
-      ${'go 1.21.1\n\nuse (\n\t./app1\n\t./app2\n)\n'} | ${'go 1.21.1\n\nuse (\n\t./app1\n\t./app2\n\t./new-app\n)\n'}
+      content                                        | newContent
+      ${'go 1.21\n'}                                 | ${'go 1.21\n\nuse ./new-app\n'}
+      ${'go 1.21\n\nuse ./app1\n'}                   | ${'go 1.21\n\nuse (\n\t./app1\n\t./new-app\n)\n'}
+      ${'go 1.21\n\nuse (\n\t./app1\n\t./app2\n)\n'} | ${'go 1.21\n\nuse (\n\t./app1\n\t./app2\n\t./new-app\n)\n'}
     `(
       'should add new dependency to go.work with content $content',
       ({ content, newContent }) => {
@@ -146,7 +163,7 @@ describe('Go bridge', () => {
     );
 
     it('should not add new dependency to go.work if already exists', () => {
-      setNextGoWorkContent('go 1.21.1\n\nuse ./app1\n');
+      setNextGoWorkContent('go 1.21\n\nuse ./app1\n');
       const spyWrite = jest.spyOn(tree, 'write');
       addGoWorkDependency(tree, 'app1');
       expect(spyWrite).not.toHaveBeenCalled();
