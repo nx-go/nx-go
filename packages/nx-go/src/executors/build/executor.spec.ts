@@ -55,4 +55,18 @@ describe('Build Executor', () => {
     const output = await executor({ flags: ['-ldflags "-s -w"'] }, null)
     expect(output.success).toBe(true)
   })
+
+  it('use different compiler', async () => {
+    const mockCommand: RunGoCommand = (ctx, command, params, options) => {
+      expect(command).toBe('build')
+      expect(options.cmd).toBe('tinygo')
+
+      return { success: true }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(utils as any).runGoCommand = jest.fn().mockImplementation(mockCommand)
+
+    const output = await executor({ cmd: 'tinygo' }, null)
+    expect(output.success).toBe(true)
+  })
 })

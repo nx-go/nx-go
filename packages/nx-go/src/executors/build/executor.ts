@@ -16,7 +16,7 @@ export default async function runExecutor(options: BuildExecutorSchema, context:
     params.push(mainFile)
   }
 
-  const commandOptions = options.env ? { env: options.env } : undefined
+  const commandOptions = options.env || options.cmd ? { env: options.env, cmd: options.cmd } : undefined
 
   return runGoCommand(context, 'build', params, commandOptions)
 }

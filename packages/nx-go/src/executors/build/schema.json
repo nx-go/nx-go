@@ -5,6 +5,11 @@
   "description": "",
   "type": "object",
   "properties": {
+    "cmd": {
+      "type": "string",
+      "description": "Name of the go binary (usually 'go', but you can replace with 'tinygo')",
+      "default": "go"
+    },
     "outputPath": {
       "type": "string",
       "description": "The output path of the resulting executable",
