@@ -108,16 +108,16 @@ export const createGoWork = (tree: Tree): void => {
 export const addGoWorkDependency = (tree: Tree, projectRoot: string): void => {
   const goWorkContent = tree.read(GO_WORK_FILE).toString();
   const exisitingModules = parseGoList('use', goWorkContent);
-  const modules = [
-    ...new Set([...exisitingModules, `./${projectRoot}`]),
-  ].sort();
+  const modules = [...new Set([...exisitingModules, `./${projectRoot}`])].sort(
+    (m1, m2) => m1.localeCompare(m2)
+  );
   if (modules.every((m) => exisitingModules.includes(m))) {
     return;
   }
 
   const use =
     modules.length > 1
-      ? `use (\n${modules.map((m) => `\t${m}\n`).join('')})`
+      ? 'use (\n' + modules.map((m) => `\t${m}\n`).join('') + ')'
       : `use ${modules[0]}`;
 
   tree.write(
