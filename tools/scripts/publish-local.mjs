@@ -1,5 +1,5 @@
 /**
- * This is a minimal script to publish your package to "npm".
+ * This is a minimal script to publish your package to a "npm" registry.
  * This is meant to be used as-is or customize as you see fit.
  *
  * This script is executed on "dist/path/to/library" as "cwd" by default.

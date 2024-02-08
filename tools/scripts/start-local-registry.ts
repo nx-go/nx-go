@@ -16,7 +16,7 @@ export default async () => {
     storage,
     verbose: false,
   });
-  execSync('npx nx run-many --targets publish --ver 0.0.0-e2e --tag e2e', {
+  execSync('npx nx run-many --targets publish-local --ver 0.0.0-e2e --tag e2e', {
     env: process.env,
     stdio: 'inherit',
   });
