@@ -20,7 +20,7 @@ jest.mock('fs', () => ({
     .mockReturnValue('import (\n\t"fmt"\n\t"proj/datalayer"\n)'),
 }));
 jest.mock('../utils', () => ({
-  parseGoList: jest.fn().mockReturnValue(['"fmt"', '"proj/datalayer"']),
+  parseGoList: jest.fn().mockReturnValue(['"fmt"', 'data "proj/datalayer"']),
 }));
 
 describe('Create dependencies', () => {
