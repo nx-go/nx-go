@@ -1,9 +1,11 @@
 <div align="center">
   <h1>nx-go</h1>
   <p>Nx plugin to use <a href="https://go.dev">Go</a> in a <a href="https://nx.dev">Nx</a> workspace.</p>
-  <img src="https://github.com/nx-go.png" title="nx-go" alt="nx-go logo">
-  <h2>Using nx-go in your company? Consider <a href="https://github.com/sponsors/beeman">sponsoring me</a> and get priority support in the issues.</h2>
+  <img src="https://github.com/nx-go.png" title="nx-go" alt="nx-go logo" width="300">
 </div>
+
+> [!IMPORTANT]
+> Looking for Nx 17 support? We're actively working on it! You can follow the progress in [#103](https://github.com/nx-go/nx-go/pull/103).
 
 ## Getting started
 
@@ -182,4 +184,4 @@ CMD [ "/workspace/api" ]
 
 ## MIT License
 
-Created by [Bram Borggreve](https://github.com/beeman).
+Created by [Bram Borggreve](https://github.com/beeman). Maintained by [Maxime Malgorn](https://github.com/utarwyn).
