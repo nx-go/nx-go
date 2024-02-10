@@ -34,11 +34,6 @@
       "description": "Skip formatting files.",
       "default": false,
       "x-priority": "internal"
-    },
-    "skipGoMod": {
-      "type": "boolean",
-      "description": "Skip creation of go.mod.",
-      "default": false
     }
   },
   "required": ["name"]

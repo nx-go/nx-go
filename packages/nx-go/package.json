@@ -4,15 +4,21 @@
   "description": "Nx plugin to use Go in a Nx Workspace",
   "license": "MIT",
   "homepage": "https://github.com/nx-go/nx-go",
+  "keywords": [
+    "go",
+    "nx",
+    "nx-plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nx-go/nx-go.git",
+    "directory": "packages/nx-go"
+  },
   "bugs": {
     "url": "https://github.com/nx-go/nx-go/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nx-go/nx-go.git"
-  },
   "dependencies": {
-    "@nx/devkit": "17.2.8",
+    "@nx/devkit": "^17.0.0 || ^18.0.0",
     "tslib": "^2.3.0"
   },
   "type": "commonjs",
