@@ -24,7 +24,7 @@ export const addNxPlugin = (tree: Tree): void => {
 export const ensureGoConfigInSharedGlobals = (tree: Tree): void => {
   const useWorkspace = isGoWorkspace(tree);
   const entries = useWorkspace
-    ? [`{workspaceRoot}/${GO_WORK_FILE}`, `{projectRoot}/${GO_MOD_FILE}`]
+    ? [`{workspaceRoot}/${GO_WORK_FILE}`]
     : [`{workspaceRoot}/${GO_MOD_FILE}`];
 
   const nxJson = readNxJson(tree);

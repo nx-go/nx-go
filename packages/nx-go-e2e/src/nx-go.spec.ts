@@ -22,7 +22,7 @@ describe('nx-go', () => {
 
     // The plugin has been built and published to a local registry in the jest globalSetup
     // Install the plugin built with the latest source code into the test repo
-    execSync(`pnpm install @nx-go/nx-go@e2e`, {
+    execSync(`npm install -D @nx-go/nx-go@latest`, {
       cwd: projectDirectory,
       stdio: 'inherit',
       env: process.env,
@@ -30,12 +30,7 @@ describe('nx-go', () => {
   });
 
   afterAll(() => {
-    // Cleanup the test project
-    try {
-      rmSync(projectDirectory, { recursive: true, force: true });
-    } catch (ignored) {
-      // ignored now, but need a closer look why resources are busy
-    }
+    rmSync(projectDirectory, { recursive: true, force: true });
   });
 
   async function runNxCommandAsync(command: string) {

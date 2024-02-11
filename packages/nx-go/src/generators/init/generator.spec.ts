@@ -7,6 +7,7 @@ import { InitGeneratorSchema } from './schema';
 
 jest.mock('@nx/devkit', () => ({
   formatFiles: jest.fn(),
+  logger: { warn: jest.fn() },
 }));
 jest.mock('../../utils', () => ({
   addNxPlugin: jest.fn(),
@@ -29,19 +30,17 @@ describe('init generator', () => {
     expect(shared.addNxPlugin).toHaveBeenCalledWith(tree);
   });
 
-  it('should create go workspace by default', async () => {
+  it('should create go workspace if supported', async () => {
+    jest.spyOn(shared, 'supportsGoWorkspace').mockReturnValueOnce(true);
     await initGenerator(tree, options);
     expect(shared.createGoWork).toHaveBeenCalledWith(tree);
   });
 
-  it('should create go mod if go workspace is skipped', async () => {
-    await initGenerator(tree, { ...options, skipGoWorkspace: true });
-    expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj');
-  });
-
-  it('should throw an error if go workspace is not supported', async () => {
+  it('should create go mod if go workspace is not supported', async () => {
     jest.spyOn(shared, 'supportsGoWorkspace').mockReturnValueOnce(false);
-    await expect(initGenerator(tree, options)).rejects.toThrow();
+    await initGenerator(tree, options);
+    expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj');
+    expect(nxDevkit.logger.warn).toHaveBeenCalledTimes(1);
   });
 
   it('should ensure go configuration in shared globals', async () => {

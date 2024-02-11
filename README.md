@@ -72,7 +72,7 @@ Want to try out these capabilities quickly? Visit our [playground](https://githu
 | 2.x           | 13.x to 16.x |
 | 1.x           | < 13.x       |
 
-This plugin is only tested on [stable versions of Go](https://go.dev/dl/), older versions does not receive support. However, you can expect a fair degree of compatibility.
+This plugin is only tested on [stable versions of Go](https://go.dev/dl/), older versions does not receive support. However, you can expect a fair degree of compatibility. Please note that multi-module Go workspaces require Go 1.18 or later.
 
 ## Contributors
 

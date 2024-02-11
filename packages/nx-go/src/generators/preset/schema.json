@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/schema",
-  "$id": "@nx-go/nx-go:init",
-  "title": "Go init generator options",
+  "$id": "@nx-go/nx-go:preset",
+  "title": "Go preset generator options",
   "type": "object",
   "properties": {
     "skipFormat": {

@@ -56,7 +56,6 @@ describe('updateNxJson', () => {
       ensureGoConfigInSharedGlobals(tree);
       expect(nxJson.namedInputs.sharedGlobals).toEqual([
         `{workspaceRoot}/${GO_WORK_FILE}`,
-        `{projectRoot}/${GO_MOD_FILE}`,
       ]);
       expect(spyUpdateNxJson).toHaveBeenCalledTimes(1);
     });

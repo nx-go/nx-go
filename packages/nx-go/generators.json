@@ -4,18 +4,27 @@
       "factory": "./src/generators/application/generator",
       "schema": "./src/generators/application/schema.json",
       "description": "Generate a Go application",
-      "aliases": ["app"]
+      "aliases": ["app"],
+      "x-type": "application"
     },
     "init": {
       "factory": "./src/generators/init/generator",
       "schema": "./src/generators/init/schema.json",
-      "description": "Initialize Nx workspace with Go support"
+      "description": "Initialize Nx workspace with Go support",
+      "hidden": true
     },
     "library": {
       "factory": "./src/generators/library/generator",
       "schema": "./src/generators/library/schema.json",
       "description": "Generate a Go library",
-      "aliases": ["lib"]
+      "aliases": ["lib"],
+      "x-type": "library"
+    },
+    "preset": {
+      "factory": "./src/generators/preset/generator",
+      "schema": "./src/generators/preset/schema.json",
+      "description": "Preset when creating Nx workspace with Go support",
+      "x-use-standalone-layout": true
     }
   }
 }

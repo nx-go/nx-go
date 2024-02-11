@@ -6,7 +6,7 @@ import { dirname, join } from 'path';
 /**
  * Creates a test project with create-nx-workspace and installs the plugin
  */
-export default function createTestProject() {
+export default function createTestProject(preset = 'apps') {
   const projectName = 'proj';
   const projectDirectory = join(process.cwd(), 'tmp', 'nx-e2e', projectName);
 
@@ -19,14 +19,13 @@ export default function createTestProject() {
   const nxVersion = readJsonFile(pkgJsonPath).devDependencies['nx'];
 
   execSync(
-    `pnpm dlx create-nx-workspace@${nxVersion} ${projectName} --preset apps --no-nxCloud --no-interactive --pm pnpm`,
+    `npx --yes create-nx-workspace@${nxVersion} ${projectName} --preset ${preset} --no-nxCloud --no-interactive`,
     {
       cwd: dirname(projectDirectory),
       stdio: 'inherit',
       env: process.env,
     }
   );
-  console.log(`Created test project in "${projectDirectory}"`);
 
   return projectDirectory;
 }
