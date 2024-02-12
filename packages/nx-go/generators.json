@@ -7,6 +7,11 @@
       "aliases": ["app"],
       "x-type": "application"
     },
+    "convert-to-one-mod": {
+      "factory": "./src/generators/convert-to-one-mod/generator",
+      "schema": "./src/generators/convert-to-one-mod/schema.json",
+      "description": "Convert a Go workspace to a single module"
+    },
     "init": {
       "factory": "./src/generators/init/generator",
       "schema": "./src/generators/init/schema.json",

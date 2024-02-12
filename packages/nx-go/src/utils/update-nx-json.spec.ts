@@ -37,40 +37,26 @@ describe('updateNxJson', () => {
   });
 
   describe('Method: ensureGoModInSharedGlobals', () => {
-    it('should add go.mod entry to the sharedGlobals array if not already included', () => {
-      const nxJson = { namedInputs: {} } as NxJsonConfiguration;
-      const spyUpdateNxJson = jest.spyOn(nxDevkit, 'updateNxJson');
-      jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue(nxJson);
-      ensureGoConfigInSharedGlobals(tree);
-      expect(nxJson.namedInputs.sharedGlobals).toContain(
-        `{workspaceRoot}/${GO_MOD_FILE}`
-      );
-      expect(spyUpdateNxJson).toHaveBeenCalledTimes(1);
-    });
-
-    it('should add workspace entries to the sharedGlobals array if not already included', () => {
-      const nxJson = { namedInputs: {} } as NxJsonConfiguration;
-      const spyUpdateNxJson = jest.spyOn(nxDevkit, 'updateNxJson');
-      jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue(nxJson);
-      jest.spyOn(goBridge, 'isGoWorkspace').mockReturnValue(true);
-      ensureGoConfigInSharedGlobals(tree);
-      expect(nxJson.namedInputs.sharedGlobals).toEqual([
-        `{workspaceRoot}/${GO_WORK_FILE}`,
-      ]);
-      expect(spyUpdateNxJson).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not add the entry to the sharedGlobals array if already included', () => {
-      const nxJson = {
-        namedInputs: { sharedGlobals: [`{workspaceRoot}/${GO_MOD_FILE}`] },
-      } as NxJsonConfiguration;
-      const spyUpdateNxJson = jest.spyOn(nxDevkit, 'updateNxJson');
-      jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue(nxJson);
-      ensureGoConfigInSharedGlobals(tree);
-      expect(nxJson.namedInputs.sharedGlobals).toEqual([
-        `{workspaceRoot}/${GO_MOD_FILE}`,
-      ]);
-      expect(spyUpdateNxJson).not.toHaveBeenCalled();
-    });
+    it.each`
+      sharedGlobals                          | isGoWorkspace | updated  | expectedSharedGlobals                  | description
+      ${[]}                                  | ${false}      | ${true}  | ${[`{workspaceRoot}/${GO_MOD_FILE}`]}  | ${'there is no go mod yet'}
+      ${[`{workspaceRoot}/${GO_WORK_FILE}`]} | ${false}      | ${true}  | ${[`{workspaceRoot}/${GO_MOD_FILE}`]}  | ${'there is already a go work but need a go mod'}
+      ${[]}                                  | ${true}       | ${true}  | ${[`{workspaceRoot}/${GO_WORK_FILE}`]} | ${'there is no go work yet'}
+      ${[`{workspaceRoot}/${GO_WORK_FILE}`]} | ${true}       | ${false} | ${[`{workspaceRoot}/${GO_WORK_FILE}`]} | ${'there is already a go work'}
+      ${[`{workspaceRoot}/${GO_MOD_FILE}`]}  | ${true}       | ${true}  | ${[`{workspaceRoot}/${GO_WORK_FILE}`]} | ${'there is already a go mod but need a go work'}
+    `(
+      'should modify sharedGlobals if $description',
+      ({ sharedGlobals, isGoWorkspace, updated, expectedSharedGlobals }) => {
+        const nxJson = {
+          namedInputs: { sharedGlobals },
+        } as NxJsonConfiguration;
+        const spyUpdateNxJson = jest.spyOn(nxDevkit, 'updateNxJson');
+        jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue(nxJson);
+        jest.spyOn(goBridge, 'isGoWorkspace').mockReturnValue(isGoWorkspace);
+        ensureGoConfigInSharedGlobals(tree);
+        expect(nxJson.namedInputs.sharedGlobals).toEqual(expectedSharedGlobals);
+        expect(spyUpdateNxJson).toHaveBeenCalledTimes(updated ? 1 : 0);
+      }
+    );
   });
 });

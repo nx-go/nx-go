@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "@nx-go/convert-to-one-mod",
+  "title": "Go convert-to-one-mod generator options",
+  "type": "object",
+  "properties": {
+    "skipFormat": {
+      "type": "boolean",
+      "description": "Skip formatting files.",
+      "default": false,
+      "x-priority": "internal"
+    }
+  }
+}

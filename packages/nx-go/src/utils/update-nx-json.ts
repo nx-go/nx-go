@@ -23,17 +23,16 @@ export const addNxPlugin = (tree: Tree): void => {
  */
 export const ensureGoConfigInSharedGlobals = (tree: Tree): void => {
   const useWorkspace = isGoWorkspace(tree);
-  const entries = useWorkspace
-    ? [`{workspaceRoot}/${GO_WORK_FILE}`]
-    : [`{workspaceRoot}/${GO_MOD_FILE}`];
+  const toAdd = `{workspaceRoot}/${useWorkspace ? GO_WORK_FILE : GO_MOD_FILE}`;
+  const toRem = `{workspaceRoot}/${useWorkspace ? GO_MOD_FILE : GO_WORK_FILE}`;
 
   const nxJson = readNxJson(tree);
   const namedInputs = nxJson.namedInputs ?? {};
   const sharedGlobals = namedInputs['sharedGlobals'] ?? [];
 
-  if (entries.some((entry) => !sharedGlobals.includes(entry))) {
+  if (!sharedGlobals.includes(toAdd) || sharedGlobals.includes(toRem)) {
     namedInputs.sharedGlobals = Array.from(
-      new Set([...sharedGlobals, ...entries])
+      new Set([...sharedGlobals.filter((item) => item !== toRem), toAdd])
     );
     updateNxJson(tree, { ...nxJson, namedInputs });
   }
