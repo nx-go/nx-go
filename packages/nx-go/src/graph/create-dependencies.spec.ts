@@ -1,4 +1,11 @@
-import { CreateDependenciesContext, ProjectConfiguration } from '@nx/devkit';
+import * as nxDevkit from '@nx/devkit';
+import {
+  CreateDependenciesContext,
+  DependencyType,
+  ProjectConfiguration,
+  RawProjectGraphDependency,
+} from '@nx/devkit';
+import * as child_process from 'child_process';
 import { execSync } from 'child_process';
 import { ProjectFileMap } from 'nx/src/config/project-graph';
 import { createDependencies } from './create-dependencies';
@@ -11,7 +18,8 @@ jest.mock('child_process', () => ({
   execSync: jest
     .fn()
     .mockReturnValue(
-      '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n{ "Path": "proj/datalayer", "Dir": "/tmp/proj/libs/data-layer" }'
+      '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n' +
+        '{ "Path": "proj/datalayer", "Dir": "/tmp/proj/libs/data-layer" }'
     ),
 }));
 jest.mock('fs', () => ({
@@ -40,24 +48,40 @@ describe('Create dependencies', () => {
     projects: projects,
   } as CreateDependenciesContext;
 
-  afterEach(() => jest.resetAllMocks());
+  const expectedDependencies: RawProjectGraphDependency[] = [
+    {
+      source: 'api',
+      target: 'datalayer',
+      type: DependencyType.static,
+      sourceFile: 'api.go',
+    },
+    {
+      source: 'api',
+      target: 'datalayer',
+      type: DependencyType.static,
+      sourceFile: 'config.go',
+    },
+  ];
+
+  afterEach(() => jest.clearAllMocks());
 
   it('should create dependencies', async () => {
     const dependencies = await createDependencies(null, validContext);
-    expect(dependencies).toEqual([
-      {
-        source: 'api',
-        target: 'datalayer',
-        type: 'static',
-        sourceFile: 'api.go',
-      },
-      {
-        source: 'api',
-        target: 'datalayer',
-        type: 'static',
-        sourceFile: 'config.go',
-      },
-    ]);
+    expect(dependencies).toEqual(expectedDependencies);
+  });
+
+  it('should create dependencies on Windows', async () => {
+    const oldWorkspace = nxDevkit.workspaceRoot;
+    Object.defineProperty(nxDevkit, 'workspaceRoot', { value: 'C:\\tmp\\proj' });
+    jest
+      .spyOn(child_process, 'execSync')
+      .mockReturnValueOnce(
+        '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n' +
+          '{ "Path": "proj/datalayer", "Dir": "C:\\\\tmp\\\\proj\\\\libs\\\\data-layer" }'
+      );
+    const dependencies = await createDependencies(null, validContext);
+    Object.defineProperty(nxDevkit, 'workspaceRoot', { value: oldWorkspace });
+    expect(dependencies).toEqual(expectedDependencies);
   });
 
   describe('Go modules', () => {

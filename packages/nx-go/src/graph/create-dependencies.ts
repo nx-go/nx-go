@@ -93,7 +93,9 @@ const getProjectNameForGoImport = (
   { import: goImport, module }: GoImportWithModule
 ): string | null => {
   const relativeImportPath = goImport.substring(module.Path.length + 1);
-  const relativeModuleDir = module.Dir.substring(workspaceRoot.length + 1);
+  const relativeModuleDir = module.Dir.substring(
+    workspaceRoot.length + 1
+  ).replace(/\\/g, '/');
   let projectPath = relativeModuleDir
     ? `${relativeModuleDir}/${relativeImportPath}`
     : relativeImportPath;
