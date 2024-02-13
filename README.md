@@ -25,7 +25,7 @@
 
 You need to have a [stable version of Go](https://go.dev/dl/) installed on your machine. And.. you are ready!
 
-### Generate a Nx workspace with Go suppport
+### Generate a Nx workspace with Go support
 
 ```shell
 npx create-nx-workspace go-workspace --preset=@nx-go/nx-go

@@ -15,6 +15,7 @@ export default async function runExecutor(
   const directory = options.cwd ?? extractProjectRoot(context);
   const mainFile = options.main.replace(`${directory}/`, '');
   return executeCommand(['run', mainFile, ...(options.args ?? [])], {
+    executable: options.cmd,
     cwd: directory,
   });
 }

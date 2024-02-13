@@ -8,6 +8,10 @@ Uses `go run` command to run a Go application.
 
 - (string): Path to the file containing the main() function
 
+### cmd
+
+- (string): Name of the go binary to use, default is go
+
 ### cwd
 
 - (string): Working directory from which to run the application

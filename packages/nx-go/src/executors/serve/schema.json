@@ -12,6 +12,11 @@
       "x-completion-glob": "main.go",
       "x-priority": "important"
     },
+    "cmd": {
+      "type": "string",
+      "description": "Name of the go binary to use, default is go",
+      "default": "go"
+    },
     "cwd": {
       "type": "string",
       "description": "Working directory from which to run the application",
@@ -22,7 +27,8 @@
       "items": {
         "type": "string"
       },
-      "description": "Extra args when starting the app"
+      "description": "Extra args when starting the app",
+      "alias": "arguments"
     }
   },
   "required": ["main"]

@@ -41,6 +41,16 @@ describe('Serve Executor', () => {
     );
   });
 
+  it('should run Go program with custom executable', async () => {
+    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const output = await executor({ ...options, cmd: 'tinygo' }, context);
+    expect(output.success).toBeTruthy();
+    expect(spyExecute).toHaveBeenCalledWith(
+      ['run', 'hello_world.go'],
+      expect.objectContaining({ executable: 'tinygo' })
+    );
+  });
+
   it('should remove directory from main file path', async () => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor(
