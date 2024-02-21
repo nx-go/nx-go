@@ -14,6 +14,9 @@
 
 </div>
 
+> [!NOTE]
+> This README refers to v3 of the plugin, currently in **beta**. We look forward to your feedback in [#107](https://github.com/nx-go/nx-go/issues/107). If you use **Nx < 17**, [look here](https://github.com/nx-go/nx-go/tree/v2.8.0#readme).
+
 ## ✨ Features
 
 - Generate Go applications and libraries **in seconds** within your Nx workspace
@@ -25,16 +28,20 @@
 
 You need to have a [stable version of Go](https://go.dev/dl/) installed on your machine. And.. you are ready!
 
-### Generate a Nx workspace with Go support
+### During the beta phase
+
+As the plugin is still in beta, it is impossible to use the quick commands for workspace creation or addition via Nx.
+You need to install the plugin manually and initialize it in your workspace. If you don't have one, follow the [official documentation](https://nx.dev/getting-started/installation) to create one.
 
 ```shell
-npx create-nx-workspace go-workspace --preset=@nx-go/nx-go
+npm install -D @nx-go/nx-go@beta
+nx g @nx-go/nx-go:init
 ```
 
-### Add to an exisiting workspace
+### Migrate to beta version
 
 ```shell
-nx add @nx-go/nx-go
+nx migrate @nx-go/nx-go@beta
 ```
 
 ### Don't want to use a multi-module Go workspace?
@@ -54,7 +61,7 @@ nx g @nx-go/nx-go:convert-to-one-mod
 
 ### Executors
 
-- `build`: [Builds a Go project](./docs/executors/build.md)
+- `build`: [Build a Go project](./docs/executors/build.md)
 - `lint`: [Format and lint a Go project](./docs/executors/lint.md)
 - `serve`: [Run a Go application](./docs/executors/serve.md)
 - `test`: [Run tests of a Go project](./docs/executors/test.md)
