@@ -1,33 +1,19 @@
 {
-  "root": "packages/nx-go",
+  "name": "nx-go",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx-go/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["packages/nx-go/**/*.ts"]
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/nx-go"],
-      "options": {
-        "jestConfig": "packages/nx-go/jest.config.js",
-        "passWithNoTests": true
-      }
-    },
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/nx-go",
-        "tsConfig": "packages/nx-go/tsconfig.lib.json",
-        "packageJson": "packages/nx-go/package.json",
         "main": "packages/nx-go/src/index.ts",
+        "tsConfig": "packages/nx-go/tsconfig.lib.json",
         "assets": [
-          "packages/nx-go/*.md",
+          "LICENSE",
+          "README.md",
           {
             "input": "./packages/nx-go/src",
             "glob": "**/!(*.ts)",
@@ -54,6 +40,43 @@
             "output": "."
           }
         ]
+      }
+    },
+    "publish-local": {
+      "command": "node tools/scripts/publish-local.mjs nx-go {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/nx-go/jest.config.ts"
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "postTargets": ["build", "deploy", "github"],
+        "preset": "conventionalcommits",
+        "tagPrefix": "v"
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "{tag}",
+        "notes": "{notes}"
+      }
+    },
+    "deploy": {
+      "executor": "ngx-deploy-npm:deploy",
+      "options": {
+        "access": "public",
+        "distFolderPath": "dist/packages/nx-go"
       }
     }
   },

@@ -1,16 +1,35 @@
-import { addProjectConfiguration, formatFiles, getWorkspaceLayout, Tree } from '@nrwl/devkit'
-import { join } from 'path'
-import { addFiles, createGoMod, normalizeOptions, updateGoWork } from '../../utils'
-import { LibraryGeneratorSchema } from './schema'
+import {
+  addProjectConfiguration,
+  formatFiles,
+  generateFiles,
+  names,
+  Tree,
+} from '@nx/devkit';
+import { join } from 'path';
+import {
+  addGoWorkDependency,
+  createGoMod,
+  isGoWorkspace,
+  normalizeOptions,
+} from '../../utils';
+import { LibraryGeneratorSchema } from './schema';
 
-export default async function (tree: Tree, options: LibraryGeneratorSchema) {
-  const normalizedOptions = normalizeOptions(tree, getWorkspaceLayout(tree).libsDir, options)
-  const sourceRoot = normalizedOptions.projectRoot
+export default async function libraryGenerator(
+  tree: Tree,
+  schema: LibraryGeneratorSchema
+) {
+  const options = await normalizeOptions(
+    tree,
+    schema,
+    'library',
+    '@nx-go/nx-go:library'
+  );
 
-  addProjectConfiguration(tree, normalizedOptions.projectName, {
-    root: sourceRoot,
-    projectType: 'library',
-    sourceRoot,
+  addProjectConfiguration(tree, options.name, {
+    root: options.projectRoot,
+    projectType: options.projectType,
+    sourceRoot: options.projectRoot,
+    tags: options.parsedTags,
     targets: {
       test: {
         executor: '@nx-go/nx-go:test',
@@ -19,14 +38,23 @@ export default async function (tree: Tree, options: LibraryGeneratorSchema) {
         executor: '@nx-go/nx-go:lint',
       },
     },
-    tags: normalizedOptions.parsedTags,
-  })
-  addFiles(tree, join(__dirname, 'files'), normalizedOptions)
+  });
 
-  if (normalizedOptions.useGoWork) {
-    createGoMod(tree, normalizedOptions)
-    updateGoWork(tree, normalizedOptions)
+  generateFiles(tree, join(__dirname, 'files'), options.projectRoot, {
+    ...options,
+    ...names(options.projectName),
+  });
+
+  if (isGoWorkspace(tree)) {
+    createGoMod(
+      tree,
+      `${options.npmScope}/${options.moduleName}`,
+      options.projectRoot
+    );
+    addGoWorkDependency(tree, options.projectRoot);
   }
 
-  await formatFiles(tree)
+  if (!schema.skipFormat) {
+    await formatFiles(tree);
+  }
 }

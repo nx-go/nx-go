@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  e2e:
+    name: End-to-end tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        go_version: [ 1.22.0 ]
+        node_version: [ 20.x ]
+    steps:
+      - name: 📥 Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ⚙ Setup
+        uses: ./.github/actions/setup
+        with:
+          go_version: ${{ matrix.go_version }}
+          node_version: ${{ matrix.node_version }}
+
+      - name: 🎭 End-to-end tests
+        run: pnpm nx affected --target=e2e --parallel
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ⚙ Setup
+        uses: ./.github/actions/setup
+        with:
+          go_version: 1.22.0
+          node_version: 20.x
+
+      - name: 💭 Validate current commit (last commit) with commitlint
+        if: github.event_name == 'push'
+        run: pnpm commitlint --from HEAD~1 --to HEAD --verbose
+
+      - name: 💭 Validate PR commits with commitlint
+        if: github.event_name == 'pull_request'
+        run: pnpm commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+      - name: 🎈 Lint, test and build
+        run: |
+          pnpm nx affected --target=lint --parallel=3
+          pnpm nx run-many --all --target=test --parallel=3 --ci --code-coverage --coverageReporters=lcov
+          pnpm nx affected --target=build --parallel=3
+
+      - name: ⛳ SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

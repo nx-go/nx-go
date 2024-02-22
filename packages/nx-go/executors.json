@@ -1,25 +1,24 @@
 {
-  "$schema": "http://json-schema.org/schema",
   "executors": {
     "build": {
       "implementation": "./src/executors/build/executor",
       "schema": "./src/executors/build/schema.json",
-      "description": "build executor"
-    },
-    "test": {
-      "implementation": "./src/executors/test/executor",
-      "schema": "./src/executors/test/schema.json",
-      "description": "test executor"
+      "description": "Build the executable of a Go program"
     },
     "lint": {
       "implementation": "./src/executors/lint/executor",
       "schema": "./src/executors/lint/schema.json",
-      "description": "lint executor"
+      "description": "Lint a Go program"
     },
     "serve": {
       "implementation": "./src/executors/serve/executor",
       "schema": "./src/executors/serve/schema.json",
-      "description": "serve executor"
+      "description": "Run a Go program"
+    },
+    "test": {
+      "implementation": "./src/executors/test/executor",
+      "schema": "./src/executors/test/schema.json",
+      "description": "Test a Go program"
     }
   }
 }

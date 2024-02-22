@@ -1,8 +1,8 @@
 {
-  "$schema": "http://json-schema.org/schema",
-  "cli": "nx",
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
   "title": "Lint executor",
-  "description": "Lints the code for the Go project.",
+  "description": "Go lint options",
   "type": "object",
   "properties": {
     "linter": {
@@ -10,8 +10,11 @@
       "description": "The command to execute when running the lint executor."
     },
     "args": {
-      "type": "string",
-      "description": "Additional arguments to the linter"
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Extra args when linting the app"
     }
   },
   "required": []

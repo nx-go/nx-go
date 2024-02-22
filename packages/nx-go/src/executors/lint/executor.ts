@@ -1,25 +1,20 @@
-import { ExecutorContext } from '@nrwl/devkit'
-import { LintExecutorSchema } from './schema'
-import { execSync } from 'child_process'
+import { ExecutorContext } from '@nx/devkit';
+import { executeCommand, extractProjectRoot } from '../../utils';
+import { LintExecutorSchema } from './schema';
 
-export default async function runExecutor(options: LintExecutorSchema, context: ExecutorContext) {
-  const projectName = context.projectName
-  const cwd = context.workspace.projects[projectName]?.root ?? ''
-  const isVerbose = context.isVerbose ?? false
-
-  const sources = `./...`
-  const linter = options.linter ?? 'go fmt' // Keeping default from initial version of linter
-  const args = options.args?.trim() ?? ''
-  const command = [linter, args, sources].filter((a) => a).join(' ')
-
-  if (isVerbose) {
-    console.log(`Executing Lint linter: '${linter}', arguments: '${args}', cwd: '${cwd}', command: '${command}'`)
-  }
-  try {
-    execSync(command, { cwd, stdio: [0, 1, 2] })
-    return { success: true }
-  } catch (ex) {
-    console.error(ex)
-    return { success: false }
-  }
+/**
+ * This executor lints Go code using the `go fmt` command.
+ *
+ * @param schema options passed to the executor
+ * @param context context passed to the executor
+ */
+export default async function runExecutor(
+  schema: LintExecutorSchema,
+  context: ExecutorContext
+) {
+  const defaultArgs = schema.linter == null ? ['fmt'] : [];
+  return executeCommand([...defaultArgs, ...(schema.args ?? []), './...'], {
+    cwd: extractProjectRoot(context),
+    executable: schema.linter,
+  });
 }

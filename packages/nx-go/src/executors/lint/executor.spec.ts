@@ -1,87 +1,49 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ExecutorContext } from '@nx/devkit';
+import * as sharedFunctions from '../../utils';
+import executor from './executor';
+import { LintExecutorSchema } from './schema';
 
-import executor from './executor'
-import { LintExecutorSchema } from './schema'
+jest.mock('../../utils', () => ({
+  executeCommand: jest.fn().mockResolvedValue({ success: true }),
+  extractProjectRoot: jest.fn(() => 'apps/project'),
+}));
 
-import * as child_process from 'child_process'
-import { ExecSyncOptionsWithBufferEncoding } from 'child_process'
+const options: LintExecutorSchema = {};
 
-const options: LintExecutorSchema = {}
-
-const sampleContext = {
+const context: ExecutorContext = {
+  cwd: 'current-dir',
   root: '',
-  cwd: '',
-  isVerbose: true,
-  projectName: 'test-project',
-  workspace: {
-    version: 1,
-    npmScope: 'test-workspace',
-    projects: {
-      'test-project': {
-        root: 'libs/test-project',
-      },
-    },
-  },
-}
+  isVerbose: false,
+};
 
 describe('Lint Executor', () => {
-  afterEach(() => jest.clearAllMocks())
+  it('should execute lint command with default options', async () => {
+    const output = await executor(options, context);
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['fmt', './...'],
+      { cwd: 'apps/project' }
+    );
+  });
 
-  it('can run', async () => {
-    ;(child_process as any).execSync = jest.fn().mockReturnValue({
-      success: true,
-    })
-    const output = await executor(options, sampleContext)
-    expect(output.success).toBe(true)
-  })
+  it('should execute lint command with custom linter', async () => {
+    const output = await executor({ ...options, linter: 'revive' }, context);
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(['./...'], {
+      cwd: 'apps/project',
+      executable: 'revive',
+    });
+  });
 
-  it('properly formats command when all options provided', async () => {
-    ;(child_process as any).execSync = jest.fn((command: string, opts: ExecSyncOptionsWithBufferEncoding) => {
-      expect(command).toBe('revive -config revive.toml -exclude node_modules/... ./...')
-      expect(opts.cwd).toBe('libs/test-project')
-      return { success: true }
-    })
-
+  it('should execute lint command with custom options', async () => {
     const output = await executor(
-      {
-        linter: 'revive',
-        args: '-config revive.toml -exclude node_modules/...',
-      },
-      sampleContext,
-    )
-    expect(output.success).toBe(true)
-  })
-
-  it('properly formats command with no options', async () => {
-    ;(child_process as any).execSync = jest.fn((command: string, opts: ExecSyncOptionsWithBufferEncoding) => {
-      expect(command).toBe('go fmt ./...')
-      expect(opts.cwd).toBe('libs/test-project')
-      return { success: true }
-    })
-
-    const output = await executor(options, sampleContext)
-    expect(output.success).toBe(true)
-  })
-
-  it('properly formats command with arguments only', async () => {
-    ;(child_process as any).execSync = jest.fn((command: string, opts: ExecSyncOptionsWithBufferEncoding) => {
-      expect(command).toBe('go fmt -x ./...')
-      expect(opts.cwd).toBe('libs/test-project')
-      return { success: true }
-    })
-
-    const output = await executor({ args: '-x' }, sampleContext)
-    expect(output.success).toBe(true)
-  })
-
-  it('properly formats command with linter only', async () => {
-    ;(child_process as any).execSync = jest.fn((command: string, opts: ExecSyncOptionsWithBufferEncoding) => {
-      expect(command).toBe('revive ./...')
-      expect(opts.cwd).toBe('libs/test-project')
-      return { success: true }
-    })
-
-    const output = await executor({ linter: 'revive' }, sampleContext)
-    expect(output.success).toBe(true)
-  })
-})
+      { ...options, args: ['--config', 'revive.toml'], linter: 'revive' },
+      context
+    );
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['--config', 'revive.toml', './...'],
+      { cwd: 'apps/project', executable: 'revive' }
+    );
+  });
+});

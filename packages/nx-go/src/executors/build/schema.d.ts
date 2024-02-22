@@ -1,6 +1,6 @@
 export interface BuildExecutorSchema {
-  outputPath?: string
-  main?: string
-  env?: { [key as string]: string }
-  flags?: string[]
+  main: string;
+  outputPath?: string;
+  env?: { [key: string]: string };
+  flags?: string[];
 }

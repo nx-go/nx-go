@@ -1,58 +1,50 @@
-import executor from './executor'
-import { BuildExecutorSchema } from './schema'
+import { ExecutorContext } from '@nx/devkit';
+import * as sharedFunctions from '../../utils';
+import executor from './executor';
+import { BuildExecutorSchema } from './schema';
 
-jest.mock('../../utils')
-import * as utils from '../../utils'
-import { RunGoCommand } from '../../utils'
+jest.mock('../../utils', () => ({
+  executeCommand: jest.fn().mockResolvedValue({ success: true }),
+  extractProjectRoot: jest.fn(() => 'apps/project'),
+}));
 
-const options: BuildExecutorSchema = {}
+const options: BuildExecutorSchema = {
+  main: 'apps/project/main.go',
+  env: { hello: 'world' },
+};
+
+const context: ExecutorContext = {
+  cwd: 'current-dir',
+  root: '',
+  isVerbose: false,
+};
 
 describe('Build Executor', () => {
-  afterEach(() => jest.clearAllMocks())
-
-  it('can run', async () => {
-    const mockCommand: RunGoCommand = (ctx, command, params, options) => {
-      expect(command).toBe('build')
-      expect(params).toHaveLength(0)
-      expect(options).toBeUndefined()
-
-      return { success: true }
+  it.each`
+    platform   | outputPath
+    ${'win32'} | ${'dist/apps/project.exe'}
+    ${'linux'} | ${'dist/apps/project'}
+  `(
+    'should execute build command on platform $platform',
+    async ({ platform, outputPath }) => {
+      Object.defineProperty(process, 'platform', { value: platform });
+      const output = await executor(options, context);
+      expect(output.success).toBeTruthy();
+      expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+        ['build', '-o', outputPath, 'apps/project/main.go'],
+        { cwd: 'current-dir', env: { hello: 'world' } }
+      );
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(utils as any).runGoCommand = jest.fn().mockImplementation(mockCommand)
+  );
 
-    const output = await executor(options, null)
-    expect(output.success).toBe(true)
-  })
-
-  it('receives environment variables', async () => {
-    const mockCommand: RunGoCommand = (ctx, command, params, options) => {
-      expect(command).toBe('build')
-      expect(options.env).toBeDefined()
-      expect(options.env.GOOS).toBeDefined()
-      expect(options.env.GOOS).toEqual('windows')
-
-      return { success: true }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(utils as any).runGoCommand = jest.fn().mockImplementation(mockCommand)
-
-    const output = await executor({ env: { GOOS: 'windows' } }, null)
-    expect(output.success).toBe(true)
-  })
-
-  it('pass flags', async () => {
-    const mockCommand: RunGoCommand = (ctx, command, params) => {
-      expect(command).toBe('build')
-      expect(params).toHaveLength(1)
-      expect(params[0]).toBe('-ldflags "-s -w"')
-
-      return { success: true }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(utils as any).runGoCommand = jest.fn().mockImplementation(mockCommand)
-
-    const output = await executor({ flags: ['-ldflags "-s -w"'] }, null)
-    expect(output.success).toBe(true)
-  })
-})
+  it('should execute build command with custom output path and flags', async () => {
+    await executor(
+      { ...options, outputPath: 'custom-path', flags: ['--flag1'] },
+      context
+    );
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['build', '-o', 'custom-path', '--flag1', 'apps/project/main.go'],
+      expect.anything()
+    );
+  });
+});

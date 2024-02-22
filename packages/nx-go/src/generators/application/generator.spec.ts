@@ -1,44 +1,88 @@
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing'
-import { Tree, readProjectConfiguration, readWorkspaceConfiguration } from '@nrwl/devkit'
+const normalizeOptions = {
+  npmScope: 'proj',
+  moduleName: 'api',
+  projectRoot: 'apps/api',
+  projectType: 'application',
+  parsedTags: ['api', 'backend'],
+};
 
-import generator from './generator'
-import { ApplicationGeneratorSchema } from './schema'
+import type { Tree } from '@nx/devkit';
+import * as nxDevkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { join } from 'path';
+import * as shared from '../../utils';
+import applicationGenerator from './generator';
+import type { ApplicationGeneratorSchema } from './schema';
+
+jest.mock('@nx/devkit');
+jest.mock('../../utils', () => ({
+  addGoWorkDependency: jest.fn(),
+  createGoMod: jest.fn(),
+  isGoWorkspace: jest.fn().mockReturnValue(false),
+  normalizeOptions: jest.fn().mockReturnValue(normalizeOptions),
+}));
 
 describe('application generator', () => {
-  let appTree: Tree
-  const options: ApplicationGeneratorSchema = { name: 'test' }
+  let tree: Tree;
+  const options: ApplicationGeneratorSchema = { name: 'test' };
 
-  beforeEach(() => {
-    appTree = createTreeWithEmptyWorkspace()
-  })
+  beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
+  afterEach(() => jest.clearAllMocks());
 
-  it('should run successfully', async () => {
-    await generator(appTree, options)
-    const config = readProjectConfiguration(appTree, 'test')
-    expect(config).toBeDefined()
-  })
+  it('should write project configuration', async () => {
+    await applicationGenerator(tree, options);
+    expect(nxDevkit.addProjectConfiguration).toHaveBeenCalledWith(
+      tree,
+      'test',
+      {
+        root: 'apps/api',
+        projectType: 'application',
+        sourceRoot: 'apps/api',
+        targets: expect.anything(),
+        tags: ['api', 'backend'],
+      }
+    );
+  });
 
-  it('should add go.mod to dependencies if present', async () => {
-    await generator(appTree, options)
-    const workspaceConfig = readWorkspaceConfiguration(appTree)
-    expect(workspaceConfig.implicitDependencies).toBeDefined()
-    expect(workspaceConfig.implicitDependencies['go.mod']).toBe('*')
-  })
+  it('should generate files', async () => {
+    await applicationGenerator(tree, options);
+    expect(nxDevkit.generateFiles).toHaveBeenCalledWith(
+      tree,
+      join(__dirname, './files'),
+      'apps/api',
+      normalizeOptions
+    );
+  });
 
-  it('should not add go.mod to dependencies if not present', async () => {
-    await generator(appTree, { name: 'test', skipGoMod: true })
-    const workspaceConfig = readWorkspaceConfiguration(appTree)
-    if (workspaceConfig.implicitDependencies) {
-      expect(workspaceConfig.implicitDependencies['go.mod']).toBeUndefined()
-    }
-  })
+  it('should create Go mod for project if in a Go workspace', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
+    await applicationGenerator(tree, options);
+    expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj/api', 'apps/api');
+  });
 
-  it('should use posix-style paths', async () => {
-    await generator(appTree, options)
-    const { targets } = readProjectConfiguration(appTree, 'test')
-    expect(targets).toBeDefined()
-    expect(targets.build?.options?.outputPath).toBe('dist/apps/test')
-    expect(targets.build?.options?.main).toBe('apps/test/main.go')
-    expect(targets.serve?.options?.main).toBe('apps/test/main.go')
-  })
-})
+  it('should not create Go mod for project if not in a Go workspace', async () => {
+    await applicationGenerator(tree, options);
+    expect(shared.createGoMod).not.toHaveBeenCalled();
+  });
+
+  it('should add Go work dependency if in a Go workspace', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
+    await applicationGenerator(tree, options);
+    expect(shared.addGoWorkDependency).toHaveBeenCalledWith(tree, 'apps/api');
+  });
+
+  it('should not add Go work dependency if not in a Go workspace', async () => {
+    await applicationGenerator(tree, options);
+    expect(shared.addGoWorkDependency).not.toHaveBeenCalled();
+  });
+
+  it('should format files', async () => {
+    await applicationGenerator(tree, options);
+    expect(nxDevkit.formatFiles).toHaveBeenCalledWith(tree);
+  });
+
+  it('should not format files if skipped', async () => {
+    await applicationGenerator(tree, { ...options, skipFormat: true });
+    expect(nxDevkit.formatFiles).not.toHaveBeenCalled();
+  });
+});

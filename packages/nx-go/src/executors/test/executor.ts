@@ -1,14 +1,29 @@
-import { ExecutorContext } from '@nrwl/devkit'
-import { runGoCommand } from '../../utils'
-import { TestExecutorSchema } from './schema'
+import { ExecutorContext } from '@nx/devkit';
+import { executeCommand, extractProjectRoot } from '../../utils';
+import { TestExecutorSchema } from './schema';
 
-export default async function runExecutor(options: TestExecutorSchema, context: ExecutorContext) {
-  const projectName = context?.projectName
-  const sourceRoot = context?.workspace?.projects[projectName]?.root
-  const cwd = `${sourceRoot}`
-  const sources = `-v ./...`
-  const cover = options.skipCover ? '' : '-cover'
-  const race = options.skipRace ? '' : '-race'
-
-  return runGoCommand(context, 'test', [sources, cover, race], { cwd })
+/**
+ * This executor tests Go code using the `go test` command.
+ *
+ * @param options options passed to the executor
+ * @param context context passed to the executor
+ */
+export default async function runExecutor(
+  options: TestExecutorSchema,
+  context: ExecutorContext
+) {
+  return executeCommand(
+    [
+      'test',
+      '-v',
+      './...',
+      ...buildFlagIfNotSkipped('-cover', options.skipCover),
+      ...buildFlagIfNotSkipped('-race', options.skipRace),
+    ],
+    { cwd: extractProjectRoot(context) }
+  );
 }
+
+const buildFlagIfNotSkipped = (flag: string, skipped: boolean): string[] => {
+  return skipped ? [] : [flag];
+};

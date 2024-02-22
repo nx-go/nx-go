@@ -1,30 +1,45 @@
-import { addProjectConfiguration, formatFiles, getWorkspaceLayout, Tree } from '@nrwl/devkit'
-import { join, normalize } from 'path'
-import { addFiles, createGoMod, normalizeOptions, toPosixPath, updateGoWork } from '../../utils'
-import { ApplicationGeneratorSchema } from './schema'
+import {
+  addProjectConfiguration,
+  formatFiles,
+  generateFiles,
+  Tree,
+} from '@nx/devkit';
+import { join } from 'path';
+import {
+  addGoWorkDependency,
+  createGoMod,
+  isGoWorkspace,
+  normalizeOptions,
+} from '../../utils';
+import type { ApplicationGeneratorSchema } from './schema';
 
-export default async function (tree: Tree, options: ApplicationGeneratorSchema) {
-  const normalizedOptions = normalizeOptions(tree, getWorkspaceLayout(tree).appsDir, options)
-  const sourceRoot = normalizedOptions.projectRoot
+export default async function applicationGenerator(
+  tree: Tree,
+  schema: ApplicationGeneratorSchema
+) {
+  const options = await normalizeOptions(
+    tree,
+    schema,
+    'application',
+    '@nx-go/nx-go:application'
+  );
 
-  const targetOptions = {
-    outputPath: toPosixPath(join(normalize('dist'), sourceRoot)),
-    main: toPosixPath(join(sourceRoot, 'main.go')),
-  }
-
-  addProjectConfiguration(tree, normalizedOptions.projectName, {
-    root: sourceRoot,
-    projectType: 'application',
-    sourceRoot,
+  addProjectConfiguration(tree, schema.name, {
+    root: options.projectRoot,
+    projectType: options.projectType,
+    sourceRoot: options.projectRoot,
+    tags: options.parsedTags,
     targets: {
       build: {
         executor: '@nx-go/nx-go:build',
-        options: targetOptions,
+        options: {
+          main: '{projectRoot}/main.go',
+        },
       },
       serve: {
         executor: '@nx-go/nx-go:serve',
         options: {
-          main: toPosixPath(join(sourceRoot, 'main.go')),
+          main: '{projectRoot}/main.go',
         },
       },
       test: {
@@ -34,12 +49,20 @@ export default async function (tree: Tree, options: ApplicationGeneratorSchema) 
         executor: '@nx-go/nx-go:lint',
       },
     },
-    tags: normalizedOptions.parsedTags,
-  })
-  addFiles(tree, join(__dirname, 'files'), normalizedOptions)
+  });
 
-  createGoMod(tree, normalizedOptions)
-  updateGoWork(tree, normalizedOptions)
+  generateFiles(tree, join(__dirname, 'files'), options.projectRoot, options);
 
-  await formatFiles(tree)
+  if (isGoWorkspace(tree)) {
+    createGoMod(
+      tree,
+      `${options.npmScope}/${options.moduleName}`,
+      options.projectRoot
+    );
+    addGoWorkDependency(tree, options.projectRoot);
+  }
+
+  if (!schema.skipFormat) {
+    await formatFiles(tree);
+  }
 }

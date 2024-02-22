@@ -1,5 +1,3 @@
-export interface LibraryGeneratorSchema {
-  name: string
-  tags?: string
-  directory?: string
-}
+import type { GeneratorSchema } from '../../utils';
+
+export type LibraryGeneratorSchema = GeneratorSchema;

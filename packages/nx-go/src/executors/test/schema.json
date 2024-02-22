@@ -1,9 +1,20 @@
 {
-  "$schema": "http://json-schema.org/schema",
-  "cli": "nx",
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
   "title": "Test executor",
-  "description": "",
+  "description": "Go test options",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "skipCover": {
+      "description": "Whether or not to skip coverage analysis during test execution",
+      "type": "boolean",
+      "default": false
+    },
+    "skipRace": {
+      "description": "Whether or not to skip race detector during test execution",
+      "type": "boolean",
+      "default": false
+    }
+  },
   "required": []
 }

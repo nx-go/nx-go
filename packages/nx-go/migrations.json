@@ -1,10 +1,14 @@
 {
   "generators": {
-    "add-go-mod-to-implicit-deps": {
-      "version": "2.3.0",
-      "description": "add-go-mod-to-implicit-deps",
-      "cli": "nx",
-      "implementation": "./src/migrations/add-go-mod-to-implicit-deps/add-go-mod-to-implicit-deps"
+    "add-nx-go-plugin": {
+      "version": "3.0.0-beta.0",
+      "description": "Add Nx Go plugin to Nx workspace configuration",
+      "implementation": "./src/migrations/update-3.0.0/add-nx-go-plugin"
+    },
+    "add-go-config-in-shared-globals": {
+      "version": "3.0.0-beta.0",
+      "description": "Add Go config in shared globals",
+      "implementation": "./src/migrations/update-3.0.0/add-go-config-in-shared-globals"
     }
   }
 }

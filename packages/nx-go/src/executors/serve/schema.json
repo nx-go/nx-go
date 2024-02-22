@@ -1,33 +1,35 @@
 {
-  "$schema": "http://json-schema.org/schema",
-  "cli": "nx",
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
   "title": "Serve executor",
-  "description": "Run the Go application",
+  "description": "Go serve options",
   "type": "object",
   "properties": {
+    "main": {
+      "type": "string",
+      "description": "Path to the file containing the main() function",
+      "x-completion-type": "file",
+      "x-completion-glob": "main.go",
+      "x-priority": "important"
+    },
     "cmd": {
       "type": "string",
-      "description": "Name of the go binary (usually 'go')",
+      "description": "Name of the go binary to use, default is go",
       "default": "go"
     },
     "cwd": {
       "type": "string",
       "description": "Working directory from which to run the application",
-      "default": ""
+      "x-completion-type": "directory"
     },
-    "main": {
-      "type": "string",
-      "description": "Name of the file containing the main() function",
-      "default": "main.go"
-    },
-    "arguments": {
-      "description": "Command line arguments for the application",
+    "args": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": []
+      "description": "Extra args when starting the app",
+      "alias": "arguments"
     }
   },
-  "required": []
+  "required": ["main"]
 }
