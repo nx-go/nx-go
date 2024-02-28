@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/schema",
   "version": 2,
-  "title": "Serve executor",
+  "title": "@nx-go/nx-go:serve",
   "description": "Go serve options",
   "type": "object",
   "properties": {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/schema",
   "version": 2,
-  "title": "Test executor",
+  "title": "@nx-go/nx-go:test",
   "description": "Go test options",
   "type": "object",
   "properties": {
