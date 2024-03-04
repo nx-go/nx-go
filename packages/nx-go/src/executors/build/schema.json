@@ -2,8 +2,8 @@
   "version": 2,
   "outputCapture": "direct-nodejs",
   "$schema": "https://json-schema.org/schema",
-  "title": "@nx-go/nx-go:build",
-  "description": "Go build options",
+  "title": "Build executor",
+  "description": "Builds an executable using the `go build` command",
   "type": "object",
   "properties": {
     "main": {

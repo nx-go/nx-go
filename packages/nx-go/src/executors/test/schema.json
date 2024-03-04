@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/schema",
   "version": 2,
-  "title": "@nx-go/nx-go:test",
-  "description": "Go test options",
+  "title": "Test executor",
+  "description": "Tests Go code using the `go test` command",
   "type": "object",
   "properties": {
     "skipCover": {

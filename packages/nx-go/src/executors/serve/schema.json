@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/schema",
   "version": 2,
-  "title": "@nx-go/nx-go:serve",
-  "description": "Go serve options",
+  "title": "Serve executor",
+  "description": "Runs a Go program using the `go run` command",
   "type": "object",
   "properties": {
     "main": {
