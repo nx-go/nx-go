@@ -21,4 +21,16 @@ describe('Test Executor', () => {
     const output = await executor(options, null)
     expect(output.success).toBe(true)
   })
+
+  it('can run when given packages', async () => {
+    const localOptions = { ...options, packages: ['./apps/messaging/...', './apps/omega/star/...'] }
+    const output = await executor(localOptions, null)
+    expect(output.success).toBe(true)
+  })
+
+  it('can run when given build tags', async () => {
+    const localOptions = { ...options, tags: ['integration'] }
+    const output = await executor(localOptions, null)
+    expect(output.success).toBe(true)
+  })
 })
