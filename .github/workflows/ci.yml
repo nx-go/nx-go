@@ -2,8 +2,7 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -59,8 +58,8 @@ jobs:
           pnpm nx run-many --all --target=test --parallel=3 --ci --code-coverage --coverageReporters=lcov
           pnpm nx affected --target=build --parallel=3
 
-      - name: ⛳ SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: 📤 Upload code coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: coverage/**/lcov.info
