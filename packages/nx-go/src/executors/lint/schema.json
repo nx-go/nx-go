@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/schema",
   "version": 2,
   "title": "Lint executor",
-  "description": "Go lint options",
+  "description": "Lints Go code using the `go fmt` command",
   "type": "object",
   "properties": {
     "linter": {

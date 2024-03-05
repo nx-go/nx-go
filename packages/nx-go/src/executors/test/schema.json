@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/schema",
   "version": 2,
   "title": "Test executor",
-  "description": "Go test options",
+  "description": "Tests Go code using the `go test` command",
   "type": "object",
   "properties": {
     "skipCover": {

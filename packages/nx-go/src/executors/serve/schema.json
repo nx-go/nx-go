@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/schema",
   "version": 2,
   "title": "Serve executor",
-  "description": "Go serve options",
+  "description": "Runs a Go program using the `go run` command",
   "type": "object",
   "properties": {
     "main": {
