@@ -8,7 +8,9 @@ jest.mock('../../utils', () => ({
   extractProjectRoot: jest.fn(() => 'apps/project'),
 }));
 
-const options: TestExecutorSchema = {};
+const options: TestExecutorSchema = {
+  verbose: true
+};
 
 const context: ExecutorContext = {
   cwd: 'current-dir',
@@ -22,7 +24,7 @@ describe('Test Executor', () => {
     const output = await executor(options, context);
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith(
-      ['test', '-v', './...', '-cover', '-race'],
+      ['test', '-v', '-cover', '-race', './...'],
       { cwd: 'apps/project' }
     );
   });
@@ -37,6 +39,17 @@ describe('Test Executor', () => {
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith(
       expect.not.arrayContaining([flag]),
+      { cwd: 'apps/project' }
+    );
+  });
+
+  it('should not use the -v flag if verbose = false', async () => {
+    const localOptions = {...options, verbose: false};
+    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const output = await executor(localOptions, context);
+    expect(output.success).toBeTruthy();
+    expect(spyExecute).toHaveBeenCalledWith(
+      ['test', '', '-cover', '-race', './...'],
       { cwd: 'apps/project' }
     );
   });
