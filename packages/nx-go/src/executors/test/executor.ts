@@ -15,10 +15,10 @@ export default async function runExecutor(
   return executeCommand(
     [
       'test',
-      '-v',
-      './...',
+      options.verbose ? '-v' : '',
       ...buildFlagIfNotSkipped('-cover', options.skipCover),
       ...buildFlagIfNotSkipped('-race', options.skipRace),
+      './...',
     ],
     { cwd: extractProjectRoot(context) }
   );
