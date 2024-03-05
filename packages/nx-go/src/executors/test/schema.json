@@ -14,6 +14,27 @@
       "description": "Whether or not to skip race detector during test execution",
       "type": "boolean",
       "default": false
+    },
+    "packages": {
+      "description": "Run tests only for the specified packages",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default:": []
+    },
+    "buildTags": {
+      "description": "Run tests only for packages with the specified build tags",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default:": []
+    },
+    "verbose": {
+      "description": "Whether to use verbose output for tests",
+      "type": "boolean",
+      "default": true
     }
   },
   "required": []

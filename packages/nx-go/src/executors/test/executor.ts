@@ -12,13 +12,16 @@ export default async function runExecutor(
   options: TestExecutorSchema,
   context: ExecutorContext
 ) {
+  const packages = options.packages;
+  const buildTags = options.buildTags;
   return executeCommand(
     [
       'test',
-      '-v',
-      './...',
+      options.verbose ? '-v' : '',
+      buildTags.length > 0 ? `-tags=${buildTags.join(',')}` : '',
       ...buildFlagIfNotSkipped('-cover', options.skipCover),
       ...buildFlagIfNotSkipped('-race', options.skipRace),
+      packages.length > 0 ? packages.join(' ') : './...',
     ],
     { cwd: extractProjectRoot(context) }
   );
