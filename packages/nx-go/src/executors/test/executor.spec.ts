@@ -8,9 +8,7 @@ jest.mock('../../utils', () => ({
   extractProjectRoot: jest.fn(() => 'apps/project'),
 }));
 
-const options: TestExecutorSchema = {
-  verbose: true
-};
+const options: TestExecutorSchema = {};
 
 const context: ExecutorContext = {
   cwd: 'current-dir',
@@ -23,33 +21,22 @@ describe('Test Executor', () => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor(options, context);
     expect(output.success).toBeTruthy();
-    expect(spyExecute).toHaveBeenCalledWith(
-      ['test', '-v', '-cover', '-race', './...'],
-      { cwd: 'apps/project' }
-    );
+    expect(spyExecute).toHaveBeenCalledWith(['test', './...'], {
+      cwd: 'apps/project',
+    });
   });
 
   it.each`
-    config                 | flag
-    ${{ skipCover: true }} | ${'-cover'}
-    ${{ skipRace: true }}  | ${'-race'}
-  `('should remove flag $flag if skipped', async ({ config, flag }) => {
+    config               | flag
+    ${{ verbose: true }} | ${'-verbose'}
+    ${{ cover: true }}   | ${'-cover'}
+    ${{ race: true }}    | ${'-race'}
+  `('should add flag $flag if enabled', async ({ config, flag }) => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor({ ...options, ...config }, context);
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith(
       expect.not.arrayContaining([flag]),
-      { cwd: 'apps/project' }
-    );
-  });
-
-  it('should not use the -v flag if verbose = false', async () => {
-    const localOptions = {...options, verbose: false};
-    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
-    const output = await executor(localOptions, context);
-    expect(output.success).toBeTruthy();
-    expect(spyExecute).toHaveBeenCalledWith(
-      ['test', '', '-cover', '-race', './...'],
       { cwd: 'apps/project' }
     );
   });

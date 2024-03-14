@@ -4,10 +4,14 @@ Uses `go test` command to run tests of a Go project.
 
 ## Options
 
-### skipCover
+### cover
 
-- (boolean): Skip coverage analysis during test execution
+- (boolean): Enable coverage analysis
 
-### skipRace
+### race
 
-- (boolean): Skip race detector during test execution
+- (boolean): Enable race detector
+
+### verbose
+
+- (boolean): Enable verbose test output

@@ -15,15 +15,15 @@ export default async function runExecutor(
   return executeCommand(
     [
       'test',
-      options.verbose ? '-v' : '',
-      ...buildFlagIfNotSkipped('-cover', options.skipCover),
-      ...buildFlagIfNotSkipped('-race', options.skipRace),
+      ...buildFlagIfEnabled('-v', options.verbose),
+      ...buildFlagIfEnabled('-cover', options.cover),
+      ...buildFlagIfEnabled('-race', options.race),
       './...',
     ],
     { cwd: extractProjectRoot(context) }
   );
 }
 
-const buildFlagIfNotSkipped = (flag: string, skipped: boolean): string[] => {
-  return skipped ? [] : [flag];
+const buildFlagIfEnabled = (flag: string, enabled: boolean): string[] => {
+  return enabled ? [flag] : [];
 };

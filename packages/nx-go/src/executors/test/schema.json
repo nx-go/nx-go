@@ -5,20 +5,20 @@
   "description": "Tests Go code using the `go test` command",
   "type": "object",
   "properties": {
-    "skipCover": {
-      "description": "Whether or not to skip coverage analysis during test execution",
+    "cover": {
+      "description": "Whether to enable coverage analysis",
       "type": "boolean",
       "default": false
     },
-    "skipRace": {
-      "description": "Whether or not to skip race detector during test execution",
+    "race": {
+      "description": "Whether to enable race detector",
       "type": "boolean",
       "default": false
     },
     "verbose": {
       "description": "Whether to enable verbose test output",
       "type": "boolean",
-      "default": true
+      "default": false
     }
   },
   "required": []
