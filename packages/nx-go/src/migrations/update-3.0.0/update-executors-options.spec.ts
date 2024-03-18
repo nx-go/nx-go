@@ -49,6 +49,32 @@ describe('update-executors-options migration', () => {
   });
 
   it.each`
+    options                 | result                                        | description
+    ${{ skipCover: true }}  | ${{ verbose: true, race: true }}              | ${'coverage is already skipped'}
+    ${{ skipCover: false }} | ${{ verbose: true, race: true, cover: true }} | ${'coverage option is skipped'}
+    ${{ skipRace: true }}   | ${{ verbose: true, cover: true }}             | ${'race is already skipped'}
+    ${{ skipRace: false }}  | ${{ verbose: true, cover: true, race: true }} | ${'race option is skipped'}
+    ${{}}                   | ${{ verbose: true, cover: true, race: true }} | ${'no option present'}
+    ${null}                 | ${{ verbose: true, cover: true, race: true }} | ${'options object is null'}
+  `(
+    'should update options of @nx-go/nx-go:test executor if $description',
+    async ({ options, result }) => {
+      const updateConfig = jest.spyOn(devkit, 'updateProjectConfiguration');
+      jest.spyOn(devkit, 'getProjects').mockReturnValue(
+        createProjectMapWithTarget({
+          executor: '@nx-go/nx-go:test',
+          options,
+        })
+      );
+      await update(tree);
+      expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
+      expect(updateConfig.mock.calls[0][2].targets.target.options).toEqual(
+        result
+      );
+    }
+  );
+
+  it.each`
     executor                | options                                   | description
     ${'@nx-go/nx-go:lint'}  | ${{ args: ['-config', './revive.toml'] }} | ${'lint executor has already new args format'}
     ${'@nx-go/nx-go:lint'}  | ${{ linter: 'revive' }}                   | ${'lint executor does not have args option'}

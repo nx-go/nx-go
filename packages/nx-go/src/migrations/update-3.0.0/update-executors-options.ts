@@ -40,6 +40,20 @@ export default async function update(tree: Tree) {
         delete target.options['arguments'];
         shouldUpdate = true;
       }
+
+      // test executor: skipCover -> cover ; skipRace -> race ; add verbose
+      if (target.executor === '@nx-go/nx-go:test') {
+        target.options ??= {};
+        const oldOptions = Object.assign({}, target.options);
+
+        toggleOption(target.options, 'skipCover', 'cover');
+        toggleOption(target.options, 'skipRace', 'race');
+        target.options['verbose'] = true;
+
+        if (JSON.stringify(oldOptions) !== JSON.stringify(target.options)) {
+          shouldUpdate = true;
+        }
+      }
     }
 
     if (shouldUpdate) {
@@ -49,3 +63,12 @@ export default async function update(tree: Tree) {
 
   await formatFiles(tree);
 }
+
+const toggleOption = (options: object, skipName: string, name: string) => {
+  if (skipName in options && options[skipName]) {
+    delete options[name];
+  } else {
+    options[name] = true;
+  }
+  delete options[skipName];
+};
