@@ -1,4 +1,5 @@
 export interface TestExecutorSchema {
-  skipCover?: boolean;
-  skipRace?: boolean;
+  cover?: boolean;
+  race?: boolean;
+  verbose?: boolean;
 }

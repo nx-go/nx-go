@@ -98,9 +98,9 @@ describe('nx-go', () => {
   });
 
   it('should test the application', async () => {
-    const result = await runNxCommandAsync(`test ${appName} --skipRace`);
+    const result = await runNxCommandAsync(`test ${appName} --cover --verbose`);
     expect(result.stdout).toContain(
-      `Executing command: go test -v ./... -cover`
+      `Executing command: go test -v -cover ./...`
     );
   });
 
