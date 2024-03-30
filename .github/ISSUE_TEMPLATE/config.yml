@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Start a Discussion
+    about: "Start a discussion to share your experience with nx-go"
+    url: https://github.com/nx-go/nx-go/discussions/new/choose
