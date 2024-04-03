@@ -14,9 +14,6 @@
 
 </div>
 
-> [!NOTE]
-> This README refers to v3 of the plugin, currently in **beta**. We look forward to your feedback in [#107](https://github.com/nx-go/nx-go/issues/107). If you use **Nx < 17**, [look here](https://github.com/nx-go/nx-go/tree/v2.8.0#readme).
-
 ## ✨ Features
 
 - Generate Go applications and libraries **in seconds** within your Nx workspace
@@ -28,20 +25,22 @@
 
 You need to have a [stable version of Go](https://go.dev/dl/) installed on your machine. And.. you are ready!
 
-### During the beta phase
-
-As the plugin is still in beta, it is impossible to use the quick commands for workspace creation or addition via Nx.
-You need to install the plugin manually and initialize it in your workspace. If you don't have one, follow the [official documentation](https://nx.dev/getting-started/installation) to create one.
+### Generate a Nx workspace with Go support
 
 ```shell
-npm install -D @nx-go/nx-go@beta
-nx g @nx-go/nx-go:init
+npx create-nx-workspace go-workspace --preset=@nx-go/nx-go
 ```
 
-### Migrate to beta version
+### Add to an exisiting workspace
 
 ```shell
-nx migrate @nx-go/nx-go@beta
+nx add @nx-go/nx-go
+```
+
+### Migrate to latest version
+
+```shell
+nx migrate @nx-go/nx-go
 ```
 
 ### Don't want to use a multi-module Go workspace?
