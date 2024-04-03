@@ -2,6 +2,8 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [3.0.0](https://github.com/nx-go/nx-go/compare/v3.0.0-beta.1...v3.0.0) (2024-04-03)
+
 ## [3.0.0-beta.1](https://github.com/nx-go/nx-go/compare/v3.0.0-beta.0...v3.0.0-beta.1) (2024-03-19)
 
 
