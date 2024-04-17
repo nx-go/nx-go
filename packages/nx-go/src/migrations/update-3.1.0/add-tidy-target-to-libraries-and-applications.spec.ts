@@ -6,7 +6,7 @@ import update from './add-tidy-target-to-libraries-and-applications';
 
 jest.mock('@nx/devkit');
 
-describe('update-executors-options migration', () => {
+describe('add-tidy-target-to-libraries-and-applications migration', () => {
   let tree: Tree;
 
   beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
