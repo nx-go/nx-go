@@ -11,7 +11,7 @@ import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { join } from 'path';
 import * as shared from '../../utils';
-import applicationGenerator from './generator';
+import applicationGenerator, { defaultTargets } from './generator';
 import type { ApplicationGeneratorSchema } from './schema';
 
 jest.mock('@nx/devkit');
@@ -38,10 +38,11 @@ describe('application generator', () => {
         root: 'apps/api',
         projectType: 'application',
         sourceRoot: 'apps/api',
-        targets: expect.anything(),
+        targets: defaultTargets,
         tags: ['api', 'backend'],
       }
     );
+    expect(nxDevkit.updateProjectConfiguration).not.toHaveBeenCalled();
   });
 
   it('should generate files', async () => {
@@ -57,7 +58,32 @@ describe('application generator', () => {
   it('should create Go mod for project if in a Go workspace', async () => {
     jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
     await applicationGenerator(tree, options);
-    expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj/api', 'apps/api');
+    expect(shared.createGoMod).toHaveBeenCalledWith(
+      tree,
+      'proj/api',
+      'apps/api'
+    );
+  });
+
+  it('should add tidy executor for project if in a Go workspace', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
+    await applicationGenerator(tree, options);
+    expect(nxDevkit.updateProjectConfiguration).toHaveBeenCalledWith(
+      tree,
+      'test',
+      {
+        root: 'apps/api',
+        projectType: 'application',
+        sourceRoot: 'apps/api',
+        targets: {
+          ...defaultTargets,
+          tidy: {
+            executor: '@nx-go/nx-go:tidy',
+          },
+        },
+        tags: ['api', 'backend'],
+      }
+    );
   });
 
   it('should not create Go mod for project if not in a Go workspace', async () => {
