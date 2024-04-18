@@ -1,7 +1,7 @@
-import { ExecutorContext } from '@nx/devkit';
+import type { ExecutorContext } from '@nx/devkit';
 import * as commonFunctions from '../../utils';
 import executor from './executor';
-import { TestExecutorSchema } from './schema';
+import type { TestExecutorSchema } from './schema';
 
 jest.mock('../../utils', () => ({
   executeCommand: jest.fn().mockResolvedValue({ success: true }),
@@ -27,10 +27,11 @@ describe('Test Executor', () => {
   });
 
   it.each`
-    config               | flag
-    ${{ verbose: true }} | ${'-verbose'}
-    ${{ cover: true }}   | ${'-cover'}
-    ${{ race: true }}    | ${'-race'}
+    config                              | flag
+    ${{ verbose: true }}                | ${'-verbose'}
+    ${{ cover: true }}                  | ${'-cover'}
+    ${{ coverProfile: 'coverage.out' }} | ${'-coverageprofile=coverage.out'}
+    ${{ race: true }}                   | ${'-race'}
   `('should add flag $flag if enabled', async ({ config, flag }) => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor({ ...options, ...config }, context);

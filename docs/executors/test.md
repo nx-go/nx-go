@@ -8,6 +8,10 @@ Uses `go test` command to run tests of a Go project.
 
 - (boolean): Enable coverage analysis
 
+### coverProfile
+
+- (string): Write a coverage profile to the file after all tests have passed
+
 ### race
 
 - (boolean): Enable race detector
