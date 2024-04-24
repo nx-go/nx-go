@@ -3,7 +3,7 @@ import { executeCommand, extractProjectRoot } from '../../utils';
 import { TidyExecutorSchema } from './schema';
 
 /**
- * This executor lints Go code using the `go fmt` command.
+ * This executor runs go mod tidy on the specified module.
  *
  * @param schema options passed to the executor
  * @param context context passed to the executor

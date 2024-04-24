@@ -10,7 +10,7 @@
       "items": {
         "type": "string"
       },
-      "description": "Extra args when modt tidy the app"
+      "description": "Extra args when mod tidy the app or library"
     }
   },
   "required": []

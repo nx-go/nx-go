@@ -1,10 +1,11 @@
-import type { Tree } from '@nx/devkit';
+import type { TargetConfiguration, Tree } from '@nx/devkit';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import {
   GO_MOD_FILE,
   GO_WORK_FILE,
   GO_WORK_MINIMUM_VERSION,
+  NX_PLUGIN_NAME,
 } from '../constants';
 
 export type GoListType = 'import' | 'use';
@@ -97,6 +98,14 @@ export const createGoWork = (tree: Tree): void => {
   if (!tree.exists(GO_WORK_FILE)) {
     tree.write(GO_WORK_FILE, `go ${getGoShortVersion()}\n`);
   }
+};
+
+export const isProjectUsingNxGo = (targets: {
+  [targetName: string]: TargetConfiguration;
+}): boolean => {
+  return Object.values(targets).some((target: TargetConfiguration) =>
+    target.executor.includes(NX_PLUGIN_NAME)
+  );
 };
 
 /**

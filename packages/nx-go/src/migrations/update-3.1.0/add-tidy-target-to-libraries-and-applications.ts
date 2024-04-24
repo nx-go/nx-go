@@ -4,22 +4,29 @@ import {
   type Tree,
   updateProjectConfiguration,
 } from '@nx/devkit';
+import { isGoWorkspace, isProjectUsingNxGo } from '../../utils';
 
 /**
- * Update executor options to ensure a smooth transition to v3.
+ * Add tidy executor to existing nx-go projects
  *
  * @param tree the project tree
  */
 export default async function update(tree: Tree) {
+  // When it's not a go workspace we don't add it to any project
+  if (!isGoWorkspace(tree)) {
+    return;
+  }
+
   const projects = getProjects(tree);
 
   for (const [projectName, projectConfig] of projects) {
     let shouldUpdate = false;
 
     if (!projectConfig.targets) continue;
+    if (!isProjectUsingNxGo(projectConfig.targets)) continue;
 
     if (
-      !projectConfig.targets.tidy &&
+      !projectConfig.targets.tidy ||
       projectConfig.targets.tidy?.executor !== '@nx-go/nx-go:tidy'
     ) {
       projectConfig.targets.tidy = {
