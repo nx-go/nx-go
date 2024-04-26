@@ -10,6 +10,11 @@
       "type": "boolean",
       "default": false
     },
+    "coverProfile": {
+      "description": "Write a coverage profile to the file after all tests have passed",
+      "type": "string",
+      "x-completion-type": "file"
+    },
     "race": {
       "description": "Whether to enable race detector",
       "type": "boolean",
