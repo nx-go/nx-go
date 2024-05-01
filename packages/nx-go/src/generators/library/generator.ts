@@ -3,7 +3,10 @@ import {
   formatFiles,
   generateFiles,
   names,
+  ProjectConfiguration,
+  TargetConfiguration,
   Tree,
+  updateProjectConfiguration,
 } from '@nx/devkit';
 import { join } from 'path';
 import {
@@ -13,6 +16,15 @@ import {
   normalizeOptions,
 } from '../../utils';
 import { LibraryGeneratorSchema } from './schema';
+
+export const defaultTargets: { [targetName: string]: TargetConfiguration } = {
+  test: {
+    executor: '@nx-go/nx-go:test',
+  },
+  lint: {
+    executor: '@nx-go/nx-go:lint',
+  },
+};
 
 export default async function libraryGenerator(
   tree: Tree,
@@ -24,21 +36,15 @@ export default async function libraryGenerator(
     'library',
     '@nx-go/nx-go:library'
   );
-
-  addProjectConfiguration(tree, options.name, {
+  const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,
     projectType: options.projectType,
     sourceRoot: options.projectRoot,
     tags: options.parsedTags,
-    targets: {
-      test: {
-        executor: '@nx-go/nx-go:test',
-      },
-      lint: {
-        executor: '@nx-go/nx-go:lint',
-      },
-    },
-  });
+    targets: defaultTargets,
+  };
+
+  addProjectConfiguration(tree, options.name, projectConfiguration);
 
   generateFiles(tree, join(__dirname, 'files'), options.projectRoot, {
     ...options,
@@ -52,6 +58,10 @@ export default async function libraryGenerator(
       options.projectRoot
     );
     addGoWorkDependency(tree, options.projectRoot);
+    projectConfiguration.targets.tidy = {
+      executor: '@nx-go/nx-go:tidy',
+    };
+    updateProjectConfiguration(tree, options.name, projectConfiguration);
   }
 
   if (!schema.skipFormat) {

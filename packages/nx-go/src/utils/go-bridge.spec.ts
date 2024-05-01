@@ -2,7 +2,7 @@ import type { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as child_process from 'child_process';
 import { join } from 'path';
-import { GO_WORK_FILE } from '../constants';
+import { GO_WORK_FILE, NX_PLUGIN_NAME } from '../constants';
 import {
   addGoWorkDependency,
   createGoMod,
@@ -10,6 +10,7 @@ import {
   getGoShortVersion,
   getGoVersion,
   isGoWorkspace,
+  isProjectUsingNxGo,
   parseGoList,
   supportsGoWorkspace,
 } from './go-bridge';
@@ -136,6 +137,22 @@ describe('Go bridge', () => {
       jest.spyOn(tree, 'exists').mockReturnValue(true);
       createGoWork(tree);
       expect(spyWrite).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Method: isProjectUsingNxGo', () => {
+    it('should return false when the project is using nx-go', () => {
+      expect(isProjectUsingNxGo({})).toBeFalsy();
+    });
+
+    it('should return true when the project is using nx-go', () => {
+      expect(
+        isProjectUsingNxGo({
+          serve: {
+            executor: `${NX_PLUGIN_NAME}:serve`,
+          },
+        })
+      ).toBeTruthy();
     });
   });
 

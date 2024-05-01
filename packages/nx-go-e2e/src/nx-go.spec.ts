@@ -92,6 +92,13 @@ describe('nx-go', () => {
     });
   });
 
+  describe('Tidy', () => {
+    it('should execute go mod tidy', async () => {
+      const result = await runNxCommandAsync(`tidy ${appName}`);
+      expect(result.stdout).toContain(`Executing command: go mod tidy`);
+    });
+  });
+
   it('should serve the application', async () => {
     const result = await runNxCommandAsync(`serve ${appName}`);
     expect(result.stdout).toContain(`Executing command: go run main.go`);

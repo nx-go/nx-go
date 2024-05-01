@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Tidy executor",
+  "description": "Runs the `go mod tidy` command",
+  "type": "object",
+  "properties": {
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Extra args when mod tidy the app or library"
+    }
+  },
+  "required": []
+}

@@ -14,6 +14,11 @@
       "version": "3.0.0-beta.1",
       "description": "Update options to match new schema of executors",
       "implementation": "./src/migrations/update-3.0.0/update-executors-options"
+    },
+    "add-tidy-targets": {
+      "version": "3.1.0",
+      "description": "Add tidy target to libraries and applications",
+      "implementation": "./src/migrations/update-3.1.0/add-tidy-target-to-libraries-and-applications"
     }
   }
 }
