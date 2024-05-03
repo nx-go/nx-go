@@ -19,6 +19,7 @@ export default async function runExecutor(
       ...buildFlagIfEnabled('-cover', options.cover),
       ...buildStringFlagIfValid(`-coverprofile`, options.coverProfile),
       ...buildFlagIfEnabled('-race', options.race),
+      ...buildStringFlagIfValid(`-run`, options.run),
       './...',
     ],
     { cwd: extractProjectRoot(context) }
