@@ -1,14 +1,15 @@
 import { joinPathFragments, readJsonFile, workspaceRoot } from '@nx/devkit';
+import { tmpProjPath } from '@nx/plugin/testing';
 import { execSync } from 'child_process';
 import { mkdirSync, rmSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 
 /**
  * Creates a test project with create-nx-workspace and installs the plugin
  */
-export default function createTestProject(preset = 'apps') {
+export default function createTestProject(preset = 'apps'): string {
   const projectName = 'proj';
-  const projectDirectory = join(process.cwd(), 'tmp', 'nx-e2e', projectName);
+  const projectDirectory = tmpProjPath();
 
   // Ensure projectDirectory is empty
   rmSync(projectDirectory, { recursive: true, force: true });

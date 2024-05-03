@@ -2,7 +2,7 @@ import {
   checkFilesExist,
   readFile,
   readJson,
-  runCommandAsync,
+  runNxCommandAsync,
   uniq,
   updateFile,
 } from '@nx/plugin/testing';
@@ -32,10 +32,6 @@ describe('nx-go', () => {
   afterAll(() => {
     rmSync(projectDirectory, { recursive: true, force: true });
   });
-
-  async function runNxCommandAsync(command: string) {
-    return runCommandAsync(`nx ${command}`, { cwd: projectDirectory });
-  }
 
   it('should be installed', () => {
     // npm ls will fail if the package is not installed properly
