@@ -23,7 +23,7 @@ export default async function update(tree: Tree) {
     let shouldUpdate = false;
 
     if (!projectConfig.targets) continue;
-    if (!isProjectUsingNxGo(projectConfig.targets)) continue;
+    if (!isProjectUsingNxGo(projectConfig)) continue;
 
     if (
       !projectConfig.targets.tidy ||

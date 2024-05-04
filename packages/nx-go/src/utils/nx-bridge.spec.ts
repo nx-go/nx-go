@@ -3,14 +3,18 @@ import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../constants';
 import * as goBridge from './go-bridge';
-import { addNxPlugin, ensureGoConfigInSharedGlobals } from './update-nx-json';
+import {
+  addNxPlugin,
+  ensureGoConfigInSharedGlobals,
+  isProjectUsingNxGo,
+} from './nx-bridge';
 
 jest.mock('@nx/devkit');
 jest.mock('./go-bridge', () => ({
   isGoWorkspace: jest.fn().mockReturnValue(false),
 }));
 
-describe('updateNxJson', () => {
+describe('Nx bridge', () => {
   let tree: Tree;
 
   beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
@@ -58,5 +62,22 @@ describe('updateNxJson', () => {
         expect(spyUpdateNxJson).toHaveBeenCalledTimes(updated ? 1 : 0);
       }
     );
+  });
+
+  describe('Method: isProjectUsingNxGo', () => {
+    it('should return false when the project is using nx-go', () => {
+      expect(isProjectUsingNxGo({ root: '', targets: {} })).toBeFalsy();
+    });
+
+    it('should return true when the project is using nx-go', () => {
+      expect(
+        isProjectUsingNxGo({
+          root: '',
+          targets: {
+            serve: { executor: `${NX_PLUGIN_NAME}:serve` },
+          },
+        })
+      ).toBeTruthy();
+    });
   });
 });

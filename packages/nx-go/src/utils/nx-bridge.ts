@@ -1,4 +1,10 @@
-import { readNxJson, Tree, updateNxJson } from '@nx/devkit';
+import {
+  type ProjectConfiguration,
+  readNxJson,
+  type TargetConfiguration,
+  type Tree,
+  updateNxJson,
+} from '@nx/devkit';
 import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../constants';
 import { isGoWorkspace } from './go-bridge';
 
@@ -37,3 +43,13 @@ export const ensureGoConfigInSharedGlobals = (tree: Tree): void => {
     updateNxJson(tree, { ...nxJson, namedInputs });
   }
 };
+
+/**
+ * Checks if a Nx project is using the nx-go plugin.
+ *
+ * @param project project configuration object
+ */
+export const isProjectUsingNxGo = (project: ProjectConfiguration): boolean =>
+  Object.values(project.targets).some((target: TargetConfiguration) =>
+    target.executor.includes(NX_PLUGIN_NAME)
+  );
