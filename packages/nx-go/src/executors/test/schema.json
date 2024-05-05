@@ -20,6 +20,10 @@
       "type": "boolean",
       "default": false
     },
+    "run": {
+      "description": "Run only tests matching this regular expression",
+      "type": "string"
+    },
     "verbose": {
       "description": "Whether to enable verbose test output",
       "type": "boolean",

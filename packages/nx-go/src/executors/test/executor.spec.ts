@@ -28,17 +28,17 @@ describe('Test Executor', () => {
 
   it.each`
     config                              | flag
-    ${{ verbose: true }}                | ${'-verbose'}
+    ${{ verbose: true }}                | ${'-v'}
     ${{ cover: true }}                  | ${'-cover'}
-    ${{ coverProfile: 'coverage.out' }} | ${'-coverageprofile=coverage.out'}
+    ${{ coverProfile: 'coverage.out' }} | ${'-coverprofile=coverage.out'}
     ${{ race: true }}                   | ${'-race'}
+    ${{ run: 'TestProjection' }}        | ${'-run=TestProjection'}
   `('should add flag $flag if enabled', async ({ config, flag }) => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor({ ...options, ...config }, context);
     expect(output.success).toBeTruthy();
-    expect(spyExecute).toHaveBeenCalledWith(
-      expect.not.arrayContaining([flag]),
-      { cwd: 'apps/project' }
-    );
+    expect(spyExecute).toHaveBeenCalledWith(expect.arrayContaining([flag]), {
+      cwd: 'apps/project',
+    });
   });
 });

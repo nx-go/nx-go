@@ -16,6 +16,10 @@ Uses `go test` command to run tests of a Go project.
 
 - (boolean): Enable race detector
 
+### run
+
+- (string): Run only tests matching this regular expression
+
 ### verbose
 
 - (boolean): Enable verbose test output
