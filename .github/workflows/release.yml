@@ -15,7 +15,7 @@ jobs:
       - name: ⚙ Setup
         uses: ./.github/actions/setup
         with:
-          go_version: 1.22.0
+          go_version: 1.22.3
           node_version: 20.x
 
       - name: Configure Git
