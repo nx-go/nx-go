@@ -1,7 +1,6 @@
 const normalizeOptions = {
   name: 'data-access',
   moduleName: 'dataaccess',
-  npmScope: 'proj',
   projectName: 'data-access',
   projectRoot: 'libs/data-access',
   projectType: 'library',
@@ -68,7 +67,7 @@ describe('library generator', () => {
     await libraryGenerator(tree, options);
     expect(shared.createGoMod).toHaveBeenCalledWith(
       tree,
-      'proj/dataaccess',
+      'libs/data-access',
       'libs/data-access'
     );
   });

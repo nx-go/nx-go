@@ -16,9 +16,6 @@ jest.mock('@nx/devkit/src/generators/project-name-and-root-utils', () => ({
     projectNameAndRootFormat: 'as-provided',
   }),
 }));
-jest.mock('./npm-bridge', () => ({
-  getProjectScope: jest.fn().mockReturnValue('nx-go'),
-}));
 
 describe('normalizeOptions', () => {
   let tree: Tree;
@@ -40,16 +37,6 @@ describe('normalizeOptions', () => {
     expect(output.directory).toBe('backend-dir');
     expect(output.projectNameAndRootFormat).toBe('as-provided');
     expect(output.parsedTags).toEqual([]);
-  });
-
-  it('should extract npm scope from package.json', async () => {
-    const output = await normalizeOptions(
-      tree,
-      { name: 'backend' },
-      'application',
-      'init'
-    );
-    expect(output.npmScope).toBe('nx-go');
   });
 
   it('should normalize tags', async () => {

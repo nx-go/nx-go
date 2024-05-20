@@ -3,7 +3,6 @@ import {
   determineProjectNameAndRootOptions,
   ProjectNameAndRootFormat,
 } from '@nx/devkit/src/generators/project-name-and-root-utils';
-import { getProjectScope } from './npm-bridge';
 
 export interface GeneratorSchema {
   name: string;
@@ -15,7 +14,6 @@ export interface GeneratorSchema {
 
 export interface GeneratorNormalizedSchema extends GeneratorSchema {
   moduleName: string;
-  npmScope: string;
   projectName: string;
   projectRoot: string;
   projectType: ProjectType;
@@ -41,12 +39,10 @@ export const normalizeOptions = async (
     ? options.tags.split(',').map((s) => s.trim())
     : [];
 
-  const projectNames = names(options.name);
   return {
     ...options,
-    name: projectNames.fileName,
-    moduleName: projectNames.propertyName.toLowerCase(),
-    npmScope: getProjectScope(tree),
+    name: names(options.name).fileName,
+    moduleName: names(projectName).propertyName.toLowerCase(),
     projectNameAndRootFormat,
     projectName,
     projectRoot,
