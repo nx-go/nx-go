@@ -51,7 +51,7 @@ describe('nx-go', () => {
 
     expect(() => checkFilesExist(`${appName}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`${appName}/go.mod`)).not.toThrow();
-    expect(readFile(`${appName}/go.mod`)).toContain(`module proj/${appName}`);
+    expect(readFile(`${appName}/go.mod`)).toContain(`module ${appName}`);
     expect(readFile(`go.work`)).toContain(`use ./${appName}`);
   });
 
@@ -60,7 +60,7 @@ describe('nx-go', () => {
 
     expect(() => checkFilesExist(`${libName}/${libName}.go`)).not.toThrow();
     expect(() => checkFilesExist(`${libName}/go.mod`)).not.toThrow();
-    expect(readFile(`${libName}/go.mod`)).toContain(`module proj/${libName}`);
+    expect(readFile(`${libName}/go.mod`)).toContain(`module ${libName}`);
     expect(readFile(`go.work`)).toContain(
       `use (\n\t./${appName}\n\t./${libName}\n)`
     );
@@ -116,7 +116,7 @@ describe('nx-go', () => {
 
         import (
           "fmt"
-          "proj/${libName}"
+          "${libName}"
         )
 
         func main() {

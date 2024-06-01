@@ -1,7 +1,7 @@
 const normalizeOptions = {
-  npmScope: 'proj',
-  moduleName: 'api',
-  projectRoot: 'apps/api',
+  name: 'my-api',
+  moduleName: 'myapi',
+  projectRoot: 'apps/my-api',
   projectType: 'application',
   parsedTags: ['api', 'backend'],
 };
@@ -35,9 +35,9 @@ describe('application generator', () => {
       tree,
       'test',
       {
-        root: 'apps/api',
+        root: 'apps/my-api',
         projectType: 'application',
-        sourceRoot: 'apps/api',
+        sourceRoot: 'apps/my-api',
         targets: defaultTargets,
         tags: ['api', 'backend'],
       }
@@ -50,7 +50,7 @@ describe('application generator', () => {
     expect(nxDevkit.generateFiles).toHaveBeenCalledWith(
       tree,
       join(__dirname, './files'),
-      'apps/api',
+      'apps/my-api',
       normalizeOptions
     );
   });
@@ -60,8 +60,8 @@ describe('application generator', () => {
     await applicationGenerator(tree, options);
     expect(shared.createGoMod).toHaveBeenCalledWith(
       tree,
-      'proj/api',
-      'apps/api'
+      'apps/my-api',
+      'apps/my-api'
     );
   });
 
@@ -72,9 +72,9 @@ describe('application generator', () => {
       tree,
       'test',
       {
-        root: 'apps/api',
+        root: 'apps/my-api',
         projectType: 'application',
-        sourceRoot: 'apps/api',
+        sourceRoot: 'apps/my-api',
         targets: {
           ...defaultTargets,
           tidy: {
@@ -94,7 +94,10 @@ describe('application generator', () => {
   it('should add Go work dependency if in a Go workspace', async () => {
     jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
     await applicationGenerator(tree, options);
-    expect(shared.addGoWorkDependency).toHaveBeenCalledWith(tree, 'apps/api');
+    expect(shared.addGoWorkDependency).toHaveBeenCalledWith(
+      tree,
+      'apps/my-api'
+    );
   });
 
   it('should not add Go work dependency if not in a Go workspace', async () => {
