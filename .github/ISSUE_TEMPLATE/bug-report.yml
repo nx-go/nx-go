@@ -27,7 +27,7 @@ body:
     attributes:
       label: Github Repo
       description: |
-        This is extremely important! If this issue is reproduce-able on hhttps://github.com/nx-go/nx-go-playground, you may use that as the repo.
+        This is extremely important! If this issue is reproduce-able on https://github.com/nx-go/nx-go-playground, you may use that as the repo.
         If not, please do take a few minutes of your time to create a repo to help us reproduce the issue.
         This is the best way to help us reproduce the issue and fix it as soon as possible.
   - type: textarea
