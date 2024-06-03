@@ -24,6 +24,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node_version }}
+        registry-url: 'https://registry.npmjs.org'
 
     - name: 💼 Cache pnpm modules
       uses: actions/cache@v4
@@ -34,7 +35,7 @@ runs:
           ${{ runner.os }}-
 
     - name: 🔧 Install dependencies
-      uses: pnpm/action-setup@v2.4.0
+      uses: pnpm/action-setup@v4.0.0
       with:
         version: 8.15.x
         run_install: |

@@ -10,7 +10,9 @@ jobs:
       - name: 📥 Checkout Repo
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
 
       - name: ⚙ Setup
         uses: ./.github/actions/setup
@@ -23,17 +25,22 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
+      - name: Check npm credentials
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: 🏷 Version
         shell: bash
         run: pnpm nx run-many --projects=nx-go --target=version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
 
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GH_RELEASE_TOKEN }}
           branch: ${{ github.ref }}
-          force: true
+          force_with_lease: true
           tags: true
