@@ -61,6 +61,7 @@ nx g @nx-go/nx-go:convert-to-one-mod
 ### Executors
 
 - `build`: [Build a Go project](./docs/executors/build.md)
+- `generate`: [Generate code using Go](./docs/executors/generate.md)
 - `lint`: [Format and lint a Go project](./docs/executors/lint.md)
 - `serve`: [Run a Go application](./docs/executors/serve.md)
 - `test`: [Run tests of a Go project](./docs/executors/test.md)

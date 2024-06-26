@@ -10,6 +10,7 @@ import { execSync } from 'child_process';
 import { rmSync } from 'fs';
 import { join } from 'path';
 import createTestProject from '../shared/create-test-project';
+import { addNxTarget } from '../shared/update-nx-config';
 
 describe('nx-go', () => {
   const appName = uniq('app');
@@ -92,6 +93,17 @@ describe('nx-go', () => {
     it('should execute go mod tidy', async () => {
       const result = await runNxCommandAsync(`tidy ${appName}`);
       expect(result.stdout).toContain(`Executing command: go mod tidy`);
+    });
+  });
+
+  describe('Generate', () => {
+    beforeAll(() =>
+      addNxTarget(appName, 'generate', { executor: '@nx-go/nx-go:generate' })
+    );
+
+    it('should execute go generate', async () => {
+      const result = await runNxCommandAsync(`run ${appName}:generate`);
+      expect(result.stdout).toContain(`Executing command: go generate`);
     });
   });
 
