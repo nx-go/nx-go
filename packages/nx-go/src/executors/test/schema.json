@@ -28,6 +28,11 @@
       "description": "Whether to enable verbose test output",
       "type": "boolean",
       "default": false
+    },
+    "skipCache": {
+      "description": "Whether to skip the cache when running go tests",
+      "type": "boolean",
+      "default": false
     }
   },
   "required": []

@@ -23,3 +23,7 @@ Uses `go test` command to run tests of a Go project.
 ### verbose
 
 - (boolean): Enable verbose test output
+
+### skipCache
+
+- (boolean): Skips go test caching and force retest the go project

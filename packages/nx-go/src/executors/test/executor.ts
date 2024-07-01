@@ -20,6 +20,7 @@ export default async function runExecutor(
       ...buildStringFlagIfValid(`-coverprofile`, options.coverProfile),
       ...buildFlagIfEnabled('-race', options.race),
       ...buildStringFlagIfValid(`-run`, options.run),
+      ...buildFlagIfEnabled('-count=1', options.skipCache),
       './...',
     ],
     { cwd: extractProjectRoot(context) }
