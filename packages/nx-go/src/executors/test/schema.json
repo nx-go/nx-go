@@ -29,10 +29,9 @@
       "type": "boolean",
       "default": false
     },
-    "skipCache": {
-      "description": "Whether to skip the cache when running go tests",
-      "type": "boolean",
-      "default": false
+    "count": {
+      "description": "Run each test $N times matching this count",
+      "type": "number"
     }
   },
   "required": []
