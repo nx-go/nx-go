@@ -4,4 +4,5 @@ export interface TestExecutorSchema {
   race?: boolean;
   run?: string;
   verbose?: boolean;
+  count?: number;
 }

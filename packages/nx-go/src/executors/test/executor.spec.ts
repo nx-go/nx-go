@@ -33,6 +33,7 @@ describe('Test Executor', () => {
     ${{ coverProfile: 'coverage.out' }} | ${'-coverprofile=coverage.out'}
     ${{ race: true }}                   | ${'-race'}
     ${{ run: 'TestProjection' }}        | ${'-run=TestProjection'}
+    ${{ count: 1 }}                   | ${'-count=1'}
   `('should add flag $flag if enabled', async ({ config, flag }) => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor({ ...options, ...config }, context);

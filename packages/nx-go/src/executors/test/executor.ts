@@ -12,6 +12,7 @@ export default async function runExecutor(
   options: TestExecutorSchema,
   context: ExecutorContext
 ) {
+
   return executeCommand(
     [
       'test',
@@ -20,6 +21,7 @@ export default async function runExecutor(
       ...buildStringFlagIfValid(`-coverprofile`, options.coverProfile),
       ...buildFlagIfEnabled('-race', options.race),
       ...buildStringFlagIfValid(`-run`, options.run),
+      ...buildStringFlagIfValid('-count', options.count > 0 ? options.count.toString() : undefined),
       './...',
     ],
     { cwd: extractProjectRoot(context) }
