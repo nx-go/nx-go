@@ -28,6 +28,10 @@
       "description": "Whether to enable verbose test output",
       "type": "boolean",
       "default": false
+    },
+    "count": {
+      "description": "Run each test $N times matching this count",
+      "type": "number"
     }
   },
   "required": []
