@@ -23,3 +23,7 @@ Uses `go test` command to run tests of a Go project.
 ### verbose
 
 - (boolean): Enable verbose test output
+
+### count
+
+- (number): Run test $N times matching this count
