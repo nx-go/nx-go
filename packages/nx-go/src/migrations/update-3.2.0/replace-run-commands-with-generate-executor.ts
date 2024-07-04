@@ -25,10 +25,8 @@ export default async function update(tree: Tree) {
     const goGenerateTarget = getGoGenerateTarget(projectConfig);
 
     if (goGenerateTarget != null) {
-      const args: string =
-        goGenerateTarget[1].options?.command
-          ?.replace(generateCommand, '')
-          ?.trim() ?? '';
+      const command = goGenerateTarget[1].options?.command;
+      const args: string = command?.replace(generateCommand, '').trim() ?? '';
 
       projectConfig.targets[goGenerateTarget[0]] = {
         executor: '@nx-go/nx-go:generate',

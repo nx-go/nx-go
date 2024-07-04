@@ -18,9 +18,9 @@ describe('replace-run-commands-with-generate-executor migration', () => {
     new Map([['api', { root: 'apps/api', targets } as ProjectConfiguration]]);
 
   it.each`
-    endCommand    | cwd                | expectedArgs       | description
-    ${''}         | ${'{projectRoot}'} | ${null}            | ${'command in the project root'}
-    ${''}         | ${'apps/api'}      | ${null}            | ${'command in the project folder'}
+    endCommand     | cwd                | expectedArgs       | description
+    ${''}          | ${'{projectRoot}'} | ${null}            | ${'command in the project root'}
+    ${''}          | ${'apps/api'}      | ${null}            | ${'command in the project folder'}
     ${' ./...'}    | ${'{projectRoot}'} | ${['./...']}       | ${'one argument'}
     ${' ./... -p'} | ${'{projectRoot}'} | ${['./...', '-p']} | ${'two arguments'}
   `(
@@ -49,6 +49,7 @@ describe('replace-run-commands-with-generate-executor migration', () => {
     ${{ command: 'npm install' }}                                          | ${'another command'}
     ${{ command: 'go generate', cwd: 'other-folder/' }}                    | ${'a command in another folder'}
     ${{ command: 'go generate', cwd: '{projectRoot}', envFile: ['.env'] }} | ${'a complex use case'}
+    ${{ cwd: '{projectRoot}', envFile: ['.env'] }}                         | ${'no command'}
   `('should not update targets with $description', async ({ options }) => {
     const updateConfig = jest.spyOn(devkit, 'updateProjectConfiguration');
     jest.spyOn(devkit, 'getProjects').mockReturnValue(
@@ -56,6 +57,15 @@ describe('replace-run-commands-with-generate-executor migration', () => {
         generate: { executor: `nx:run-commands`, options },
       })
     );
+    await update(tree);
+    expect(updateConfig).not.toHaveBeenCalled();
+  });
+
+  it('should not update if there is no target', async () => {
+    const updateConfig = jest.spyOn(devkit, 'updateProjectConfiguration');
+    jest
+      .spyOn(devkit, 'getProjects')
+      .mockReturnValue(createProjectMapWithTarget(null));
     await update(tree);
     expect(updateConfig).not.toHaveBeenCalled();
   });
