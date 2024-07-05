@@ -5,6 +5,11 @@
       "schema": "./src/executors/build/schema.json",
       "description": "Build the executable of a Go program"
     },
+    "generate": {
+      "implementation": "./src/executors/generate/executor",
+      "schema": "./src/executors/generate/schema.json",
+      "description": "Run a tool using Go generate"
+    },
     "lint": {
       "implementation": "./src/executors/lint/executor",
       "schema": "./src/executors/lint/schema.json",

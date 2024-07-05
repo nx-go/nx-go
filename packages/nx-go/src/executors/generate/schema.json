@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Generate executor",
+  "description": "Runs the `go generate` command",
+  "type": "object",
+  "properties": {
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Extra args when running Go generate command"
+    }
+  },
+  "required": []
+}
