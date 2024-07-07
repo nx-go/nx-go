@@ -3,10 +3,14 @@ import * as sharedFunctions from '../../utils';
 import executor from './executor';
 import { BuildExecutorSchema } from './schema';
 
-jest.mock('../../utils', () => ({
-  executeCommand: jest.fn().mockResolvedValue({ success: true }),
-  extractProjectRoot: jest.fn(() => 'apps/project'),
-}));
+jest.mock('../../utils', () => {
+  const { buildStringFlagIfValid } = jest.requireActual('../../utils');
+  return {
+    buildStringFlagIfValid,
+    executeCommand: jest.fn().mockResolvedValue({ success: true }),
+    extractProjectRoot: jest.fn(() => 'apps/project'),
+  };
+});
 
 const options: BuildExecutorSchema = {
   main: 'apps/project/main.go',
@@ -44,6 +48,17 @@ describe('Build Executor', () => {
     );
     expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
       ['build', '-o', 'custom-path', '--flag1', 'apps/project/main.go'],
+      expect.anything()
+    );
+  });
+
+  it.each`
+    config                       | flag
+    ${{ buildMode: 'c-shared' }} | ${'-buildmode=c-shared'}
+  `('should add flag $flag if enabled', async ({ config, flag }) => {
+    expect((await executor({ ...options, ...config }, context)).success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      expect.arrayContaining([flag]),
       expect.anything()
     );
   });

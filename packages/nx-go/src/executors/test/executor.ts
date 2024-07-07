@@ -1,5 +1,10 @@
 import type { ExecutorContext } from '@nx/devkit';
-import { executeCommand, extractProjectRoot } from '../../utils';
+import {
+  buildFlagIfEnabled,
+  buildStringFlagIfValid,
+  executeCommand,
+  extractProjectRoot,
+} from '../../utils';
 import type { TestExecutorSchema } from './schema';
 
 /**
@@ -12,7 +17,6 @@ export default async function runExecutor(
   options: TestExecutorSchema,
   context: ExecutorContext
 ) {
-
   return executeCommand(
     [
       'test',
@@ -21,17 +25,12 @@ export default async function runExecutor(
       ...buildStringFlagIfValid(`-coverprofile`, options.coverProfile),
       ...buildFlagIfEnabled('-race', options.race),
       ...buildStringFlagIfValid(`-run`, options.run),
-      ...buildStringFlagIfValid('-count', options.count > 0 ? options.count.toString() : undefined),
+      ...buildStringFlagIfValid(
+        '-count',
+        options.count > 0 ? options.count.toString() : undefined
+      ),
       './...',
     ],
     { cwd: extractProjectRoot(context) }
   );
 }
-
-const buildFlagIfEnabled = (flag: string, enabled: boolean): string[] => {
-  return enabled ? [flag] : [];
-};
-
-const buildStringFlagIfValid = (flag: string, value?: string): string[] => {
-  return value ? [`${flag}=${value}`] : [];
-};

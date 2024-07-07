@@ -41,3 +41,23 @@ export const executeCommand = async (
     return { success: false };
   }
 };
+
+/**
+ * Add a flag to an array of parameter if it is enabled.
+ *
+ * @param flag the flag to add
+ * @param enabled true if flag should be added
+ */
+export const buildFlagIfEnabled = (flag: string, enabled: boolean): string[] =>
+  enabled ? [flag] : [];
+
+/**
+ * Add a string flag to an array of parameter if it is valid.
+ *
+ * @param flag the flag to add
+ * @param value the value of the flag
+ */
+export const buildStringFlagIfValid = (
+  flag: string,
+  value?: string
+): string[] => (value ? [`${flag}=${value}`] : []);
