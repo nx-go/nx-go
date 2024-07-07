@@ -62,6 +62,7 @@
       "options": {
         "postTargets": ["build", "deploy", "github"],
         "preset": "conventionalcommits",
+        "push": true,
         "tagPrefix": "v"
       }
     },
