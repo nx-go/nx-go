@@ -1,5 +1,9 @@
 import { ExecutorContext } from '@nx/devkit';
-import { executeCommand, extractProjectRoot } from '../../utils';
+import {
+  buildStringFlagIfValid,
+  executeCommand,
+  extractProjectRoot,
+} from '../../utils';
 import { BuildExecutorSchema } from './schema';
 
 /**
@@ -26,6 +30,7 @@ const buildParams = (
     'build',
     '-o',
     buildOutputPath(extractProjectRoot(context), options.outputPath),
+    ...buildStringFlagIfValid('-buildmode', options.buildMode),
     ...(options.flags ?? []),
     options.main,
   ];

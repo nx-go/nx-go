@@ -17,6 +17,10 @@
       "type": "string",
       "description": "The output path of the resulting executable"
     },
+    "buildMode": {
+      "type": "string",
+      "description": "The build mode to use"
+    },
     "env": {
       "type": "object",
       "additionalProperties": {

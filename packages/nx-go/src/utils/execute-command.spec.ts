@@ -1,6 +1,11 @@
 import { logger } from '@nx/devkit';
 import * as child_process from 'child_process';
-import { executeCommand, extractProjectRoot } from './execute-command';
+import {
+  buildFlagIfEnabled,
+  buildStringFlagIfValid,
+  executeCommand,
+  extractProjectRoot,
+} from './execute-command';
 
 jest.mock('@nx/devkit', () => ({
   logger: { info: jest.fn(), error: jest.fn() },
@@ -65,6 +70,26 @@ describe('Execute command', () => {
       expect(result.success).toBeFalsy();
       expect(logger.error).toHaveBeenCalledWith(spawnError);
       expect(logger.info).toHaveBeenCalledWith('Executing command: go version');
+    });
+  });
+
+  describe('Method: buildFlagIfEnabled', () => {
+    it('should add a flag because enabled', () => {
+      expect(buildFlagIfEnabled('--flag1', true)).toEqual(['--flag1']);
+    });
+
+    it('should not add a flag because not enabled', () => {
+      expect(buildFlagIfEnabled('--flag1', false)).toEqual([]);
+    });
+  });
+
+  describe('Method: buildStringFlagIfValid', () => {
+    it('should add a flag because valid', () => {
+      expect(buildStringFlagIfValid('--flag1', 'v1')).toEqual(['--flag1=v1']);
+    });
+
+    it('should not add a flag because not valid', () => {
+      expect(buildStringFlagIfValid('--flag1')).toEqual([]);
     });
   });
 });

@@ -12,6 +12,10 @@ Builds a project with `go build` cli command.
 
 - (string): The output path of the resulting executable
 
+### buildMode
+
+- (string): Build mode to use
+
 ### env
 
 - (object): Environment variables to set when running the executor

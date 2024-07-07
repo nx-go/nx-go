@@ -3,10 +3,16 @@ import * as commonFunctions from '../../utils';
 import executor from './executor';
 import type { TestExecutorSchema } from './schema';
 
-jest.mock('../../utils', () => ({
-  executeCommand: jest.fn().mockResolvedValue({ success: true }),
-  extractProjectRoot: jest.fn(() => 'apps/project'),
-}));
+jest.mock('../../utils', () => {
+  const { buildFlagIfEnabled, buildStringFlagIfValid } =
+    jest.requireActual('../../utils');
+  return {
+    buildFlagIfEnabled,
+    buildStringFlagIfValid,
+    executeCommand: jest.fn().mockResolvedValue({ success: true }),
+    extractProjectRoot: jest.fn(() => 'apps/project'),
+  };
+});
 
 const options: TestExecutorSchema = {};
 
@@ -33,7 +39,7 @@ describe('Test Executor', () => {
     ${{ coverProfile: 'coverage.out' }} | ${'-coverprofile=coverage.out'}
     ${{ race: true }}                   | ${'-race'}
     ${{ run: 'TestProjection' }}        | ${'-run=TestProjection'}
-    ${{ count: 1 }}                   | ${'-count=1'}
+    ${{ count: 1 }}                     | ${'-count=1'}
   `('should add flag $flag if enabled', async ({ config, flag }) => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor({ ...options, ...config }, context);
