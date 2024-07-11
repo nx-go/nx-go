@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [3.2.0](https://github.com/nx-go/nx-go/compare/v3.1.0...v3.2.0) (2024-07-11)
+
+
+### Features
+
+* add a generate executor ([#123](https://github.com/nx-go/nx-go/issues/123)) ([892ec5e](https://github.com/nx-go/nx-go/commit/892ec5e4b81feee9e0fe7e562d264a824443e81c))
+* add buildMode property to build executor ([#126](https://github.com/nx-go/nx-go/issues/126)) ([11512c3](https://github.com/nx-go/nx-go/commit/11512c3dc56477328992ba145b95e49407f045ca))
+* add count property to test executor ([#125](https://github.com/nx-go/nx-go/issues/125)) ([67753fa](https://github.com/nx-go/nx-go/commit/67753fa4980ff3c3d9c2c7a1b714aadc55e36a17))
+
 ## [3.1.0](https://github.com/nx-go/nx-go/compare/v3.0.0...v3.1.0) (2024-06-03)
 
 
