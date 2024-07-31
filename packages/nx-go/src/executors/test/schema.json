@@ -32,6 +32,10 @@
     "count": {
       "description": "Run each test $N times matching this count",
       "type": "number"
+    },
+    "timeout": {
+      "description": "If a test binary runs longer than duration d, panic.\nIf d is 0, the timeout is disabled.\nThe default is 10 minutes (10m).",
+      "type": "string"
     }
   },
   "required": []

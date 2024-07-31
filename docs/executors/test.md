@@ -27,3 +27,7 @@ Uses `go test` command to run tests of a Go project.
 ### count
 
 - (number): Run test $N times matching this count
+
+### timeout
+
+- (string): If a test binary runs longer than duration d, panic. If d is 0, the timeout is disabled. The default is 10 minutes (10m).
