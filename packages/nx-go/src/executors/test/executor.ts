@@ -29,6 +29,7 @@ export default async function runExecutor(
         '-count',
         options.count > 0 ? options.count.toString() : undefined
       ),
+      ...buildStringFlagIfValid(`-timeout`, options.timeout),
       './...',
     ],
     { cwd: extractProjectRoot(context) }
