@@ -6,16 +6,17 @@
   "implicitDependencies": ["nx-go"],
   "targets": {
     "e2e": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "packages/nx-go-e2e/jest.config.ts",
+        "passWithNoTests": true,
         "runInBand": true
       },
-      "dependsOn": ["^build"]
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
+      "dependsOn": ["^build"],
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
     }
   }
 }
