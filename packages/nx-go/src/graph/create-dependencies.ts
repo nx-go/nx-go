@@ -70,7 +70,7 @@ const getFileModuleImports = (
     return [];
   }
   return parseGoList('import', content)
-    .map((item) => item.split('"')[1])
+    .map((item) => (item.includes('"') ? item.split('"')[1] : item))
     .filter((item) => item != null)
     .map((item) => ({
       import: item,

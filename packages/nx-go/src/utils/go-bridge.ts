@@ -10,7 +10,7 @@ import {
 export type GoListType = 'import' | 'use';
 
 const REGEXS: Record<GoListType | 'version', RegExp> = {
-  import: /import\s+(\(([^)]*)\)|([^\n]*))/,
+  import: /import\s+(?:(\w+)\s+)?"([^"]+)"|\(([\s\S]*?)\)/,
   use: /use\s+(\(([^)]*)\)|([^\n]*))/,
   version: /go(?<version>\S+) /,
 };

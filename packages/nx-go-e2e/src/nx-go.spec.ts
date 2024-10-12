@@ -147,5 +147,55 @@ describe('nx-go', () => {
       expect(appDependencies.length).toBe(1);
       expect(appDependencies[0].target).toBe(libName);
     });
+
+    it('should work with packages with import in the name', async () => {
+      const dataimportLib = 'dataimport';
+      await runNxCommandAsync(`generate @nx-go/nx-go:library ${dataimportLib}`);
+
+      expect(() =>
+        checkFilesExist(`${dataimportLib}/${dataimportLib}.go`)
+      ).not.toThrow();
+
+      const captilizedDataImportName =
+        dataimportLib[0].toUpperCase() + dataimportLib.substring(1);
+      const captilizedLibName = libName[0].toUpperCase() + libName.substring(1);
+      updateFile(
+        join(dataimportLib, dataimportLib + '.go'),
+        `package ${dataimportLib}
+
+        import (
+          "${libName}"
+        )
+
+        func ${captilizedDataImportName}() string {
+          return ${libName}.${captilizedLibName}("${appName}")
+        }`
+      );
+
+      updateFile(
+        join(appName, 'main.go'),
+        `package main
+
+        import (
+          "fmt"
+          "${dataimportLib}"
+        )
+
+        func main() {
+          fmt.Println(${dataimportLib}.${captilizedDataImportName}("${appName}"))
+        }`
+      );
+
+      await runNxCommandAsync('dep-graph --file=graph.json');
+      const { graph } = readJson('graph.json');
+
+      expect(graph).toBeDefined();
+      expect(graph.dependencies).toBeDefined();
+      expect(graph.dependencies[dataimportLib]).toBeDefined();
+
+      const dataimportDependencies = graph.dependencies[dataimportLib];
+      expect(dataimportDependencies.length).toBe(1);
+      expect(dataimportDependencies[0].target).toBe(libName);
+    });
   });
 });
