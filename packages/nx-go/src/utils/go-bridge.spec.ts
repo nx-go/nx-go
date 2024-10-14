@@ -95,7 +95,7 @@ describe('Go bridge', () => {
 
     it('should parse Go list with only one item', () => {
       const result = parseGoList('import', 'import "fmt"');
-      expect(result).toEqual(['"fmt"']);
+      expect(result).toEqual(['fmt']);
     });
 
     it('should parse Go list with no item', () => {
