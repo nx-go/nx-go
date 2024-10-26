@@ -1,6 +1,7 @@
 const { FlatCompat } = require('@eslint/eslintrc');
 const js = require('@eslint/js');
 const nxEslintPlugin = require('@nx/eslint-plugin');
+const stylistic = require('@stylistic/eslint-plugin');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -8,7 +9,12 @@ const compat = new FlatCompat({
 });
 
 module.exports = [
-  { plugins: { '@nx': nxEslintPlugin } },
+  {
+    plugins: {
+      '@nx': nxEslintPlugin,
+      '@stylistic': stylistic
+    }
+  },
   {
     files: ['**/*.json'],
     // Override or add rules here
@@ -38,8 +44,7 @@ module.exports = [
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
       ...config.rules,
-      '@typescript-eslint/no-extra-semi': 'error',
-      'no-extra-semi': 'off',
+      '@stylistic/no-extra-semi': 'error',
     },
   })),
   ...compat.config({ extends: ['plugin:@nx/javascript'] }).map((config) => ({
@@ -47,8 +52,7 @@ module.exports = [
     files: ['**/*.js', '**/*.jsx'],
     rules: {
       ...config.rules,
-      '@typescript-eslint/no-extra-semi': 'error',
-      'no-extra-semi': 'off',
+      '@stylistic/no-extra-semi': 'error',
     },
   })),
   ...compat.config({ env: { jest: true } }).map((config) => ({
