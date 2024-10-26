@@ -48,9 +48,6 @@
       "dependsOn": ["build"]
     },
     "test": {
-      "options": {
-        "passWithNoTests": true
-      },
       "configurations": {
         "ci": {
           "ci": true,

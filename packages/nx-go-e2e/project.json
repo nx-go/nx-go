@@ -7,7 +7,6 @@
   "targets": {
     "e2e": {
       "options": {
-        "passWithNoTests": true,
         "runInBand": true
       },
       "dependsOn": ["^build"],
