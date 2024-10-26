@@ -20,19 +20,15 @@ runs:
       with:
         go-version: ${{ inputs.go_version }}
 
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4.0.0
+
     - name: Use Node.js ${{ inputs.node_version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node_version }}
         registry-url: 'https://registry.npmjs.org'
-
-    - name: 💼 Cache pnpm modules
-      uses: actions/cache@v4
-      with:
-        path: ~/.pnpm-store
-        key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-
+        cache: 'pnpm'
 
     - name: 🔧 Install dependencies
       uses: pnpm/action-setup@v4.0.0
