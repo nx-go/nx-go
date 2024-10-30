@@ -19,6 +19,7 @@ runs:
       uses: actions/setup-go@v5
       with:
         go-version: ${{ inputs.go_version }}
+        cache: false
 
     - name: Install pnpm
       uses: pnpm/action-setup@v4.0.0
