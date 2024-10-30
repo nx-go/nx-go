@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 export default {
   displayName: 'nx-go',
   preset: '../../jest.preset.js',

@@ -20,7 +20,7 @@ export default function createTestProject(preset = 'apps'): string {
   const nxVersion = readJsonFile(pkgJsonPath).devDependencies['nx'];
 
   execSync(
-    `npx --yes create-nx-workspace@${nxVersion} ${projectName} --preset ${preset} --no-nxCloud --no-interactive`,
+    `npx --yes create-nx-workspace@${nxVersion} ${projectName} --preset ${preset} --nxCloud skip --no-interactive`,
     {
       cwd: dirname(projectDirectory),
       stdio: 'inherit',
