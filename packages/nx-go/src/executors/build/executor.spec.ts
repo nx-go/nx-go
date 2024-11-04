@@ -41,6 +41,14 @@ describe('Build Executor', () => {
     }
   );
 
+  it('should execute build command using TinyGo compiler', async () => {
+    await executor({ ...options, compiler: 'tinygo' }, context);
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['build', '-o', 'dist/apps/project', 'apps/project/main.go'],
+      expect.objectContaining({ executable: 'tinygo' })
+    );
+  });
+
   it('should execute build command with custom output path and flags', async () => {
     await executor(
       { ...options, outputPath: 'custom-path', flags: ['--flag1'] },
@@ -56,7 +64,9 @@ describe('Build Executor', () => {
     config                       | flag
     ${{ buildMode: 'c-shared' }} | ${'-buildmode=c-shared'}
   `('should add flag $flag if enabled', async ({ config, flag }) => {
-    expect((await executor({ ...options, ...config }, context)).success).toBeTruthy();
+    expect(
+      (await executor({ ...options, ...config }, context)).success
+    ).toBeTruthy();
     expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
       expect.arrayContaining([flag]),
       expect.anything()
