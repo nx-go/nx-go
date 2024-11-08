@@ -5,22 +5,13 @@ import {
   ProjectConfiguration,
   RawProjectGraphDependency,
 } from '@nx/devkit';
-import * as child_process from 'child_process';
-import { execSync } from 'child_process';
 import { ProjectFileMap } from 'nx/src/config/project-graph';
+import * as utils from '../utils';
 import { createDependencies } from './create-dependencies';
 
 jest.mock('@nx/devkit', () => ({
   DependencyType: { static: 'static' },
   workspaceRoot: '/tmp/proj',
-}));
-jest.mock('child_process', () => ({
-  execSync: jest
-    .fn()
-    .mockReturnValue(
-      '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n' +
-        '{ "Path": "proj/datalayer", "Dir": "/tmp/proj/libs/data-layer" }'
-    ),
 }));
 jest.mock('fs', () => ({
   readFileSync: jest
@@ -28,6 +19,12 @@ jest.mock('fs', () => ({
     .mockReturnValue('import (\n\t"fmt"\n\t"proj/datalayer"\n)'),
 }));
 jest.mock('../utils', () => ({
+  getGoModules: jest
+    .fn()
+    .mockReturnValue(
+      '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n' +
+        '{ "Path": "proj/datalayer", "Dir": "/tmp/proj/libs/data-layer" }'
+    ),
   parseGoList: jest.fn().mockReturnValue(['"fmt"', 'data "proj/datalayer"']),
 }));
 
@@ -72,9 +69,11 @@ describe('Create dependencies', () => {
 
   it('should create dependencies on Windows', async () => {
     const oldWorkspace = nxDevkit.workspaceRoot;
-    Object.defineProperty(nxDevkit, 'workspaceRoot', { value: 'C:\\tmp\\proj' });
+    Object.defineProperty(nxDevkit, 'workspaceRoot', {
+      value: 'C:\\tmp\\proj',
+    });
     jest
-      .spyOn(child_process, 'execSync')
+      .spyOn(utils, 'getGoModules')
       .mockReturnValueOnce(
         '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n' +
           '{ "Path": "proj/datalayer", "Dir": "C:\\\\tmp\\\\proj\\\\libs\\\\data-layer" }'
@@ -89,22 +88,24 @@ describe('Create dependencies', () => {
       const dependencies = await createDependencies(null, {
         filesToProcess: { projectFileMap: {}, nonProjectFiles: [] },
       } as CreateDependenciesContext);
-      expect(execSync).not.toHaveBeenCalled();
+      expect(utils.getGoModules).not.toHaveBeenCalled();
       expect(dependencies).toEqual([]);
     });
 
     it('should compute Go modules but there is no', async () => {
-      (execSync as jest.Mock).mockReturnValueOnce('');
+      (utils.getGoModules as jest.Mock).mockReturnValueOnce('');
       const dependencies = await createDependencies(null, validContext);
-      expect(execSync).toHaveBeenCalledWith(
-        'go list -m -json',
-        expect.objectContaining({ cwd: '/tmp/proj' })
-      );
+      expect(utils.getGoModules).toHaveBeenCalledWith('/tmp/proj', false);
       expect(dependencies).toEqual([]);
     });
 
+    it('should compute Go modules and fail silently if Go is not required', async () => {
+      await createDependencies({ skipGoDependencyCheck: true }, validContext);
+      expect(utils.getGoModules).toHaveBeenCalledWith('/tmp/proj', true);
+    });
+
     it('should throw an error if Go modules cannot be computed', async () => {
-      (execSync as jest.Mock).mockReturnValueOnce(null);
+      (utils.getGoModules as jest.Mock).mockReturnValueOnce(null);
       await expect(createDependencies(null, validContext)).rejects.toThrow(
         'Cannot get list of Go modules'
       );
