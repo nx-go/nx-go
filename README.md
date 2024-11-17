@@ -72,6 +72,8 @@ nx g @nx-go/nx-go:convert-to-one-mod
 
 Want to try out these capabilities quickly? Visit our [playground](https://github.com/nx-go/nx-go-playground)!
 
+Need more customization? A [plugin configuration](./docs/options.md) is also available.
+
 ## 🧩 Compatibility
 
 | nx-go version | Nx version   |

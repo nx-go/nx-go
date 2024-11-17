@@ -6,10 +6,10 @@ import {
   RawProjectGraphDependency,
   workspaceRoot,
 } from '@nx/devkit';
-import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
 import { dirname, extname } from 'path';
-import { parseGoList } from '../utils';
+import type { NxGoPluginOptions } from '../type';
+import { getGoModules, parseGoList } from '../utils';
 
 type ProjectRootMap = Map<string, string>;
 
@@ -24,13 +24,12 @@ interface GoImportWithModule {
 }
 
 /**
- * Gets a list of go modules using Go CLI.
+ * Computes a list of go modules.
+ *
+ * @param failSilently if true, the function will not throw an error if it fails
  */
-const getGoModules = (): GoModule[] => {
-  const blocks = execSync('go list -m -json', {
-    encoding: 'utf-8',
-    cwd: workspaceRoot,
-  });
+const computeGoModules = (failSilently = false): GoModule[] => {
+  const blocks = getGoModules(workspaceRoot, failSilently);
   if (blocks != null) {
     return blocks
       .split('}')
@@ -114,7 +113,10 @@ const getProjectNameForGoImport = (
   return null;
 };
 
-export const createDependencies: CreateDependencies = async (_, context) => {
+export const createDependencies: CreateDependencies<NxGoPluginOptions> = async (
+  options,
+  context
+) => {
   const dependencies: RawProjectGraphDependency[] = [];
 
   let goModules: GoModule[] = null;
@@ -126,7 +128,7 @@ export const createDependencies: CreateDependencies = async (_, context) => {
     );
 
     if (files.length > 0 && goModules == null) {
-      goModules = getGoModules();
+      goModules = computeGoModules(options?.skipGoDependencyCheck);
       projectRootMap = extractProjectRootMap(context);
     }
 
