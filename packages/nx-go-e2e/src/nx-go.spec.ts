@@ -54,6 +54,10 @@ describe('nx-go', () => {
     expect(() => checkFilesExist(`${appName}/go.mod`)).not.toThrow();
     expect(readFile(`${appName}/go.mod`)).toContain(`module ${appName}`);
     expect(readFile(`go.work`)).toContain(`use ./${appName}`);
+
+    const { name, projectType } = readJson(`${appName}/project.json`);
+    expect(name).toEqual(appName);
+    expect(projectType).toEqual('application');
   });
 
   it('should create a library', async () => {
@@ -65,6 +69,10 @@ describe('nx-go', () => {
     expect(readFile(`go.work`)).toContain(
       `use (\n\t./${appName}\n\t./${libName}\n)`
     );
+
+    const { name, projectType } = readJson(`${libName}/project.json`);
+    expect(name).toEqual(libName);
+    expect(projectType).toEqual('library');
   });
 
   it('should build the application', async () => {
