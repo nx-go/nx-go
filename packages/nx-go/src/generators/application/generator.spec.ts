@@ -2,6 +2,7 @@ const normalizeOptions = {
   name: 'my-api',
   moduleName: 'myapi',
   projectRoot: 'apps/my-api',
+  projectName: 'my-api',
   projectType: 'application',
   parsedTags: ['api', 'backend'],
 };
@@ -19,12 +20,15 @@ jest.mock('../../utils', () => ({
   addGoWorkDependency: jest.fn(),
   createGoMod: jest.fn(),
   isGoWorkspace: jest.fn().mockReturnValue(false),
-  normalizeOptions: jest.fn().mockReturnValue(normalizeOptions),
+  normalizeOptions: jest.fn().mockImplementation((_, { skipFormat }) => ({
+    ...normalizeOptions,
+    skipFormat,
+  })),
 }));
 
 describe('application generator', () => {
   let tree: Tree;
-  const options: ApplicationGeneratorSchema = { name: 'test' };
+  const options: ApplicationGeneratorSchema = { name: 'my-api' };
 
   beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
   afterEach(() => jest.clearAllMocks());
@@ -33,9 +37,10 @@ describe('application generator', () => {
     await applicationGenerator(tree, options);
     expect(nxDevkit.addProjectConfiguration).toHaveBeenCalledWith(
       tree,
-      'test',
+      'my-api',
       {
         root: 'apps/my-api',
+        name: 'my-api',
         projectType: 'application',
         sourceRoot: 'apps/my-api',
         targets: defaultTargets,
@@ -70,9 +75,10 @@ describe('application generator', () => {
     await applicationGenerator(tree, options);
     expect(nxDevkit.updateProjectConfiguration).toHaveBeenCalledWith(
       tree,
-      'test',
+      'my-api',
       {
         root: 'apps/my-api',
+        name: 'my-api',
         projectType: 'application',
         sourceRoot: 'apps/my-api',
         targets: {

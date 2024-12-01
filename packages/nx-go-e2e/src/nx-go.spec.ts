@@ -75,6 +75,19 @@ describe('nx-go', () => {
     expect(projectType).toEqual('library');
   });
 
+  it('should create an application in a sub directory', async () => {
+    const name = uniq('app');
+    // directory is not derived since Nx 20
+    const directory = process.env.NX_VERSION.startsWith('20')
+      ? `apps/${name}`
+      : 'apps';
+    await runNxCommandAsync(
+      `generate @nx-go/nx-go:application ${name} --directory=${directory}`
+    );
+    expect(() => checkFilesExist(`apps/${name}/main.go`)).not.toThrow();
+    expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();
+  });
+
   it('should build the application', async () => {
     const result = await runNxCommandAsync(`build ${appName}`);
     const ext = process.platform === 'win32' ? '.exe' : '';

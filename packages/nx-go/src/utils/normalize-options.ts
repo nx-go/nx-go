@@ -1,11 +1,17 @@
-import { names, ProjectType, Tree } from '@nx/devkit';
+import { names, NX_VERSION, ProjectType, Tree } from '@nx/devkit';
 import {
   determineProjectNameAndRootOptions,
   ProjectNameAndRootFormat,
 } from '@nx/devkit/src/generators/project-name-and-root-utils';
 
 export interface GeneratorSchema {
+  /**
+   * TODO major: this property is optional in Nx 20
+   */
   name: string;
+  /**
+   * TODO major: this property is provided by default in Nx 20
+   */
   directory?: string;
   projectNameAndRootFormat?: ProjectNameAndRootFormat;
   tags?: string;
@@ -26,6 +32,8 @@ export const normalizeOptions = async (
   projectType: ProjectType,
   generator: string
 ): Promise<GeneratorNormalizedSchema> => {
+  ensureProjectDirectory(options);
+
   const { projectName, projectRoot, projectNameAndRootFormat } =
     await determineProjectNameAndRootOptions(tree, {
       name: options.name,
@@ -49,4 +57,11 @@ export const normalizeOptions = async (
     projectType,
     parsedTags,
   };
+};
+
+const ensureProjectDirectory = (options: GeneratorSchema) => {
+  // Nx 20 BREAKING CHANGE: `directory` is now mandatory and `name` is optional
+  if (NX_VERSION.startsWith('20') && options.directory === undefined) {
+    options.directory = options.name;
+  }
 };

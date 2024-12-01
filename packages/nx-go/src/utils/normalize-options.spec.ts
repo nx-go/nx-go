@@ -1,8 +1,10 @@
+import * as devkit from '@nx/devkit';
 import type { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { normalizeOptions } from './normalize-options';
 
 jest.mock('@nx/devkit', () => ({
+  NX_VERSION: '17.3.2',
   names: jest.fn().mockReturnValue({
     fileName: 'backend-filename',
     propertyName: 'backendFilename',
@@ -47,5 +49,16 @@ describe('normalizeOptions', () => {
       'init'
     );
     expect(output.parsedTags).toEqual(['api', 'web']);
+  });
+
+  it('should use name as directory if not passed when using Nx 20', async () => {
+    Object.defineProperty(devkit, 'NX_VERSION', { value: '20.2.1' });
+    const output = await normalizeOptions(
+      tree,
+      { name: 'backend' },
+      'application',
+      'init'
+    );
+    expect(output.directory).toBe('backend');
   });
 });
