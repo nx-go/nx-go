@@ -49,13 +49,14 @@ export default async function applicationGenerator(
   );
   const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,
+    name: options.projectName,
     projectType: options.projectType,
     sourceRoot: options.projectRoot,
     tags: options.parsedTags,
     targets: defaultTargets,
   };
 
-  addProjectConfiguration(tree, schema.name, projectConfiguration);
+  addProjectConfiguration(tree, options.name, projectConfiguration);
 
   generateFiles(tree, join(__dirname, 'files'), options.projectRoot, options);
 
@@ -65,10 +66,10 @@ export default async function applicationGenerator(
     projectConfiguration.targets.tidy = {
       executor: '@nx-go/nx-go:tidy',
     };
-    updateProjectConfiguration(tree, schema.name, projectConfiguration);
+    updateProjectConfiguration(tree, options.name, projectConfiguration);
   }
 
-  if (!schema.skipFormat) {
+  if (!options.skipFormat) {
     await formatFiles(tree);
   }
 }
