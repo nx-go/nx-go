@@ -38,6 +38,7 @@ export default async function libraryGenerator(
   );
   const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,
+    name: options.projectName,
     projectType: options.projectType,
     sourceRoot: options.projectRoot,
     tags: options.parsedTags,

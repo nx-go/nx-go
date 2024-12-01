@@ -2,6 +2,7 @@ const normalizeOptions = {
   name: 'my-api',
   moduleName: 'myapi',
   projectRoot: 'apps/my-api',
+  projectName: 'my-api',
   projectType: 'application',
   parsedTags: ['api', 'backend'],
 };
@@ -36,6 +37,7 @@ describe('application generator', () => {
       'test',
       {
         root: 'apps/my-api',
+        name: 'my-api',
         projectType: 'application',
         sourceRoot: 'apps/my-api',
         targets: defaultTargets,
@@ -73,6 +75,7 @@ describe('application generator', () => {
       'test',
       {
         root: 'apps/my-api',
+        name: 'my-api',
         projectType: 'application',
         sourceRoot: 'apps/my-api',
         targets: {

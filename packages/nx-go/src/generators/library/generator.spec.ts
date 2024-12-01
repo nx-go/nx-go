@@ -43,6 +43,7 @@ describe('library generator', () => {
       'data-access',
       {
         root: 'libs/data-access',
+        name: 'data-access',
         projectType: 'library',
         sourceRoot: 'libs/data-access',
         targets: defaultTargets,
@@ -94,6 +95,7 @@ describe('library generator', () => {
       'data-access',
       {
         root: 'libs/data-access',
+        name: 'data-access',
         projectType: 'library',
         sourceRoot: 'libs/data-access',
         targets: {
