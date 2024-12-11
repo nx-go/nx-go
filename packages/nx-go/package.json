@@ -1,6 +1,6 @@
 {
   "name": "@nx-go/nx-go",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Nx plugin to use Go in a Nx Workspace",
   "license": "MIT",
   "homepage": "https://github.com/nx-go/nx-go",

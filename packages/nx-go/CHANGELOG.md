@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [3.3.1](https://github.com/nx-go/nx-go/compare/v3.3.0...v3.3.1) (2024-12-11)
+
+
+### Bug Fixes
+
+* update generators to support Nx 20 ([#147](https://github.com/nx-go/nx-go/issues/147)) ([54f74f5](https://github.com/nx-go/nx-go/commit/54f74f5975fa3ffe711cc9ef160209c1cd694714))
+
 ## [3.3.0](https://github.com/nx-go/nx-go/compare/v3.2.0...v3.3.0) (2024-11-17)
 
 
