@@ -20,6 +20,11 @@
       "schema": "./src/executors/tidy/schema.json",
       "description": "Tidy the mod file of the application or library"
     },
+    "download": {
+      "implementation": "./src/executors/download/executor",
+      "schema": "./src/executors/download/schema.json",
+      "description": "Download Go modules to local cache"
+    },
     "serve": {
       "implementation": "./src/executors/serve/executor",
       "schema": "./src/executors/serve/schema.json",

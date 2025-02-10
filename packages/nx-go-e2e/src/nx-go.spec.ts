@@ -117,6 +117,13 @@ describe('nx-go', () => {
     });
   });
 
+  describe('Download', () => {
+    it('should execute go mod download', async () => {
+      const result = await runNxCommandAsync(`download ${appName}`);
+      expect(result.stdout).toContain(`Executing command: go mod download`);
+    });
+  });
+
   describe('Generate', () => {
     beforeAll(() =>
       addNxTarget(appName, 'generate', { executor: '@nx-go/nx-go:generate' })

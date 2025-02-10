@@ -66,6 +66,7 @@ nx g @nx-go/nx-go:convert-to-one-mod
 - `serve`: [Run a Go application](./docs/executors/serve.md)
 - `test`: [Run tests of a Go project](./docs/executors/test.md)
 - `tidy`: [Ensures go.mod file matches a project source code](./docs/executors/tidy.md)
+- `download`: [Downloads Go modules to local cache](./docs/executors/download.md)
 
 > [!TIP]
 > You can use `nx list @nx-go/nx-go` to see list capabilities.

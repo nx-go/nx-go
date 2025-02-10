@@ -58,6 +58,9 @@ export default async function libraryGenerator(
     projectConfiguration.targets.tidy = {
       executor: '@nx-go/nx-go:tidy',
     };
+    projectConfiguration.targets.download = {
+      executor: '@nx-go/nx-go:download',
+    };
     updateProjectConfiguration(tree, options.name, projectConfiguration);
   }
 
