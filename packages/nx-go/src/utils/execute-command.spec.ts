@@ -36,10 +36,10 @@ describe('Execute command', () => {
     it('should execute a successfully command with default options', async () => {
       const result = await executeCommand(['build']);
       expect(result.success).toBeTruthy();
-      expect(child_process.execSync).toHaveBeenCalledWith(
-        'go build',
-        expect.objectContaining({ cwd: null, env: process.env })
-      );
+      expect(child_process.execSync).toHaveBeenCalledWith('go build', {
+        env: process.env,
+        stdio: [0, 1, 2],
+      });
       expect(logger.info).toHaveBeenCalledWith('Executing command: go build');
     });
 
