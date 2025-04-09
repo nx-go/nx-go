@@ -30,7 +30,11 @@ const buildParams = (
   return [
     'build',
     '-o',
-    buildOutputPath(extractProjectRoot(context), options.outputPath),
+    buildOutputPath(
+      extractProjectRoot(context),
+      options.extension,
+      options.outputPath
+    ),
     ...buildStringFlagIfValid('-buildmode', options.buildMode),
     ...(options.flags ?? []),
     options.main,
@@ -43,9 +47,17 @@ const buildParams = (
  * @param projectRoot project root
  * @param customPath custom path to use first
  */
-const buildOutputPath = (projectRoot: string, customPath?: string): string => {
-  const extension = process.platform === 'win32' ? '.exe' : '';
-  return (customPath ?? `dist/${projectRoot}`) + extension;
+const buildOutputPath = (
+  projectRoot: string,
+  extension: BuildExecutorSchema['extension'],
+  customPath?: string
+): string => {
+  let ext = process.platform === 'win32' ? '.exe' : '';
+
+  if (extension !== 'inherit') {
+    ext = extension;
+  }
+  return (customPath ?? `dist/${projectRoot}`) + ext;
 };
 
 /**

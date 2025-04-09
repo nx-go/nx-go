@@ -15,6 +15,13 @@ jest.mock('../../utils', () => {
 const options: BuildExecutorSchema = {
   main: 'apps/project/main.go',
   env: { hello: 'world' },
+  extension: 'inherit',
+};
+
+const customExt: BuildExecutorSchema = {
+  main: 'apps/project/main.go',
+  env: { hello: 'world' },
+  extension: '.whatever',
 };
 
 const context: ExecutorContext = {
@@ -33,6 +40,23 @@ describe('Build Executor', () => {
     async ({ platform, outputPath }) => {
       Object.defineProperty(process, 'platform', { value: platform });
       const output = await executor(options, context);
+      expect(output.success).toBeTruthy();
+      expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+        ['build', '-o', outputPath, 'apps/project/main.go'],
+        { cwd: 'current-dir', env: { hello: 'world' } }
+      );
+    }
+  );
+
+  it.each`
+    platform   | outputPath
+    ${'win32'} | ${'dist/apps/project.whatever'}
+    ${'linux'} | ${'dist/apps/project.whatever'}
+  `(
+    'should execute build command on platform $platform with custom extension',
+    async ({ platform, outputPath }) => {
+      Object.defineProperty(process, 'platform', { value: platform });
+      const output = await executor(customExt, context);
       expect(output.success).toBeTruthy();
       expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
         ['build', '-o', outputPath, 'apps/project/main.go'],
