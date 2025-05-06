@@ -3,4 +3,5 @@ export interface ServeExecutorSchema {
   cmd?: string;
   cwd?: string;
   args?: string[];
+  flags?: string[];
 }

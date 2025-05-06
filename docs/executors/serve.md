@@ -19,3 +19,7 @@ Uses `go run` command to run a Go application.
 ### args
 
 - (array): Extra args when starting the app
+
+### flags
+
+- (array): Flags to pass to the go compiler

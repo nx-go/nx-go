@@ -29,6 +29,13 @@
       },
       "description": "Extra args when starting the app",
       "alias": "arguments"
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Flags to pass to the go compiler"
     }
   },
   "required": ["main"]
