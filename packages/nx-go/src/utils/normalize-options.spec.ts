@@ -1,10 +1,10 @@
-import * as devkit from '@nx/devkit';
 import type { Tree } from '@nx/devkit';
+import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { normalizeOptions } from './normalize-options';
 
 jest.mock('@nx/devkit', () => ({
-  NX_VERSION: '17.3.2',
+  NX_VERSION: '21.0.2',
   names: jest.fn().mockReturnValue({
     fileName: 'backend-filename',
     propertyName: 'backendFilename',
@@ -28,8 +28,7 @@ describe('normalizeOptions', () => {
     const output = await normalizeOptions(
       tree,
       { name: 'backend', directory: 'backend-dir' },
-      'application',
-      'init'
+      'application'
     );
     expect(output.name).toBe('backend-filename');
     expect(output.moduleName).toBe('backendfilename');
@@ -37,7 +36,6 @@ describe('normalizeOptions', () => {
     expect(output.projectRoot).toBe('/tmp');
     expect(output.projectType).toBe('application');
     expect(output.directory).toBe('backend-dir');
-    expect(output.projectNameAndRootFormat).toBe('as-provided');
     expect(output.parsedTags).toEqual([]);
   });
 
@@ -45,19 +43,17 @@ describe('normalizeOptions', () => {
     const output = await normalizeOptions(
       tree,
       { name: 'backend', tags: 'api,web' },
-      'application',
-      'init'
+      'application'
     );
     expect(output.parsedTags).toEqual(['api', 'web']);
   });
 
   it('should use name as directory if not passed when using Nx 20', async () => {
-    Object.defineProperty(devkit, 'NX_VERSION', { value: '20.2.1' });
+    Object.defineProperty(devkit, 'NX_VERSION', { value: '21.0.1' });
     const output = await normalizeOptions(
       tree,
       { name: 'backend' },
-      'application',
-      'init'
+      'application'
     );
     expect(output.directory).toBe('backend');
   });

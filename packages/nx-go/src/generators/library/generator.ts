@@ -33,8 +33,8 @@ export default async function libraryGenerator(
   const options = await normalizeOptions(
     tree,
     schema,
-    'library',
-    '@nx-go/nx-go:library'
+    'library'
+    // '@nx-go/nx-go:library'
   );
   const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,

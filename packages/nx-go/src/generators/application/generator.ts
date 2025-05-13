@@ -44,8 +44,8 @@ export default async function applicationGenerator(
   const options = await normalizeOptions(
     tree,
     schema,
-    'application',
-    '@nx-go/nx-go:application'
+    'application'
+    // '@nx-go/nx-go:application',
   );
   const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,
