@@ -20,7 +20,6 @@ describe('nx-go', () => {
 
   beforeAll(() => {
     projectDirectory = createTestProject();
-    console.log(projectDirectory);
 
     // The plugin has been built and published to a local registry in the jest globalSetup
     // Install the plugin built with the latest source code into the test repo
@@ -81,13 +80,12 @@ describe('nx-go', () => {
   it('should create an application in a sub directory', async () => {
     const name = uniq('app');
     // directory is not derived since Nx 20
-    // const nxVersion = process.env.NX_VERSION;
-    // const directory = nxVersion ? 'apps' : `apps/${name}`;
+    const nxVersion = parseInt(process.env.NX_VERSION) >= 20;
+    const directory = nxVersion ? 'apps' : `apps/${name}`;
     await runNxCommandAsync(
-      `g @nx-go/nx-go:application --name=${name} --directory=apps/${name}`
+      `g @nx-go/nx-go:application --name=${name} --directory=${directory}`
     );
 
-    // console.log(x);
     expect(() => checkFilesExist(`apps/${name}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();
   });
