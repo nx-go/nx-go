@@ -21,6 +21,9 @@ const context: ExecutorContext = {
   cwd: 'current-dir',
   root: '',
   isVerbose: false,
+  projectsConfigurations: undefined,
+  nxJsonConfiguration: undefined,
+  projectGraph: undefined,
 };
 
 describe('Build Executor', () => {

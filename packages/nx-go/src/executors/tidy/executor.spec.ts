@@ -1,4 +1,5 @@
 import { ExecutorContext } from '@nx/devkit';
+import { readNxJson } from 'nx/src/config/nx-json';
 import * as sharedFunctions from '../../utils';
 import executor from './executor';
 import { TidyExecutorSchema } from './schema';
@@ -14,6 +15,12 @@ const context: ExecutorContext = {
   cwd: 'current-dir',
   root: '',
   isVerbose: false,
+  projectsConfigurations: {
+    version: 0,
+    projects: {},
+  },
+  nxJsonConfiguration: readNxJson('*'),
+  projectGraph: undefined,
 };
 
 describe('Tidy Executor', () => {
