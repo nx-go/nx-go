@@ -17,7 +17,8 @@ export default function createTestProject(preset = 'apps'): string {
 
   // Extract current nx version
   const pkgJsonPath = joinPathFragments(workspaceRoot, 'package.json');
-  const nxVersion = readJsonFile(pkgJsonPath).devDependencies['nx'];
+  const nxVersion =
+    process.env.NX_VERSION ?? readJsonFile(pkgJsonPath).devDependencies['nx'];
 
   execSync(
     `npx --yes create-nx-workspace@${nxVersion} ${projectName} --preset ${preset} --nxCloud skip --no-interactive`,

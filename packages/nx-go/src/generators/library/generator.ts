@@ -38,6 +38,7 @@ export default async function libraryGenerator(
   );
   const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,
+    name: options.projectName,
     projectType: options.projectType,
     sourceRoot: options.projectRoot,
     tags: options.parsedTags,
@@ -60,7 +61,7 @@ export default async function libraryGenerator(
     updateProjectConfiguration(tree, options.name, projectConfiguration);
   }
 
-  if (!schema.skipFormat) {
+  if (!options.skipFormat) {
     await formatFiles(tree);
   }
 }

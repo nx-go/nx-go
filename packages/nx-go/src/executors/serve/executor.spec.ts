@@ -51,6 +51,16 @@ describe('Serve Executor', () => {
     );
   });
 
+  it('should run Go program with custom flags', async () => {
+    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const output = await executor({ ...options, flags: ['-v', '-x'] }, context);
+    expect(output.success).toBeTruthy();
+    expect(spyExecute).toHaveBeenCalledWith(
+      ['run', '-v', '-x', 'hello_world.go'],
+      { cwd: 'apps/project' }
+    );
+  });
+
   it('should remove directory from main file path', async () => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor(

@@ -7,6 +7,7 @@ import {
   addGoWorkDependency,
   createGoMod,
   createGoWork,
+  getGoModules,
   getGoShortVersion,
   getGoVersion,
   isGoWorkspace,
@@ -53,6 +54,32 @@ describe('Go bridge', () => {
     });
   });
 
+  describe('Method: getGoModules', () => {
+    it('should return output of go list -m -json command', () => {
+      const mockOutput = '{"Path":"example.com/module","Version":"v1.0.0"}';
+      jest.spyOn(child_process, 'execSync').mockReturnValueOnce(mockOutput);
+      const result = getGoModules('/path/to/project', false);
+      expect(result).toEqual(mockOutput);
+    });
+
+    it('should return empty string if command fails and failSilently is true', () => {
+      jest.spyOn(child_process, 'execSync').mockImplementationOnce(() => {
+        throw new Error('Command failed');
+      });
+      const result = getGoModules('/path/to/project', true);
+      expect(result).toEqual('');
+    });
+
+    it('should throw error if command fails and failSilently is false', () => {
+      jest.spyOn(child_process, 'execSync').mockImplementationOnce(() => {
+        throw new Error('Command failed');
+      });
+      expect(() => getGoModules('/path/to/project', false)).toThrow(
+        'Command failed'
+      );
+    });
+  });
+
   describe('Method: supportsGoWorkspace', () => {
     it.each`
       version     | expected
@@ -95,7 +122,7 @@ describe('Go bridge', () => {
 
     it('should parse Go list with only one item', () => {
       const result = parseGoList('import', 'import "fmt"');
-      expect(result).toEqual(['"fmt"']);
+      expect(result).toEqual(['fmt']);
     });
 
     it('should parse Go list with no item', () => {

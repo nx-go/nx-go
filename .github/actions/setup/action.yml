@@ -18,11 +18,17 @@ runs:
     - name: Use Go ${{ inputs.go_version }}
       uses: actions/setup-go@v5
       with:
+        cache: false # we do not install Go modules, so we do not need to cache them
         go-version: ${{ inputs.go_version }}
         cache: false
 
     - name: Install pnpm
       uses: pnpm/action-setup@v4.0.0
+
+    - name: Use pnpm
+      uses: pnpm/action-setup@v4.0.0
+      with:
+        run_install: false
 
     - name: Use Node.js ${{ inputs.node_version }}
       uses: actions/setup-node@v4
@@ -31,8 +37,6 @@ runs:
         registry-url: 'https://registry.npmjs.org'
         cache: 'pnpm'
 
-    - name: 🔧 Install dependencies
-      uses: pnpm/action-setup@v4.0.0
-      with:
-        run_install: |
-          - args: [--frozen-lockfile, --strict-peer-dependencies]
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile --strict-peer-dependencies

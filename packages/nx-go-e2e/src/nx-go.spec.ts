@@ -54,6 +54,10 @@ describe('nx-go', () => {
     expect(() => checkFilesExist(`${appName}/go.mod`)).not.toThrow();
     expect(readFile(`${appName}/go.mod`)).toContain(`module ${appName}`);
     expect(readFile(`go.work`)).toContain(`use ./${appName}`);
+
+    const { name, projectType } = readJson(`${appName}/project.json`);
+    expect(name).toEqual(appName);
+    expect(projectType).toEqual('application');
   });
 
   it('should create a library', async () => {
@@ -65,6 +69,23 @@ describe('nx-go', () => {
     expect(readFile(`go.work`)).toContain(
       `use (\n\t./${appName}\n\t./${libName}\n)`
     );
+
+    const { name, projectType } = readJson(`${libName}/project.json`);
+    expect(name).toEqual(libName);
+    expect(projectType).toEqual('library');
+  });
+
+  it('should create an application in a sub directory', async () => {
+    const name = uniq('app');
+    // directory is not derived since Nx 20
+    const directory = process.env.NX_VERSION.startsWith('20')
+      ? `apps/${name}`
+      : 'apps';
+    await runNxCommandAsync(
+      `generate @nx-go/nx-go:application ${name} --directory=${directory}`
+    );
+    expect(() => checkFilesExist(`apps/${name}/main.go`)).not.toThrow();
+    expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();
   });
 
   it('should build the application', async () => {
@@ -146,6 +167,56 @@ describe('nx-go', () => {
       const appDependencies = graph.dependencies[appName];
       expect(appDependencies.length).toBe(1);
       expect(appDependencies[0].target).toBe(libName);
+    });
+
+    it('should work with packages with import in the name', async () => {
+      const dataimportLib = 'dataimport';
+      await runNxCommandAsync(`generate @nx-go/nx-go:library ${dataimportLib}`);
+
+      expect(() =>
+        checkFilesExist(`${dataimportLib}/${dataimportLib}.go`)
+      ).not.toThrow();
+
+      const captilizedDataImportName =
+        dataimportLib[0].toUpperCase() + dataimportLib.substring(1);
+      const captilizedLibName = libName[0].toUpperCase() + libName.substring(1);
+      updateFile(
+        join(dataimportLib, dataimportLib + '.go'),
+        `package ${dataimportLib}
+
+        import (
+          "${libName}"
+        )
+
+        func ${captilizedDataImportName}() string {
+          return ${libName}.${captilizedLibName}("${appName}")
+        }`
+      );
+
+      updateFile(
+        join(appName, 'main.go'),
+        `package main
+
+        import (
+          "fmt"
+          "${dataimportLib}"
+        )
+
+        func main() {
+          fmt.Println(${dataimportLib}.${captilizedDataImportName}("${appName}"))
+        }`
+      );
+
+      await runNxCommandAsync('dep-graph --file=graph.json');
+      const { graph } = readJson('graph.json');
+
+      expect(graph).toBeDefined();
+      expect(graph.dependencies).toBeDefined();
+      expect(graph.dependencies[dataimportLib]).toBeDefined();
+
+      const dataimportDependencies = graph.dependencies[dataimportLib];
+      expect(dataimportDependencies.length).toBe(1);
+      expect(dataimportDependencies[0].target).toBe(libName);
     });
   });
 });

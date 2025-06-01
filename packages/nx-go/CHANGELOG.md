@@ -2,6 +2,28 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [3.3.1](https://github.com/nx-go/nx-go/compare/v3.3.0...v3.3.1) (2024-12-11)
+
+
+### Bug Fixes
+
+* update generators to support Nx 20 ([#147](https://github.com/nx-go/nx-go/issues/147)) ([54f74f5](https://github.com/nx-go/nx-go/commit/54f74f5975fa3ffe711cc9ef160209c1cd694714))
+
+## [3.3.0](https://github.com/nx-go/nx-go/compare/v3.2.0...v3.3.0) (2024-11-17)
+
+
+### Features
+
+* add an option to skip Go dependency check ([#143](https://github.com/nx-go/nx-go/issues/143)) ([cf725d7](https://github.com/nx-go/nx-go/commit/cf725d71a284f5374d7daa74bef41e3a0e63d2c4))
+* add support of Nx 20 ([#142](https://github.com/nx-go/nx-go/issues/142)) ([2919f4d](https://github.com/nx-go/nx-go/commit/2919f4d6acf03f7a585ea8559240dd9c6a9b1901))
+* add support of TinyGo ([#94](https://github.com/nx-go/nx-go/issues/94)) ([3b6a5a5](https://github.com/nx-go/nx-go/commit/3b6a5a57482f1db9ea40991254057f1526239456))
+* add timeout property to test executor ([#132](https://github.com/nx-go/nx-go/issues/132)) ([c79e2de](https://github.com/nx-go/nx-go/commit/c79e2deaef250e50f7b8533f52ca2201be0ce468))
+
+
+### Bug Fixes
+
+* improve regular expression for parsing import statements ([#139](https://github.com/nx-go/nx-go/issues/139)) ([1715cc7](https://github.com/nx-go/nx-go/commit/1715cc75736c7014096128c3d80f4af2836e8069))
+
 ## [3.2.0](https://github.com/nx-go/nx-go/compare/v3.1.0...v3.2.0) (2024-07-11)
 
 

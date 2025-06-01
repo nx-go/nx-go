@@ -26,7 +26,10 @@ jest.mock('../../utils', () => ({
   addGoWorkDependency: jest.fn(),
   createGoMod: jest.fn(),
   isGoWorkspace: jest.fn().mockReturnValue(false),
-  normalizeOptions: jest.fn().mockReturnValue(normalizeOptions),
+  normalizeOptions: jest.fn().mockImplementation((_, { skipFormat }) => ({
+    ...normalizeOptions,
+    skipFormat,
+  })),
 }));
 
 describe('library generator', () => {
@@ -43,6 +46,7 @@ describe('library generator', () => {
       'data-access',
       {
         root: 'libs/data-access',
+        name: 'data-access',
         projectType: 'library',
         sourceRoot: 'libs/data-access',
         targets: defaultTargets,
@@ -94,6 +98,7 @@ describe('library generator', () => {
       'data-access',
       {
         root: 'libs/data-access',
+        name: 'data-access',
         projectType: 'library',
         sourceRoot: 'libs/data-access',
         targets: {

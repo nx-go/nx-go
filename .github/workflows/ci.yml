@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -10,10 +10,10 @@ jobs:
     name: End-to-end tests
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-        go_version: [ 1.22.3 ]
-        node_version: [ 20.x ]
+        nx_version: [17.3.2, 20.1.2]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - name: 📥 Checkout Repo
         uses: actions/checkout@v4
@@ -23,11 +23,13 @@ jobs:
       - name: ⚙ Setup
         uses: ./.github/actions/setup
         with:
-          go_version: ${{ matrix.go_version }}
-          node_version: ${{ matrix.node_version }}
+          go_version: 1.23.2
+          node_version: 22.x
 
       - name: 🎭 End-to-end tests
         run: pnpm nx affected --target=e2e --parallel
+        env:
+          NX_VERSION: ${{ matrix.nx_version }}
 
   build:
     name: Build
@@ -41,8 +43,8 @@ jobs:
       - name: ⚙ Setup
         uses: ./.github/actions/setup
         with:
-          go_version: 1.22.3
-          node_version: 20.x
+          go_version: 1.23.2
+          node_version: 22.x
 
       - name: 💭 Validate current commit (last commit) with commitlint
         if: github.event_name == 'push'
