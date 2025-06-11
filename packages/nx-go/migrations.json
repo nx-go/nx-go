@@ -24,6 +24,11 @@
       "version": "3.2.0",
       "description": "Use generate executor in projects using a \"run-commands\" target for generating code.",
       "implementation": "./src/migrations/update-3.2.0/replace-run-commands-with-generate-executor"
+    },
+    "add-download-targets": {
+      "version": "3.4.0",
+      "description": "Add download target to libraries and applications",
+      "implementation": "./src/migrations/update-3.4.0/add-download-target-to-libraries-and-applications"
     }
   }
 }

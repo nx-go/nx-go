@@ -92,6 +92,28 @@ describe('application generator', () => {
     );
   });
 
+  it('should add download executor for project if in a Go workspace', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
+    await applicationGenerator(tree, options);
+    expect(nxDevkit.updateProjectConfiguration).toHaveBeenCalledWith(
+      tree,
+      'my-api',
+      {
+        root: 'apps/my-api',
+        name: 'my-api',
+        projectType: 'application',
+        sourceRoot: 'apps/my-api',
+        targets: {
+          ...defaultTargets,
+          download: {
+            executor: '@nx-go/nx-go:download',
+          },
+        },
+        tags: ['api', 'backend'],
+      }
+    );
+  });
+
   it('should not create Go mod for project if not in a Go workspace', async () => {
     await applicationGenerator(tree, options);
     expect(shared.createGoMod).not.toHaveBeenCalled();

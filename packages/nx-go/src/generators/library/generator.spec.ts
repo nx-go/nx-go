@@ -112,6 +112,28 @@ describe('library generator', () => {
     );
   });
 
+  it('should add download executor for project if in a Go workspace', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
+    await libraryGenerator(tree, options);
+    expect(nxDevkit.updateProjectConfiguration).toHaveBeenCalledWith(
+      tree,
+      'data-access',
+      {
+        root: 'libs/data-access',
+        name: 'data-access',
+        projectType: 'library',
+        sourceRoot: 'libs/data-access',
+        targets: {
+          ...defaultTargets,
+          download: {
+            executor: '@nx-go/nx-go:download',
+          },
+        },
+        tags: ['data', 'data-access'],
+      }
+    );
+  });
+
   it('should not add Go work dependency if not in a Go workspace', async () => {
     await libraryGenerator(tree, options);
     expect(shared.addGoWorkDependency).not.toHaveBeenCalled();
