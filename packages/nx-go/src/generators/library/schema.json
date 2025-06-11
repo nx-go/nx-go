@@ -34,6 +34,10 @@
       "description": "Skip formatting files.",
       "default": false,
       "x-priority": "internal"
+    },
+    "modulePath": {
+      "type": "string",
+      "description": "The module path of the library. (i.e. github.com/org/repo)"
     }
   },
   "required": ["name"]

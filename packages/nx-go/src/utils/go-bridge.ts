@@ -106,11 +106,12 @@ export const parseGoList = (
 export const createGoMod = (
   tree: Tree,
   name: string,
-  folder?: string
+  folder?: string,
+  modulePath?: string,
 ): void => {
   const filePath = folder ? join(folder, GO_MOD_FILE) : GO_MOD_FILE;
   if (!tree.exists(filePath)) {
-    tree.write(filePath, `module ${name}\n\ngo ${getGoShortVersion()}\n`);
+    tree.write(filePath, `module ${modulePath ? join(modulePath, name) : name}\n\ngo ${getGoShortVersion()}\n`);
   }
 };
 
