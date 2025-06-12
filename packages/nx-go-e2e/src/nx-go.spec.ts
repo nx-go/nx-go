@@ -60,17 +60,36 @@ describe('nx-go', () => {
     expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();
   });
 
-  it('should build the application', async () => {
-    const result = await runNxCommandAsync(`build ${appName}`);
+  describe('Building', () => {
     const ext = process.platform === 'win32' ? '.exe' : '';
-    expect(result.stdout).toContain(
-      `Executing command: go build -o dist/${appName}${ext} ${appName}/main.go`
-    );
+
+    it('should build the application', async () => {
+      const result = await runNxCommandAsync(`build ${appName}`);
+      expect(result.stdout).toContain(
+        `Executing command: go build -o dist/${appName}${ext} ${appName}/main.go`
+      );
+    });
+
+    it('should build the application from a different folder', async () => {
+      const result = await runNxCommandAsync(`build ${appName}`, {
+        cwd: libName,
+      });
+      expect(result.stdout).toContain(
+        `Executing command: go build -o ../dist/${appName}${ext} ../${appName}/main.go`
+      );
+    });
   });
 
   describe('Linting', () => {
     it('should execute the default linter', async () => {
       const result = await runNxCommandAsync(`lint ${appName}`);
+      expect(result.stdout).toContain(`Executing command: go fmt ./...`);
+    });
+
+    it('should execute the linter from a different folder', async () => {
+      const result = await runNxCommandAsync(`lint ${appName}`, {
+        cwd: libName,
+      });
       expect(result.stdout).toContain(`Executing command: go fmt ./...`);
     });
 
