@@ -26,7 +26,7 @@ export const executeCommand = async (
   options: RunGoOptions = {}
 ): Promise<{ success: boolean }> => {
   try {
-    const { executable = 'go', cwd = null, env = {} } = options;
+    const { executable = 'go', cwd, env = {} } = options;
 
     logger.info(`Executing command: ${[executable, ...parameters].join(' ')}`);
     execSync([executable, ...parameters].join(' '), {
