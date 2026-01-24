@@ -1,11 +1,11 @@
 import { NxPlugin } from '@nx/devkit';
 import { createDependencies } from './graph/create-dependencies';
-import { createNodes } from './graph/create-nodes';
+import { createNodesV2 } from './graph/create-nodes-v2';
 
 const plugin: NxPlugin = {
   name: '@nx-go/nx-go',
   createDependencies,
-  createNodes,
+  createNodesV2,
 };
 
 export = plugin;

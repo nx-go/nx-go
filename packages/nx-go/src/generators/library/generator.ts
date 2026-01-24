@@ -30,12 +30,7 @@ export default async function libraryGenerator(
   tree: Tree,
   schema: LibraryGeneratorSchema
 ) {
-  const options = await normalizeOptions(
-    tree,
-    schema,
-    'library',
-    '@nx-go/nx-go:library'
-  );
+  const options = await normalizeOptions(tree, schema, 'library');
   const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,
     name: options.projectName,

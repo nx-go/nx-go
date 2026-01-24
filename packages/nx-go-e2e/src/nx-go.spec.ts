@@ -1,46 +1,21 @@
 import {
   checkFilesExist,
+  cleanup,
+  ensureNxProject,
   readFile,
   readJson,
   runNxCommandAsync,
   uniq,
   updateFile,
 } from '@nx/plugin/testing';
-import { execSync } from 'child_process';
-import { rmSync } from 'fs';
 import { join } from 'path';
-import createTestProject from '../shared/create-test-project';
-import { addNxTarget } from '../shared/update-nx-config';
 
 describe('nx-go', () => {
   const appName = uniq('app');
   const libName = uniq('lib');
 
-  let projectDirectory: string;
-
-  beforeAll(() => {
-    projectDirectory = createTestProject();
-
-    // The plugin has been built and published to a local registry in the jest globalSetup
-    // Install the plugin built with the latest source code into the test repo
-    execSync(`npm install -D @nx-go/nx-go@latest`, {
-      cwd: projectDirectory,
-      stdio: 'inherit',
-      env: process.env,
-    });
-  });
-
-  afterAll(() => {
-    rmSync(projectDirectory, { recursive: true, force: true });
-  });
-
-  it('should be installed', () => {
-    // npm ls will fail if the package is not installed properly
-    execSync('npm ls @nx-go/nx-go', {
-      cwd: projectDirectory,
-      stdio: 'inherit',
-    });
-  });
+  beforeAll(() => ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go'));
+  afterAll(() => cleanup());
 
   it('should initialize the workspace', async () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:init`);
@@ -48,7 +23,9 @@ describe('nx-go', () => {
   });
 
   it('should create an application', async () => {
-    await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`);
+    await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`, {
+      silenceError: false,
+    });
 
     expect(() => checkFilesExist(`${appName}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`${appName}/go.mod`)).not.toThrow();
@@ -77,13 +54,8 @@ describe('nx-go', () => {
 
   it('should create an application in a sub directory', async () => {
     const name = uniq('app');
-    // directory is not derived since Nx 20
-    const directory = process.env.NX_VERSION.startsWith('20')
-      ? `apps/${name}`
-      : 'apps';
-    await runNxCommandAsync(
-      `generate @nx-go/nx-go:application ${name} --directory=${directory}`
-    );
+    await runNxCommandAsync(`g @nx-go/nx-go:application apps/${name}`);
+
     expect(() => checkFilesExist(`apps/${name}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();
   });
@@ -118,9 +90,13 @@ describe('nx-go', () => {
   });
 
   describe('Generate', () => {
-    beforeAll(() =>
-      addNxTarget(appName, 'generate', { executor: '@nx-go/nx-go:generate' })
-    );
+    beforeAll(() => {
+      updateFile(join(appName, 'project.json'), (content) => {
+        const json = JSON.parse(content);
+        json['targets']['generate'] = { executor: '@nx-go/nx-go:generate' };
+        return JSON.stringify(json);
+      });
+    });
 
     it('should execute go generate', async () => {
       const result = await runNxCommandAsync(`run ${appName}:generate`);

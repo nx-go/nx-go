@@ -12,18 +12,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        nx_version: [17.3.2, 20.1.2]
+        nx_version: [20.8.4, 22.4.1]
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - name: 📥 Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: ⚙ Setup
         uses: ./.github/actions/setup
         with:
-          go_version: 1.23.2
+          go_version: 1.25.6
           node_version: 22.x
 
       - name: 🎭 End-to-end tests
@@ -36,14 +36,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: ⚙ Setup
         uses: ./.github/actions/setup
         with:
-          go_version: 1.23.2
+          go_version: 1.25.6
           node_version: 22.x
 
       - name: 💭 Validate current commit (last commit) with commitlint

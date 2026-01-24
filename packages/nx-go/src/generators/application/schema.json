@@ -4,26 +4,20 @@
   "title": "Go application generator options",
   "type": "object",
   "properties": {
-    "name": {
+    "directory": {
       "type": "string",
-      "description": "Name of the project to generate.",
+      "description": "The directory of the new application.",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use?",
-      "x-priority": "important"
+      "x-prompt": "Which directory do you want to create the application in?"
     },
-    "directory": {
+    "name": {
       "type": "string",
-      "description": "A directory where the project is placed.",
-      "alias": "d",
+      "description": "The name of the new application.",
+      "pattern": "^[a-zA-Z][^:]*$",
       "x-priority": "important"
-    },
-    "projectNameAndRootFormat": {
-      "type": "string",
-      "description": "Whether to generate the project name and root directory as provided (`as-provided`) or generate them composing their values and taking the configured layout into account (`derived`).",
-      "enum": ["as-provided", "derived"]
     },
     "tags": {
       "type": "string",
@@ -36,5 +30,5 @@
       "x-priority": "internal"
     }
   },
-  "required": ["name"]
+  "required": ["directory"]
 }
