@@ -57,7 +57,7 @@ jobs:
       - name: 🎈 Lint, test and build
         run: |
           pnpm nx affected --target=lint --parallel=3
-          pnpm nx run-many --all --target=test --parallel=3 --ci --code-coverage --coverageReporters=lcov
+          pnpm nx run-many --all --target=test --parallel=3 --ci --coverage --coverageReporters=lcov
           pnpm nx affected --target=build --parallel=3
 
       - name: ⛳ SonarCloud Scan
