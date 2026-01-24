@@ -1,5 +1,4 @@
 import { ExecutorContext } from '@nx/devkit';
-import { readNxJson } from 'nx/src/config/nx-json';
 import * as sharedFunctions from '../../utils';
 import executor from './executor';
 import { TidyExecutorSchema } from './schema';

@@ -12,8 +12,8 @@ module.exports = [
   {
     plugins: {
       '@nx': nxEslintPlugin,
-      '@stylistic': stylistic
-    }
+      '@stylistic': stylistic,
+    },
   },
   {
     files: ['**/*.json'],
