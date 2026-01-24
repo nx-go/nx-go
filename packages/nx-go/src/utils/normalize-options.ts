@@ -2,14 +2,8 @@ import { names, ProjectType, Tree } from '@nx/devkit';
 import { determineProjectNameAndRootOptions } from '@nx/devkit/src/generators/project-name-and-root-utils';
 
 export interface GeneratorSchema {
-  /**
-   * TODO major: this property is optional in Nx 20
-   */
-  name: string;
-  /**
-   * TODO major: this property is provided by default in Nx 20
-   */
-  directory?: string;
+  directory: string;
+  name?: string;
   tags?: string;
   skipFormat?: boolean;
 }
@@ -42,7 +36,7 @@ export const normalizeOptions = async (
 
   return {
     ...options,
-    name: names(options.name).fileName,
+    name: projectName,
     moduleName: names(projectName).propertyName.toLowerCase(),
     projectName,
     projectRoot,

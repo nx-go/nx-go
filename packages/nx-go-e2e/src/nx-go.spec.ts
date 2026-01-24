@@ -54,9 +54,7 @@ describe('nx-go', () => {
 
   it('should create an application in a sub directory', async () => {
     const name = uniq('app');
-    await runNxCommandAsync(
-      `g @nx-go/nx-go:application --name=${name} --directory=apps/${name}`
-    );
+    await runNxCommandAsync(`g @nx-go/nx-go:application apps/${name}`);
 
     expect(() => checkFilesExist(`apps/${name}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();

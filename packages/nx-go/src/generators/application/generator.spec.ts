@@ -28,7 +28,7 @@ jest.mock('../../utils', () => ({
 
 describe('application generator', () => {
   let tree: Tree;
-  const options: ApplicationGeneratorSchema = { name: 'my-api' };
+  const options: ApplicationGeneratorSchema = { directory: 'my-api' };
 
   beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
   afterEach(() => jest.clearAllMocks());

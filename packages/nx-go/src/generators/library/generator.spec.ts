@@ -34,7 +34,7 @@ jest.mock('../../utils', () => ({
 
 describe('library generator', () => {
   let tree: Tree;
-  const options: LibraryGeneratorSchema = { name: 'data-access' };
+  const options: LibraryGeneratorSchema = { directory: 'data-access' };
 
   beforeEach(() => (tree = createTreeWithEmptyWorkspace()));
   afterEach(() => jest.clearAllMocks());

@@ -3,10 +3,7 @@ import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { normalizeOptions } from './normalize-options';
 
 jest.mock('@nx/devkit', () => ({
-  names: jest.fn().mockReturnValue({
-    fileName: 'backend-filename',
-    propertyName: 'backendFilename',
-  }),
+  names: jest.fn().mockReturnValue({ propertyName: 'backendFilename' }),
   readJson: jest.fn().mockReturnValue({ name: '@nx-go/backend' }),
 }));
 jest.mock('@nx/devkit/src/generators/project-name-and-root-utils', () => ({
@@ -28,7 +25,7 @@ describe('normalizeOptions', () => {
       { name: 'backend', directory: 'backend-dir' },
       'application'
     );
-    expect(output.name).toBe('backend-filename');
+    expect(output.name).toBe('backend');
     expect(output.moduleName).toBe('backendfilename');
     expect(output.projectName).toBe('backend');
     expect(output.projectRoot).toBe('/tmp');
@@ -40,7 +37,7 @@ describe('normalizeOptions', () => {
   it('should normalize tags', async () => {
     const output = await normalizeOptions(
       tree,
-      { name: 'backend', tags: 'api,web' },
+      { directory: 'backend', tags: 'api,web' },
       'application'
     );
     expect(output.parsedTags).toEqual(['api', 'web']);
