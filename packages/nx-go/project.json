@@ -43,10 +43,6 @@
         ]
       }
     },
-    "publish-local": {
-      "command": "node tools/scripts/publish-local.mjs nx-go {args.ver} {args.tag}",
-      "dependsOn": ["build"]
-    },
     "test": {
       "configurations": {
         "ci": {

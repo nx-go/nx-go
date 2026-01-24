@@ -1,4 +1,3 @@
- 
 export default {
   displayName: 'nx-go-e2e',
   preset: '../../jest.preset.js',
@@ -8,6 +7,4 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   testTimeout: 60000,
   coverageDirectory: '../../coverage/packages/nx-go-e2e',
-  globalSetup: '../../tools/scripts/start-local-registry.ts',
-  globalTeardown: '../../tools/scripts/stop-local-registry.ts',
 };

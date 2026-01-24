@@ -1,31 +1,19 @@
-import { checkFilesExist, runCommandAsync } from '@nx/plugin/testing';
-import { execSync } from 'child_process';
-import { rmSync } from 'fs';
-import createTestProject from '../shared/create-test-project';
+import {
+  checkFilesExist,
+  cleanup,
+  ensureNxProject,
+  runNxCommand,
+} from '@nx/plugin/testing';
 
 describe('nx-go: create workspace', () => {
-  let workspaceDirectory: string;
-
   beforeAll(() => {
-    workspaceDirectory = createTestProject('@nx-go/nx-go');
+    ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go');
+    runNxCommand('generate @nx-go/nx-go:init');
   });
+  afterAll(() => cleanup());
 
-  afterAll(() => {
-    rmSync(workspaceDirectory, { recursive: true, force: true });
-  });
-
-  it('should be installed', () => {
-    // npm ls will fail if the package is not installed properly
-    execSync('npm ls @nx-go/nx-go', {
-      cwd: workspaceDirectory,
-      stdio: 'inherit',
-    });
-  });
-
-  it('should be able to convert the workspace to one Go module', async () => {
-    await runCommandAsync(`nx g @nx-go/nx-go:convert-to-one-mod`, {
-      cwd: workspaceDirectory,
-    });
+  it('should be able to convert the workspace to one Go module', () => {
+    runNxCommand('generate @nx-go/nx-go:convert-to-one-mod');
     expect(() => checkFilesExist(`go.mod`)).not.toThrow();
     expect(() => checkFilesExist(`go.work`)).toThrow();
   });

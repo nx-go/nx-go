@@ -1,6 +1,6 @@
-import { createNodesV2 } from './create-nodes';
+import { createNodesV2 } from './create-nodes-v2';
 
-describe('Create nodes', () => {
+describe('Create nodes V2', () => {
   it('should compute all go.mod files', () => {
     expect(createNodesV2[0]).toEqual('**/go.mod');
   });
