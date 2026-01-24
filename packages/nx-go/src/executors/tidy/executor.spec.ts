@@ -15,11 +15,8 @@ const context: ExecutorContext = {
   cwd: 'current-dir',
   root: '',
   isVerbose: false,
-  projectsConfigurations: {
-    version: 0,
-    projects: {},
-  },
-  nxJsonConfiguration: readNxJson('*'),
+  projectsConfigurations: undefined,
+  nxJsonConfiguration: undefined,
   projectGraph: undefined,
 };
 
