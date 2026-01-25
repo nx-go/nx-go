@@ -1,5 +1,9 @@
 import { ExecutorContext } from '@nx/devkit';
-import { executeCommand, resolveWorkingDirectory } from '../../utils';
+import {
+  executeCommand,
+  extractProjectRoot,
+  resolveWorkingDirectory,
+} from '../../utils';
 import { ServeExecutorSchema } from './schema';
 
 /**
@@ -12,10 +16,11 @@ export default async function runExecutor(
   options: ServeExecutorSchema,
   context: ExecutorContext
 ) {
-  const directory = options.cwd ?? resolveWorkingDirectory(context);
+  const cwd = options.cwd ?? resolveWorkingDirectory(context);
+  const directory = options.cwd ?? extractProjectRoot(context);
   const mainFile = options.main.replace(`${directory}/`, '');
   return executeCommand(
     ['run', ...(options.flags ?? []), mainFile, ...(options.args ?? [])],
-    { executable: options.cmd, cwd: directory }
+    { executable: options.cmd, cwd }
   );
 }

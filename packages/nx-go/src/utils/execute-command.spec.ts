@@ -1,5 +1,5 @@
 import { logger } from '@nx/devkit';
-import * as child_process from 'child_process';
+import * as child_process from 'node:child_process';
 import { join } from 'node:path';
 import {
   buildFlagIfEnabled,
@@ -13,7 +13,7 @@ jest.mock('@nx/devkit', () => ({
   logger: { info: jest.fn(), error: jest.fn() },
   joinPathFragments: (...parts: string[]) => parts.join('/'),
 }));
-jest.mock('child_process');
+jest.mock('node:child_process');
 
 describe('Execute command', () => {
   describe('Method: extractProjectRoot', () => {
