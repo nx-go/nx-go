@@ -1,14 +1,17 @@
 import { logger } from '@nx/devkit';
 import * as child_process from 'child_process';
+import { join } from 'node:path';
 import {
   buildFlagIfEnabled,
   buildStringFlagIfValid,
   executeCommand,
   extractProjectRoot,
+  resolveWorkingDirectory,
 } from './execute-command';
 
 jest.mock('@nx/devkit', () => ({
   logger: { info: jest.fn(), error: jest.fn() },
+  joinPathFragments: (...parts: string[]) => parts.join('/'),
 }));
 jest.mock('child_process');
 
@@ -32,11 +35,65 @@ describe('Execute command', () => {
     });
   });
 
+  describe('Method: resolveWorkingDirectory', () => {
+    it('should return workspace root when project root is workspace root', () => {
+      expect(
+        resolveWorkingDirectory({
+          projectName: 'proj',
+          cwd: '/workspace/apps/frontend',
+          isVerbose: false,
+          root: '/workspace',
+          projectsConfigurations: {
+            projects: { proj: { root: '' } },
+            version: 1,
+          },
+          nxJsonConfiguration: undefined,
+          projectGraph: undefined,
+        })
+      ).toBe(join('/workspace'));
+    });
+
+    it('should return absolute path to project when running from different directory', () => {
+      expect(
+        resolveWorkingDirectory({
+          projectName: 'backend',
+          cwd: '/workspace/apps/frontend',
+          isVerbose: false,
+          root: '/workspace',
+          projectsConfigurations: {
+            projects: { backend: { root: 'apps/backend' } },
+            version: 1,
+          },
+          nxJsonConfiguration: undefined,
+          projectGraph: undefined,
+        })
+      ).toBe(join('/workspace/apps/backend'));
+    });
+
+    it('should return absolute path to project when running from workspace root', () => {
+      expect(
+        resolveWorkingDirectory({
+          projectName: 'backend',
+          cwd: '/workspace',
+          isVerbose: false,
+          root: '/workspace',
+          projectsConfigurations: {
+            projects: { backend: { root: 'apps/backend' } },
+            version: 1,
+          },
+          nxJsonConfiguration: undefined,
+          projectGraph: undefined,
+        })
+      ).toBe(join('/workspace/apps/backend'));
+    });
+  });
+
   describe('Method: executeCommand', () => {
     it('should execute a successfully command with default options', async () => {
-      const result = await executeCommand(['build']);
+      const result = await executeCommand(['build'], { cwd: '/workspace' });
       expect(result.success).toBeTruthy();
       expect(child_process.execSync).toHaveBeenCalledWith('go build', {
+        cwd: '/workspace',
         env: process.env,
         stdio: [0, 1, 2],
       });
@@ -67,7 +124,7 @@ describe('Execute command', () => {
       jest.spyOn(child_process, 'execSync').mockImplementationOnce(() => {
         throw spawnError;
       });
-      const result = await executeCommand(['version']);
+      const result = await executeCommand(['version'], { cwd: '/workspace' });
 
       expect(result.success).toBeFalsy();
       expect(logger.error).toHaveBeenCalledWith(spawnError);
