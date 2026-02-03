@@ -6,6 +6,7 @@ export interface GeneratorSchema {
   name?: string;
   tags?: string;
   skipFormat?: boolean;
+  modulePath?: string;
 }
 
 export interface GeneratorNormalizedSchema extends GeneratorSchema {

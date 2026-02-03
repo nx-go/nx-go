@@ -56,7 +56,7 @@ export default async function applicationGenerator(
   generateFiles(tree, join(__dirname, 'files'), options.projectRoot, options);
 
   if (isGoWorkspace(tree)) {
-    createGoMod(tree, options.projectRoot, options.projectRoot);
+    createGoMod(tree, options.projectRoot, options.projectRoot, options.modulePath);
     addGoWorkDependency(tree, options.projectRoot);
     projectConfiguration.targets.tidy = {
       executor: '@nx-go/nx-go:tidy',
