@@ -64,7 +64,7 @@ describe('nx-go', () => {
     it('should build the application', async () => {
       const result = await runNxCommandAsync(`build ${appName}`);
       expect(result.stdout).toContain(
-        `Executing command: go build -o ../dist/${appName}${ext} main.go`
+        `Executing command: go build -o ../dist/${appName}${ext} .`
       );
       expect(() => checkFilesExist(`dist/${appName}${ext}`)).not.toThrow();
     });
@@ -73,6 +73,21 @@ describe('nx-go', () => {
       const result = await runNxCommandAsync(`build ${appName}`, {
         cwd: tmpProjPath(appName),
       });
+      expect(result.stdout).toContain(
+        `Executing command: go build -o ../dist/${appName}${ext} .`
+      );
+      expect(() => checkFilesExist(`dist/${appName}${ext}`)).not.toThrow();
+    });
+
+    it('should build the application with specifying main file', async () => {
+      // Update project.json to add main option
+      updateFile(`${appName}/project.json`, (content) => {
+        const json = JSON.parse(content);
+        json.targets.build.options = { main: 'main.go' };
+        return JSON.stringify(json);
+      });
+
+      const result = await runNxCommandAsync(`build ${appName}`);
       expect(result.stdout).toContain(
         `Executing command: go build -o ../dist/${appName}${ext} main.go`
       );
@@ -124,6 +139,18 @@ describe('nx-go', () => {
   });
 
   it('should serve the application', async () => {
+    const result = await runNxCommandAsync(`serve ${appName}`);
+    expect(result.stdout).toContain(`Executing command: go run .`);
+  });
+
+  it('should serve the application with specifying main file', async () => {
+    // Update project.json to add main option
+    updateFile(`${appName}/project.json`, (content) => {
+      const json = JSON.parse(content);
+      json.targets.serve.options = { main: 'main.go' };
+      return JSON.stringify(json);
+    });
+
     const result = await runNxCommandAsync(`serve ${appName}`);
     expect(result.stdout).toContain(`Executing command: go run main.go`);
   });

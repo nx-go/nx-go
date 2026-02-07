@@ -41,7 +41,7 @@ const buildParams = (
     buildOutputPath(context, options.outputPath),
     ...buildStringFlagIfValid('-buildmode', options.buildMode),
     ...(options.flags ?? []),
-    options.main,
+    options.main ?? '.',
   ];
 };
 

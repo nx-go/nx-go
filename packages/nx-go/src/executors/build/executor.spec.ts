@@ -88,4 +88,16 @@ describe('Build Executor', () => {
       expect.anything()
     );
   });
+
+  it('should default to current directory when main is not provided', async () => {
+    const optionsWithoutMain = {
+      env: { hello: 'world' },
+    };
+    const output = await executor(optionsWithoutMain, context);
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['build', '-o', '../../dist/apps/project', '.'],
+      { cwd: 'apps/project', env: { hello: 'world' } }
+    );
+  });
 });

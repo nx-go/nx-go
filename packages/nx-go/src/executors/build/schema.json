@@ -10,8 +10,7 @@
       "type": "string",
       "description": "Path to the file containing the main() function",
       "x-completion-type": "file",
-      "x-completion-glob": "main.go",
-      "x-priority": "important"
+      "x-completion-glob": "main.go"
     },
     "compiler": {
       "type": "string",
@@ -41,6 +40,5 @@
       },
       "description": "Flags to pass to the go compiler"
     }
-  },
-  "required": ["main"]
+  }
 }
