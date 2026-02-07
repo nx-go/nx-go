@@ -76,4 +76,14 @@ describe('Serve Executor', () => {
       cwd: 'apps/project',
     });
   });
+
+  it('should default to current directory when main is not provided', async () => {
+    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const optionsWithoutMain = { args: ['--help'] };
+    const output = await executor(optionsWithoutMain, context);
+    expect(output.success).toBeTruthy();
+    expect(spyExecute).toHaveBeenCalledWith(['run', '.', '--help'], {
+      cwd: 'apps/project',
+    });
+  });
 });

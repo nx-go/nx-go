@@ -19,15 +19,9 @@ import type { ApplicationGeneratorSchema } from './schema';
 export const defaultTargets: { [targetName: string]: TargetConfiguration } = {
   build: {
     executor: '@nx-go/nx-go:build',
-    options: {
-      main: 'main.go',
-    },
   },
   serve: {
     executor: '@nx-go/nx-go:serve',
-    options: {
-      main: 'main.go',
-    },
   },
   test: {
     executor: '@nx-go/nx-go:test',
