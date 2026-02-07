@@ -1,9 +1,10 @@
 import { ExecutorContext, logger } from '@nx/devkit';
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
+import { join } from 'node:path';
 
 export type RunGoOptions = {
   executable?: string;
-  cwd?: string;
+  cwd: string;
   env?: { [key: string]: string };
 };
 
@@ -16,17 +17,26 @@ export const extractProjectRoot = (context: ExecutorContext): string =>
   context.projectsConfigurations.projects[context.projectName].root;
 
 /**
+ * Resolve the working directory for the executor.
+ *
+ * @param context the executor context
+ * @returns the absolute project path
+ */
+export const resolveWorkingDirectory = (context: ExecutorContext): string =>
+  join(context.root, extractProjectRoot(context));
+
+/**
  * Execute and log a command, then return the result to executor.
  *
  * @param parameters the parameters of the command
  * @param options the options of the command
  */
 export const executeCommand = async (
-  parameters: string[] = [],
-  options: RunGoOptions = {}
+  parameters: string[],
+  options: RunGoOptions
 ): Promise<{ success: boolean }> => {
   try {
-    const { executable = 'go', cwd = null, env = {} } = options;
+    const { executable = 'go', cwd, env = {} } = options;
     const command = [executable, ...parameters].join(' ');
 
     logger.info(`Executing command: ${command}`);

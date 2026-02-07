@@ -10,7 +10,7 @@ jest.mock('../../utils', () => {
     buildFlagIfEnabled,
     buildStringFlagIfValid,
     executeCommand: jest.fn().mockResolvedValue({ success: true }),
-    extractProjectRoot: jest.fn(() => 'apps/project'),
+    resolveWorkingDirectory: jest.fn(() => 'apps/project'),
   };
 });
 

@@ -9,16 +9,17 @@ jest.mock('../../utils', () => {
     buildStringFlagIfValid,
     executeCommand: jest.fn().mockResolvedValue({ success: true }),
     extractProjectRoot: jest.fn(() => 'apps/project'),
+    resolveWorkingDirectory: jest.fn(() => 'apps/project'),
   };
 });
 
 const options: BuildExecutorSchema = {
-  main: 'apps/project/main.go',
+  main: 'main.go',
   env: { hello: 'world' },
 };
 
 const context: ExecutorContext = {
-  cwd: 'current-dir',
+  cwd: '',
   root: '',
   isVerbose: false,
   projectsConfigurations: undefined,
@@ -29,8 +30,8 @@ const context: ExecutorContext = {
 describe('Build Executor', () => {
   it.each`
     platform   | outputPath
-    ${'win32'} | ${'dist/apps/project.exe'}
-    ${'linux'} | ${'dist/apps/project'}
+    ${'win32'} | ${'../../dist/apps/project.exe'}
+    ${'linux'} | ${'../../dist/apps/project'}
   `(
     'should execute build command on platform $platform',
     async ({ platform, outputPath }) => {
@@ -38,16 +39,28 @@ describe('Build Executor', () => {
       const output = await executor(options, context);
       expect(output.success).toBeTruthy();
       expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
-        ['build', '-o', outputPath, 'apps/project/main.go'],
-        { cwd: 'current-dir', env: { hello: 'world' } }
+        ['build', '-o', outputPath, 'main.go'],
+        { cwd: 'apps/project', env: { hello: 'world' } }
       );
     }
   );
 
+  it('should execute build in another working directory', async () => {
+    const output = await executor(options, {
+      ...context,
+      cwd: 'some/other/path',
+    });
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['build', '-o', '../../dist/apps/project', 'main.go'],
+      { cwd: 'apps/project', env: { hello: 'world' } }
+    );
+  });
+
   it('should execute build command using TinyGo compiler', async () => {
     await executor({ ...options, compiler: 'tinygo' }, context);
     expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
-      ['build', '-o', 'dist/apps/project', 'apps/project/main.go'],
+      ['build', '-o', '../../dist/apps/project', 'main.go'],
       expect.objectContaining({ executable: 'tinygo' })
     );
   });
@@ -58,7 +71,7 @@ describe('Build Executor', () => {
       context
     );
     expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
-      ['build', '-o', 'custom-path', '--flag1', 'apps/project/main.go'],
+      ['build', '-o', 'custom-path', '--flag1', 'main.go'],
       expect.anything()
     );
   });

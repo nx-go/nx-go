@@ -5,10 +5,10 @@ import {
   readFile,
   readJson,
   runNxCommandAsync,
+  tmpProjPath,
   uniq,
   updateFile,
 } from '@nx/plugin/testing';
-import { join } from 'path';
 
 describe('nx-go', () => {
   const appName = uniq('app');
@@ -23,9 +23,7 @@ describe('nx-go', () => {
   });
 
   it('should create an application', async () => {
-    await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`, {
-      silenceError: false,
-    });
+    await runNxCommandAsync(`generate @nx-go/nx-go:application ${appName}`);
 
     expect(() => checkFilesExist(`${appName}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`${appName}/go.mod`)).not.toThrow();
@@ -60,17 +58,38 @@ describe('nx-go', () => {
     expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();
   });
 
-  it('should build the application', async () => {
-    const result = await runNxCommandAsync(`build ${appName}`);
+  describe('Building', () => {
     const ext = process.platform === 'win32' ? '.exe' : '';
-    expect(result.stdout).toContain(
-      `Executing command: go build -o dist/${appName}${ext} ${appName}/main.go`
-    );
+
+    it('should build the application', async () => {
+      const result = await runNxCommandAsync(`build ${appName}`);
+      expect(result.stdout).toContain(
+        `Executing command: go build -o ../dist/${appName}${ext} main.go`
+      );
+      expect(() => checkFilesExist(`dist/${appName}${ext}`)).not.toThrow();
+    });
+
+    it('should build the application from a different folder', async () => {
+      const result = await runNxCommandAsync(`build ${appName}`, {
+        cwd: tmpProjPath(appName),
+      });
+      expect(result.stdout).toContain(
+        `Executing command: go build -o ../dist/${appName}${ext} main.go`
+      );
+      expect(() => checkFilesExist(`dist/${appName}${ext}`)).not.toThrow();
+    });
   });
 
   describe('Linting', () => {
     it('should execute the default linter', async () => {
       const result = await runNxCommandAsync(`lint ${appName}`);
+      expect(result.stdout).toContain(`Executing command: go fmt ./...`);
+    });
+
+    it('should execute the linter from a different folder', async () => {
+      const result = await runNxCommandAsync(`lint ${appName}`, {
+        cwd: tmpProjPath(appName),
+      });
       expect(result.stdout).toContain(`Executing command: go fmt ./...`);
     });
 
@@ -91,7 +110,7 @@ describe('nx-go', () => {
 
   describe('Generate', () => {
     beforeAll(() => {
-      updateFile(join(appName, 'project.json'), (content) => {
+      updateFile(`${appName}/project.json`, (content) => {
         const json = JSON.parse(content);
         json['targets']['generate'] = { executor: '@nx-go/nx-go:generate' };
         return JSON.stringify(json);
@@ -120,7 +139,7 @@ describe('nx-go', () => {
     it('should create graph with dependencies', async () => {
       const captilizedLibName = libName[0].toUpperCase() + libName.substring(1);
       updateFile(
-        join(appName, 'main.go'),
+        `${appName}/main.go`,
         `package main
 
         import (
@@ -157,7 +176,7 @@ describe('nx-go', () => {
         dataimportLib[0].toUpperCase() + dataimportLib.substring(1);
       const captilizedLibName = libName[0].toUpperCase() + libName.substring(1);
       updateFile(
-        join(dataimportLib, dataimportLib + '.go'),
+        `${dataimportLib}/${dataimportLib}.go`,
         `package ${dataimportLib}
 
         import (
@@ -170,7 +189,7 @@ describe('nx-go', () => {
       );
 
       updateFile(
-        join(appName, 'main.go'),
+        `${appName}/main.go`,
         `package main
 
         import (

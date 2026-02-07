@@ -20,13 +20,13 @@ export const defaultTargets: { [targetName: string]: TargetConfiguration } = {
   build: {
     executor: '@nx-go/nx-go:build',
     options: {
-      main: '{projectRoot}/main.go',
+      main: 'main.go',
     },
   },
   serve: {
     executor: '@nx-go/nx-go:serve',
     options: {
-      main: '{projectRoot}/main.go',
+      main: 'main.go',
     },
   },
   test: {
