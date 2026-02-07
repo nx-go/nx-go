@@ -53,7 +53,7 @@ describe('Build Executor', () => {
     ${'windows'} | ${'linux'}   | ${'../../dist/apps/project.exe'}
     ${'windows'} | ${'darwin'}  | ${'../../dist/apps/project.exe'}
   `(
-    'should respect GOOS=$goos when cross-compiling from $hostPlatform',
+    'should respect GOOS=$goos from executor config when cross-compiling from $hostPlatform',
     async ({ goos, hostPlatform, outputPath }) => {
       Object.defineProperty(process, 'platform', { value: hostPlatform });
       const output = await executor(
@@ -65,6 +65,35 @@ describe('Build Executor', () => {
         ['build', '-o', outputPath, 'main.go'],
         { cwd: 'apps/project', env: { hello: 'world', GOOS: goos } }
       );
+    }
+  );
+
+  it.each`
+    goos         | hostPlatform | outputPath
+    ${'linux'}   | ${'win32'}   | ${'../../dist/apps/project'}
+    ${'darwin'}  | ${'win32'}   | ${'../../dist/apps/project'}
+    ${'windows'} | ${'linux'}   | ${'../../dist/apps/project.exe'}
+    ${'windows'} | ${'darwin'}  | ${'../../dist/apps/project.exe'}
+  `(
+    'should respect GOOS=$goos from process.env when cross-compiling from $hostPlatform',
+    async ({ goos, hostPlatform, outputPath }) => {
+      Object.defineProperty(process, 'platform', { value: hostPlatform });
+      const originalGOOS = process.env.GOOS;
+      process.env.GOOS = goos;
+
+      const output = await executor(options, context);
+      expect(output.success).toBeTruthy();
+      expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+        ['build', '-o', outputPath, 'main.go'],
+        { cwd: 'apps/project', env: { hello: 'world' } }
+      );
+
+      // Restore original value
+      if (originalGOOS === undefined) {
+        delete process.env.GOOS;
+      } else {
+        process.env.GOOS = originalGOOS;
+      }
     }
   );
 

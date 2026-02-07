@@ -69,14 +69,18 @@ const buildOutputPath = (
 /**
  * Determines the file extension for the compiled binary based on the target OS.
  *
- * Use GOOS env variable, or fall back to host platform.
+ * Priority order:
+ * 1. GOOS from executor config env
+ * 2. GOOS from process environment
+ * 3. Host platform (process.platform)
+ *
  * Check for 'windows' (GOOS value) and 'win32' (process.platform value)
  *
  * @param env environment variables containing GOOS
  * @returns the file extension string ('.exe' for Windows, empty string otherwise)
  */
 const buildExtension = (env?: BuildExecutorSchema['env']): string => {
-  const targetOS = env?.GOOS ?? process.platform;
+  const targetOS = env?.GOOS ?? process.env.GOOS ?? process.platform;
   return targetOS === 'windows' || targetOS === 'win32' ? '.exe' : '';
 };
 
