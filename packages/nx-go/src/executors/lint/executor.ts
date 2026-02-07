@@ -1,5 +1,5 @@
 import { ExecutorContext } from '@nx/devkit';
-import { executeCommand, extractProjectRoot } from '../../utils';
+import { executeCommand, resolveWorkingDirectory } from '../../utils';
 import { LintExecutorSchema } from './schema';
 
 /**
@@ -14,7 +14,7 @@ export default async function runExecutor(
 ) {
   const defaultArgs = schema.linter == null ? ['fmt'] : [];
   return executeCommand([...defaultArgs, ...(schema.args ?? []), './...'], {
-    cwd: extractProjectRoot(context),
+    cwd: resolveWorkingDirectory(context),
     executable: schema.linter,
   });
 }

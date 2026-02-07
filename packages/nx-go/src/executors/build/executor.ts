@@ -1,8 +1,9 @@
-import { ExecutorContext } from '@nx/devkit';
+import { ExecutorContext, joinPathFragments, offsetFromRoot } from '@nx/devkit';
 import {
   buildStringFlagIfValid,
   executeCommand,
   extractProjectRoot,
+  resolveWorkingDirectory,
 } from '../../utils';
 import { BuildExecutorSchema } from './schema';
 
@@ -17,12 +18,19 @@ export default async function runExecutor(
   context: ExecutorContext
 ) {
   return executeCommand(buildParams(options, context), {
-    cwd: context.cwd,
+    cwd: resolveWorkingDirectory(context),
     env: options.env,
     executable: buildExecutable(options.compiler),
   });
 }
 
+/**
+ * Builds the parameters for the `go build` command.
+ *
+ * @param options options passed to the executor
+ * @param context context passed to the executor
+ * @returns an array of strings representing the parameters for the `go build` command
+ */
 const buildParams = (
   options: BuildExecutorSchema,
   context: ExecutorContext
@@ -30,41 +38,39 @@ const buildParams = (
   return [
     'build',
     '-o',
-    buildOutputPath(
-      extractProjectRoot(context),
-      options.extension,
-      options.outputPath
-    ),
+    buildOutputPath(context, options.outputPath),
     ...buildStringFlagIfValid('-buildmode', options.buildMode),
     ...(options.flags ?? []),
-    options.main,
+    options.main ?? '.',
   ];
 };
 
 /**
  * Builds the output path of the executable based on the project root.
  *
- * @param projectRoot project root
+ * @param context executor context
  * @param customPath custom path to use first
+ * @return the output path as a string
  */
 const buildOutputPath = (
-  projectRoot: string,
-  extension: BuildExecutorSchema['extension'],
+  context: ExecutorContext,
   customPath?: string
 ): string => {
-  let ext = process.platform === 'win32' ? '.exe' : '';
-
-  if (extension !== 'inherit') {
-    ext = extension;
-  }
-  return (customPath ?? `dist/${projectRoot}`) + ext;
+  const projectRoot = extractProjectRoot(context);
+  const defaultPath = joinPathFragments(
+    offsetFromRoot(projectRoot),
+    'dist',
+    projectRoot
+  );
+  const extension = process.platform === 'win32' ? '.exe' : '';
+  return (customPath ?? defaultPath) + extension;
 };
 
 /**
  * Determines the executable command based on the provided compiler.
  *
- * @param compiler - The compiler to use, which can be either 'tinygo' or 'go'.
- * @returns The executable command as a string, either 'tinygo' or 'go'.
+ * @param compiler compiler to use, which can be either 'tinygo' or 'go'.
+ * @returns the executable command as a string, either 'tinygo' or 'go'.
  */
 const buildExecutable = (
   compiler: BuildExecutorSchema['compiler']

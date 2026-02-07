@@ -1,5 +1,5 @@
 export interface BuildExecutorSchema {
-  main: string;
+  main?: string;
   compiler?: 'go' | 'tinygo';
   outputPath?: string;
   buildMode?: string;

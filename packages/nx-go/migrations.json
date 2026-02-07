@@ -24,6 +24,11 @@
       "version": "3.2.0",
       "description": "Use generate executor in projects using a \"run-commands\" target for generating code.",
       "implementation": "./src/migrations/update-3.2.0/replace-run-commands-with-generate-executor"
+    },
+    "update-main-path-in-targets": {
+      "version": "4.0.0-beta.0",
+      "description": "Update main paths in build and serve targets to be relative to project root",
+      "implementation": "./src/migrations/update-4.0.0/update-main-path-in-targets"
     }
   }
 }

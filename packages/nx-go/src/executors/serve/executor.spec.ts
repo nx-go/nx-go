@@ -6,6 +6,7 @@ import { ServeExecutorSchema } from './schema';
 jest.mock('../../utils', () => ({
   executeCommand: jest.fn().mockResolvedValue({ success: true }),
   extractProjectRoot: jest.fn(() => 'apps/project'),
+  resolveWorkingDirectory: jest.fn(() => 'apps/project'),
 }));
 
 const options: ServeExecutorSchema = {
@@ -16,6 +17,9 @@ const context: ExecutorContext = {
   cwd: 'current-dir',
   root: '',
   isVerbose: false,
+  projectsConfigurations: undefined,
+  nxJsonConfiguration: undefined,
+  projectGraph: undefined,
 };
 
 describe('Serve Executor', () => {
@@ -51,6 +55,16 @@ describe('Serve Executor', () => {
     );
   });
 
+  it('should run Go program with custom flags', async () => {
+    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const output = await executor({ ...options, flags: ['-v', '-x'] }, context);
+    expect(output.success).toBeTruthy();
+    expect(spyExecute).toHaveBeenCalledWith(
+      ['run', '-v', '-x', 'hello_world.go'],
+      { cwd: 'apps/project' }
+    );
+  });
+
   it('should remove directory from main file path', async () => {
     const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
     const output = await executor(
@@ -59,6 +73,16 @@ describe('Serve Executor', () => {
     );
     expect(output.success).toBeTruthy();
     expect(spyExecute).toHaveBeenCalledWith(['run', 'hello_world.go'], {
+      cwd: 'apps/project',
+    });
+  });
+
+  it('should default to current directory when main is not provided', async () => {
+    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const optionsWithoutMain = { args: ['--help'] };
+    const output = await executor(optionsWithoutMain, context);
+    expect(output.success).toBeTruthy();
+    expect(spyExecute).toHaveBeenCalledWith(['run', '.', '--help'], {
       cwd: 'apps/project',
     });
   });

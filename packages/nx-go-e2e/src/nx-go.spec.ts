@@ -1,46 +1,21 @@
 import {
   checkFilesExist,
+  cleanup,
+  ensureNxProject,
   readFile,
   readJson,
   runNxCommandAsync,
+  tmpProjPath,
   uniq,
   updateFile,
 } from '@nx/plugin/testing';
-import { execSync } from 'child_process';
-import { rmSync } from 'fs';
-import { join } from 'path';
-import createTestProject from '../shared/create-test-project';
-import { addNxTarget } from '../shared/update-nx-config';
 
 describe('nx-go', () => {
   const appName = uniq('app');
   const libName = uniq('lib');
 
-  let projectDirectory: string;
-
-  beforeAll(() => {
-    projectDirectory = createTestProject();
-
-    // The plugin has been built and published to a local registry in the jest globalSetup
-    // Install the plugin built with the latest source code into the test repo
-    execSync(`npm install -D @nx-go/nx-go@latest`, {
-      cwd: projectDirectory,
-      stdio: 'inherit',
-      env: process.env,
-    });
-  });
-
-  afterAll(() => {
-    rmSync(projectDirectory, { recursive: true, force: true });
-  });
-
-  it('should be installed', () => {
-    // npm ls will fail if the package is not installed properly
-    execSync('npm ls @nx-go/nx-go', {
-      cwd: projectDirectory,
-      stdio: 'inherit',
-    });
-  });
+  beforeAll(() => ensureNxProject('@nx-go/nx-go', 'dist/packages/nx-go'));
+  afterAll(() => cleanup());
 
   it('should initialize the workspace', async () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:init`);
@@ -77,28 +52,59 @@ describe('nx-go', () => {
 
   it('should create an application in a sub directory', async () => {
     const name = uniq('app');
-    // directory is not derived since Nx 20
-    const directory = process.env.NX_VERSION.startsWith('20')
-      ? `apps/${name}`
-      : 'apps';
-    await runNxCommandAsync(
-      `generate @nx-go/nx-go:application ${name} --directory=${directory}`
-    );
+    await runNxCommandAsync(`g @nx-go/nx-go:application apps/${name}`);
+
     expect(() => checkFilesExist(`apps/${name}/main.go`)).not.toThrow();
     expect(() => checkFilesExist(`apps/${name}/go.mod`)).not.toThrow();
   });
 
-  it('should build the application', async () => {
-    const result = await runNxCommandAsync(`build ${appName}`);
+  describe('Building', () => {
     const ext = process.platform === 'win32' ? '.exe' : '';
-    expect(result.stdout).toContain(
-      `Executing command: go build -o dist/${appName}${ext} ${appName}/main.go`
-    );
+
+    it('should build the application', async () => {
+      const result = await runNxCommandAsync(`build ${appName}`);
+      expect(result.stdout).toContain(
+        `Executing command: go build -o ../dist/${appName}${ext} .`
+      );
+      expect(() => checkFilesExist(`dist/${appName}${ext}`)).not.toThrow();
+    });
+
+    it('should build the application from a different folder', async () => {
+      const result = await runNxCommandAsync(`build ${appName}`, {
+        cwd: tmpProjPath(appName),
+      });
+      expect(result.stdout).toContain(
+        `Executing command: go build -o ../dist/${appName}${ext} .`
+      );
+      expect(() => checkFilesExist(`dist/${appName}${ext}`)).not.toThrow();
+    });
+
+    it('should build the application with specifying main file', async () => {
+      // Update project.json to add main option
+      updateFile(`${appName}/project.json`, (content) => {
+        const json = JSON.parse(content);
+        json.targets.build.options = { main: 'main.go' };
+        return JSON.stringify(json);
+      });
+
+      const result = await runNxCommandAsync(`build ${appName}`);
+      expect(result.stdout).toContain(
+        `Executing command: go build -o ../dist/${appName}${ext} main.go`
+      );
+      expect(() => checkFilesExist(`dist/${appName}${ext}`)).not.toThrow();
+    });
   });
 
   describe('Linting', () => {
     it('should execute the default linter', async () => {
       const result = await runNxCommandAsync(`lint ${appName}`);
+      expect(result.stdout).toContain(`Executing command: go fmt ./...`);
+    });
+
+    it('should execute the linter from a different folder', async () => {
+      const result = await runNxCommandAsync(`lint ${appName}`, {
+        cwd: tmpProjPath(appName),
+      });
       expect(result.stdout).toContain(`Executing command: go fmt ./...`);
     });
 
@@ -118,9 +124,13 @@ describe('nx-go', () => {
   });
 
   describe('Generate', () => {
-    beforeAll(() =>
-      addNxTarget(appName, 'generate', { executor: '@nx-go/nx-go:generate' })
-    );
+    beforeAll(() => {
+      updateFile(`${appName}/project.json`, (content) => {
+        const json = JSON.parse(content);
+        json['targets']['generate'] = { executor: '@nx-go/nx-go:generate' };
+        return JSON.stringify(json);
+      });
+    });
 
     it('should execute go generate', async () => {
       const result = await runNxCommandAsync(`run ${appName}:generate`);
@@ -129,6 +139,18 @@ describe('nx-go', () => {
   });
 
   it('should serve the application', async () => {
+    const result = await runNxCommandAsync(`serve ${appName}`);
+    expect(result.stdout).toContain(`Executing command: go run .`);
+  });
+
+  it('should serve the application with specifying main file', async () => {
+    // Update project.json to add main option
+    updateFile(`${appName}/project.json`, (content) => {
+      const json = JSON.parse(content);
+      json.targets.serve.options = { main: 'main.go' };
+      return JSON.stringify(json);
+    });
+
     const result = await runNxCommandAsync(`serve ${appName}`);
     expect(result.stdout).toContain(`Executing command: go run main.go`);
   });
@@ -144,7 +166,7 @@ describe('nx-go', () => {
     it('should create graph with dependencies', async () => {
       const captilizedLibName = libName[0].toUpperCase() + libName.substring(1);
       updateFile(
-        join(appName, 'main.go'),
+        `${appName}/main.go`,
         `package main
 
         import (
@@ -181,7 +203,7 @@ describe('nx-go', () => {
         dataimportLib[0].toUpperCase() + dataimportLib.substring(1);
       const captilizedLibName = libName[0].toUpperCase() + libName.substring(1);
       updateFile(
-        join(dataimportLib, dataimportLib + '.go'),
+        `${dataimportLib}/${dataimportLib}.go`,
         `package ${dataimportLib}
 
         import (
@@ -194,7 +216,7 @@ describe('nx-go', () => {
       );
 
       updateFile(
-        join(appName, 'main.go'),
+        `${appName}/main.go`,
         `package main
 
         import (

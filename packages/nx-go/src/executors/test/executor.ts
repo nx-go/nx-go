@@ -3,7 +3,7 @@ import {
   buildFlagIfEnabled,
   buildStringFlagIfValid,
   executeCommand,
-  extractProjectRoot,
+  resolveWorkingDirectory,
 } from '../../utils';
 import type { TestExecutorSchema } from './schema';
 
@@ -32,6 +32,6 @@ export default async function runExecutor(
       ...buildStringFlagIfValid(`-timeout`, options.timeout),
       './...',
     ],
-    { cwd: extractProjectRoot(context) }
+    { cwd: resolveWorkingDirectory(context) }
   );
 }

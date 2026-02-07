@@ -1,19 +1,9 @@
-import { names, NX_VERSION, ProjectType, Tree } from '@nx/devkit';
-import {
-  determineProjectNameAndRootOptions,
-  ProjectNameAndRootFormat,
-} from '@nx/devkit/src/generators/project-name-and-root-utils';
+import { names, ProjectType, Tree } from '@nx/devkit';
+import { determineProjectNameAndRootOptions } from '@nx/devkit/src/generators/project-name-and-root-utils';
 
 export interface GeneratorSchema {
-  /**
-   * TODO major: this property is optional in Nx 20
-   */
-  name: string;
-  /**
-   * TODO major: this property is provided by default in Nx 20
-   */
-  directory?: string;
-  projectNameAndRootFormat?: ProjectNameAndRootFormat;
+  directory: string;
+  name?: string;
   tags?: string;
   skipFormat?: boolean;
 }
@@ -29,19 +19,16 @@ export interface GeneratorNormalizedSchema extends GeneratorSchema {
 export const normalizeOptions = async (
   tree: Tree,
   options: GeneratorSchema,
-  projectType: ProjectType,
-  generator: string
+  projectType: ProjectType
 ): Promise<GeneratorNormalizedSchema> => {
-  ensureProjectDirectory(options);
-
-  const { projectName, projectRoot, projectNameAndRootFormat } =
-    await determineProjectNameAndRootOptions(tree, {
+  const { projectName, projectRoot } = await determineProjectNameAndRootOptions(
+    tree,
+    {
       name: options.name,
       projectType: projectType,
       directory: options.directory,
-      projectNameAndRootFormat: options.projectNameAndRootFormat,
-      callingGenerator: generator,
-    });
+    }
+  );
 
   const parsedTags = options.tags
     ? options.tags.split(',').map((s) => s.trim())
@@ -49,19 +36,11 @@ export const normalizeOptions = async (
 
   return {
     ...options,
-    name: names(options.name).fileName,
+    name: projectName,
     moduleName: names(projectName).propertyName.toLowerCase(),
-    projectNameAndRootFormat,
     projectName,
     projectRoot,
     projectType,
     parsedTags,
   };
-};
-
-const ensureProjectDirectory = (options: GeneratorSchema) => {
-  // Nx 20 BREAKING CHANGE: `directory` is now mandatory and `name` is optional
-  if (NX_VERSION.startsWith('20') && options.directory === undefined) {
-    options.directory = options.name;
-  }
 };

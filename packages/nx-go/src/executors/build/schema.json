@@ -10,8 +10,7 @@
       "type": "string",
       "description": "Path to the file containing the main() function",
       "x-completion-type": "file",
-      "x-completion-glob": "main.go",
-      "x-priority": "important"
+      "x-completion-glob": "main.go"
     },
     "compiler": {
       "type": "string",
@@ -46,6 +45,5 @@
       "default": "inherit",
       "description": "The extension of the output file. By default, it will make an extension based on the OS"
     }
-  },
-  "required": ["main"]
+  }
 }

@@ -21,6 +21,9 @@ runs:
         cache: false # we do not install Go modules, so we do not need to cache them
         go-version: ${{ inputs.go_version }}
 
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4.0.0
+
     - name: Use pnpm
       uses: pnpm/action-setup@v4.0.0
       with:

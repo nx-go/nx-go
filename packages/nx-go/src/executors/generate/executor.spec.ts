@@ -5,7 +5,7 @@ import { GenerateExecutorSchema } from './schema';
 
 jest.mock('../../utils', () => ({
   executeCommand: jest.fn().mockResolvedValue({ success: true }),
-  extractProjectRoot: jest.fn(() => 'apps/project'),
+  resolveWorkingDirectory: jest.fn(() => 'apps/project'),
 }));
 
 const options: GenerateExecutorSchema = {};
@@ -14,6 +14,9 @@ const context: ExecutorContext = {
   cwd: 'current-dir',
   root: '',
   isVerbose: false,
+  projectsConfigurations: undefined,
+  nxJsonConfiguration: undefined,
+  projectGraph: undefined,
 };
 
 describe('Generate Executor', () => {

@@ -19,15 +19,9 @@ import type { ApplicationGeneratorSchema } from './schema';
 export const defaultTargets: { [targetName: string]: TargetConfiguration } = {
   build: {
     executor: '@nx-go/nx-go:build',
-    options: {
-      main: '{projectRoot}/main.go',
-    },
   },
   serve: {
     executor: '@nx-go/nx-go:serve',
-    options: {
-      main: '{projectRoot}/main.go',
-    },
   },
   test: {
     executor: '@nx-go/nx-go:test',
@@ -41,12 +35,7 @@ export default async function applicationGenerator(
   tree: Tree,
   schema: ApplicationGeneratorSchema
 ) {
-  const options = await normalizeOptions(
-    tree,
-    schema,
-    'application',
-    '@nx-go/nx-go:application'
-  );
+  const options = await normalizeOptions(tree, schema, 'application');
   const projectConfiguration: ProjectConfiguration = {
     root: options.projectRoot,
     name: options.projectName,

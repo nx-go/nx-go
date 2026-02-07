@@ -1,5 +1,5 @@
 import { ExecutorContext } from '@nx/devkit';
-import { executeCommand, extractProjectRoot } from '../../utils';
+import { executeCommand, resolveWorkingDirectory } from '../../utils';
 import { TidyExecutorSchema } from './schema';
 
 /**
@@ -13,6 +13,6 @@ export default async function runExecutor(
   context: ExecutorContext
 ) {
   return executeCommand(['mod', 'tidy', ...(schema.args ?? [])], {
-    cwd: extractProjectRoot(context),
+    cwd: resolveWorkingDirectory(context),
   });
 }
