@@ -39,11 +39,6 @@
         "type": "string"
       },
       "description": "Flags to pass to the go compiler"
-    },
-    "extension": {
-      "type": "string",
-      "default": "inherit",
-      "description": "The extension of the output file. By default, it will make an extension based on the OS"
     }
   }
 }

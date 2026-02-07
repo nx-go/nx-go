@@ -5,5 +5,4 @@ export interface BuildExecutorSchema {
   buildMode?: string;
   env?: { [key: string]: string };
   flags?: string[];
-  extension: 'inherit' | (string & {}); // eslint-disable-line
 }
