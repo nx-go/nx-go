@@ -29,11 +29,12 @@ const context: ExecutorContext = {
 
 describe('Build Executor', () => {
   it.each`
-    platform   | outputPath
-    ${'win32'} | ${'../../dist/apps/project.exe'}
-    ${'linux'} | ${'../../dist/apps/project'}
+    platform    | outputPath
+    ${'win32'}  | ${'../../dist/apps/project.exe'}
+    ${'linux'}  | ${'../../dist/apps/project'}
+    ${'darwin'} | ${'../../dist/apps/project'}
   `(
-    'should execute build command on platform $platform',
+    'should execute build command on platform $platform (host platform detection)',
     async ({ platform, outputPath }) => {
       Object.defineProperty(process, 'platform', { value: platform });
       const output = await executor(options, context);
@@ -42,6 +43,57 @@ describe('Build Executor', () => {
         ['build', '-o', outputPath, 'main.go'],
         { cwd: 'apps/project', env: { hello: 'world' } }
       );
+    }
+  );
+
+  it.each`
+    goos         | hostPlatform | outputPath
+    ${'linux'}   | ${'win32'}   | ${'../../dist/apps/project'}
+    ${'darwin'}  | ${'win32'}   | ${'../../dist/apps/project'}
+    ${'windows'} | ${'linux'}   | ${'../../dist/apps/project.exe'}
+    ${'windows'} | ${'darwin'}  | ${'../../dist/apps/project.exe'}
+  `(
+    'should respect GOOS=$goos from executor config when cross-compiling from $hostPlatform',
+    async ({ goos, hostPlatform, outputPath }) => {
+      Object.defineProperty(process, 'platform', { value: hostPlatform });
+      const output = await executor(
+        { ...options, env: { ...options.env, GOOS: goos } },
+        context
+      );
+      expect(output.success).toBeTruthy();
+      expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+        ['build', '-o', outputPath, 'main.go'],
+        { cwd: 'apps/project', env: { hello: 'world', GOOS: goos } }
+      );
+    }
+  );
+
+  it.each`
+    goos         | hostPlatform | outputPath
+    ${'linux'}   | ${'win32'}   | ${'../../dist/apps/project'}
+    ${'darwin'}  | ${'win32'}   | ${'../../dist/apps/project'}
+    ${'windows'} | ${'linux'}   | ${'../../dist/apps/project.exe'}
+    ${'windows'} | ${'darwin'}  | ${'../../dist/apps/project.exe'}
+  `(
+    'should respect GOOS=$goos from process.env when cross-compiling from $hostPlatform',
+    async ({ goos, hostPlatform, outputPath }) => {
+      Object.defineProperty(process, 'platform', { value: hostPlatform });
+      const originalGOOS = process.env.GOOS;
+      process.env.GOOS = goos;
+
+      const output = await executor(options, context);
+      expect(output.success).toBeTruthy();
+      expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+        ['build', '-o', outputPath, 'main.go'],
+        { cwd: 'apps/project', env: { hello: 'world' } }
+      );
+
+      // Restore original value
+      if (originalGOOS === undefined) {
+        delete process.env.GOOS;
+      } else {
+        process.env.GOOS = originalGOOS;
+      }
     }
   );
 
@@ -66,12 +118,25 @@ describe('Build Executor', () => {
   });
 
   it('should execute build command with custom output path and flags', async () => {
+    Object.defineProperty(process, 'platform', { value: 'linux' });
     await executor(
       { ...options, outputPath: 'custom-path', flags: ['--flag1'] },
       context
     );
     expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
       ['build', '-o', 'custom-path', '--flag1', 'main.go'],
+      expect.anything()
+    );
+  });
+
+  it('should add .exe extension to custom output path when targeting Windows', async () => {
+    Object.defineProperty(process, 'platform', { value: 'linux' });
+    await executor(
+      { ...options, outputPath: 'custom-path', env: { GOOS: 'windows' } },
+      context
+    );
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['build', '-o', 'custom-path.exe', 'main.go'],
       expect.anything()
     );
   });

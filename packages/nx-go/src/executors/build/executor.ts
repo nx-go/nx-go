@@ -38,7 +38,7 @@ const buildParams = (
   return [
     'build',
     '-o',
-    buildOutputPath(context, options.outputPath),
+    buildOutputPath(context, options),
     ...buildStringFlagIfValid('-buildmode', options.buildMode),
     ...(options.flags ?? []),
     options.main ?? '.',
@@ -49,12 +49,12 @@ const buildParams = (
  * Builds the output path of the executable based on the project root.
  *
  * @param context executor context
- * @param customPath custom path to use first
+ * @param options executor options containing outputPath and env
  * @return the output path as a string
  */
 const buildOutputPath = (
   context: ExecutorContext,
-  customPath?: string
+  { env, outputPath }: BuildExecutorSchema
 ): string => {
   const projectRoot = extractProjectRoot(context);
   const defaultPath = joinPathFragments(
@@ -62,8 +62,26 @@ const buildOutputPath = (
     'dist',
     projectRoot
   );
-  const extension = process.platform === 'win32' ? '.exe' : '';
-  return (customPath ?? defaultPath) + extension;
+
+  return (outputPath ?? defaultPath) + buildExtension(env);
+};
+
+/**
+ * Determines the file extension for the compiled binary based on the target OS.
+ *
+ * Priority order:
+ * 1. GOOS from executor config env
+ * 2. GOOS from process environment
+ * 3. Host platform (process.platform)
+ *
+ * Check for 'windows' (GOOS value) and 'win32' (process.platform value)
+ *
+ * @param env environment variables containing GOOS
+ * @returns the file extension string ('.exe' for Windows, empty string otherwise)
+ */
+const buildExtension = (env?: BuildExecutorSchema['env']): string => {
+  const targetOS = env?.GOOS ?? process.env.GOOS ?? process.platform;
+  return targetOS === 'windows' || targetOS === 'win32' ? '.exe' : '';
 };
 
 /**
