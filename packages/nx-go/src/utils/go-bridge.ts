@@ -9,10 +9,11 @@ import {
 
 export type GoListType = 'import' | 'use';
 
-const REGEXS: Record<GoListType | 'version', RegExp> = {
+const REGEXS: Record<GoListType | 'version' | 'directive', RegExp> = {
   import: /import\s+(?:(\w+)\s+)?"([^"]+)"|\(([\s\S]*?)\)/,
   use: /use\s+(\(([^)]*)\)|([^\n]*))/,
   version: /go(?<version>\S+) /,
+  directive: /^go\s+(?<version>\d+\.\d+)/m,
 };
 
 /**
@@ -32,6 +33,24 @@ export const getGoVersion = (): string => {
 export const getGoShortVersion = (): string => {
   const [major, minor] = getGoVersion().split('.');
   return `${major}.${minor}`;
+};
+
+/**
+ * Gets the Go version to use for new go.mod files.
+ * If go.work exists, uses its version. Otherwise, uses the installed Go version.
+ *
+ * @param tree the project tree
+ * @returns The Go version to use (major.minor format)
+ */
+export const getGoVersionForNewMod = (tree: Tree): string => {
+  if (tree.exists(GO_WORK_FILE)) {
+    const goWorkContent = tree.read(GO_WORK_FILE).toString();
+    const version = REGEXS.directive.exec(goWorkContent)?.groups?.version;
+    if (version) {
+      return version;
+    }
+  }
+  return getGoShortVersion();
 };
 
 /**
@@ -110,7 +129,8 @@ export const createGoMod = (
 ): void => {
   const filePath = folder ? join(folder, GO_MOD_FILE) : GO_MOD_FILE;
   if (!tree.exists(filePath)) {
-    tree.write(filePath, `module ${name}\n\ngo ${getGoShortVersion()}\n`);
+    const goVersion = getGoVersionForNewMod(tree);
+    tree.write(filePath, `module ${name}\n\ngo ${goVersion}\n`);
   }
 };
 

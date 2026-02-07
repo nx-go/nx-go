@@ -10,6 +10,7 @@ import {
   getGoModules,
   getGoShortVersion,
   getGoVersion,
+  getGoVersionForNewMod,
   isGoWorkspace,
   parseGoList,
   supportsGoWorkspace,
@@ -114,6 +115,33 @@ describe('Go bridge', () => {
     });
   });
 
+  describe('Method: getGoVersionForNewMod', () => {
+    it('should return version from go.work if it exists', () => {
+      jest.spyOn(tree, 'exists').mockReturnValue(true);
+      jest
+        .spyOn(tree, 'read')
+        .mockReturnValue(
+          Buffer.from('go 1.23\n', 'utf-8') as unknown as string
+        );
+      expect(getGoVersionForNewMod(tree)).toBe('1.23');
+    });
+
+    it('should return installed Go version if go.work does not exist', () => {
+      jest.spyOn(tree, 'exists').mockReturnValue(false);
+      expect(getGoVersionForNewMod(tree)).toBe('1.21');
+    });
+
+    it('should fallback to installed version if go.work has no version', () => {
+      jest.spyOn(tree, 'exists').mockReturnValue(true);
+      jest
+        .spyOn(tree, 'read')
+        .mockReturnValue(
+          Buffer.from('invalid\n', 'utf-8') as unknown as string
+        );
+      expect(getGoVersionForNewMod(tree)).toBe('1.21');
+    });
+  });
+
   describe('Method: parseGoList', () => {
     it('should parse Go list with multiple items', () => {
       const result = parseGoList('use', 'use (./a\n  ./b\n./c  )');
@@ -132,13 +160,35 @@ describe('Go bridge', () => {
   });
 
   describe('Method: createGoMod', () => {
-    it('should write go.mod if not exists', () => {
+    it('should write go.mod with installed Go version if go.work does not exist', () => {
       const spyWrite = jest.spyOn(tree, 'write');
       jest.spyOn(tree, 'exists').mockReturnValue(false);
       createGoMod(tree, 'moduleName', 'libs/data-access');
       expect(spyWrite).toHaveBeenCalledWith(
         join('libs/data-access', 'go.mod'),
         'module moduleName\n\ngo 1.21\n'
+      );
+    });
+
+    it('should write go.mod with version from go.work if it exists', () => {
+      const spyWrite = jest.spyOn(tree, 'write');
+      const spyRead = jest.spyOn(tree, 'read');
+      const existsSpy = jest.spyOn(tree, 'exists');
+
+      // Mock go.work exists and contains version 1.23
+      existsSpy.mockImplementation((path: string) => {
+        if (path === GO_WORK_FILE) return true;
+        if (path === join('libs/data-access', 'go.mod')) return false;
+        return false;
+      });
+      spyRead.mockReturnValue(
+        Buffer.from('go 1.23\n', 'utf-8') as unknown as string
+      );
+
+      createGoMod(tree, 'moduleName', 'libs/data-access');
+      expect(spyWrite).toHaveBeenCalledWith(
+        join('libs/data-access', 'go.mod'),
+        'module moduleName\n\ngo 1.23\n'
       );
     });
 
