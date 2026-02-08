@@ -1,0 +1,67 @@
+import { TargetConfiguration } from '@nx/devkit';
+import { NX_PLUGIN_NAME } from '../../constants';
+import { NxGoPluginOptions } from '../../type';
+
+/**
+ * Contains all files that are common inputs for Go projects.
+ * Used in multiple targets (build, test, lint, tidy) to ensure proper caching and invalidation.
+ */
+const goProjectInputs = [
+  '{projectRoot}/go.mod',
+  '{projectRoot}/go.sum',
+  '{projectRoot}/**/*.go',
+  '{workspaceRoot}/go.work',
+  '{workspaceRoot}/go.work.sum',
+];
+
+/**
+ * Generates a set of default targets for a Go project based on whether it's an application or a library.
+ * Applications get build and serve targets, while both applications and libraries get test, lint, and tidy targets.
+ *
+ * @param options - The plugin options containing target names
+ * @param isApplication - A boolean indicating if the project is an application (has package main) or a library
+ * @returns An object containing the generated targets for the project
+ * @see https://nx.dev/docs/extending-nx/project-graph-plugins#identifying-projects
+ */
+export const generateTargets = (
+  options: NxGoPluginOptions,
+  isApplication: boolean
+): Record<string, TargetConfiguration> => {
+  const targets: Record<string, TargetConfiguration> = {};
+
+  // Build and Serve targets - only for applications
+  if (isApplication) {
+    targets[options.buildTargetName] = {
+      executor: `${NX_PLUGIN_NAME}:build`,
+      cache: true,
+      inputs: goProjectInputs,
+      outputs: ['{options.outputPath}'],
+    };
+    targets[options.serveTargetName] = {
+      executor: `${NX_PLUGIN_NAME}:serve`,
+    };
+  }
+
+  // Test, Lint, and Tidy targets - for all Go projects
+  targets[options.testTargetName] = {
+    executor: `${NX_PLUGIN_NAME}:test`,
+    cache: true,
+    inputs: goProjectInputs,
+    outputs: ['{options.coverProfile}'],
+  };
+
+  targets[options.lintTargetName] = {
+    executor: `${NX_PLUGIN_NAME}:lint`,
+    cache: true,
+    inputs: goProjectInputs,
+  };
+
+  targets[options.tidyTargetName] = {
+    executor: `${NX_PLUGIN_NAME}:tidy`,
+    cache: true,
+    inputs: goProjectInputs,
+    outputs: ['{projectRoot}/go.sum'],
+  };
+
+  return targets;
+};

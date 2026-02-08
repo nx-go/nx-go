@@ -12,7 +12,7 @@ import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { join } from 'path';
 import * as shared from '../../utils';
-import applicationGenerator, { defaultTargets } from './generator';
+import applicationGenerator from './generator';
 import type { ApplicationGeneratorSchema } from './schema';
 
 jest.mock('@nx/devkit');
@@ -43,11 +43,9 @@ describe('application generator', () => {
         name: 'my-api',
         projectType: 'application',
         sourceRoot: 'apps/my-api',
-        targets: defaultTargets,
         tags: ['api', 'backend'],
       }
     );
-    expect(nxDevkit.updateProjectConfiguration).not.toHaveBeenCalled();
   });
 
   it('should generate files', async () => {
@@ -67,28 +65,6 @@ describe('application generator', () => {
       tree,
       'apps/my-api',
       'apps/my-api'
-    );
-  });
-
-  it('should add tidy executor for project if in a Go workspace', async () => {
-    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
-    await applicationGenerator(tree, options);
-    expect(nxDevkit.updateProjectConfiguration).toHaveBeenCalledWith(
-      tree,
-      'my-api',
-      {
-        root: 'apps/my-api',
-        name: 'my-api',
-        projectType: 'application',
-        sourceRoot: 'apps/my-api',
-        targets: {
-          ...defaultTargets,
-          tidy: {
-            executor: '@nx-go/nx-go:tidy',
-          },
-        },
-        tags: ['api', 'backend'],
-      }
     );
   });
 

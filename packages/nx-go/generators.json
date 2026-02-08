@@ -7,6 +7,11 @@
       "aliases": ["app"],
       "x-type": "application"
     },
+    "convert-to-inferred": {
+      "factory": "./src/generators/convert-to-inferred/generator",
+      "schema": "./src/generators/convert-to-inferred/schema.json",
+      "description": "Convert explicit targets to inferred tasks (Project Crystal)"
+    },
     "convert-to-one-mod": {
       "factory": "./src/generators/convert-to-one-mod/generator",
       "schema": "./src/generators/convert-to-one-mod/schema.json",

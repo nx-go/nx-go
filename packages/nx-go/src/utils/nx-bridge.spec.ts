@@ -38,6 +38,17 @@ describe('Nx bridge', () => {
       expect(nxJson.plugins).toEqual([NX_PLUGIN_NAME]);
       expect(spyUpdateNxJson).not.toHaveBeenCalled();
     });
+
+    it('should not add the plugin if already included as a plugin object', () => {
+      const nxJson = {
+        plugins: [{ plugin: NX_PLUGIN_NAME, options: {} }],
+      } as NxJsonConfiguration;
+      const spyUpdateNxJson = jest.spyOn(nxDevkit, 'updateNxJson');
+      jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue(nxJson);
+      addNxPlugin(tree);
+      expect(nxJson.plugins).toEqual([{ plugin: NX_PLUGIN_NAME, options: {} }]);
+      expect(spyUpdateNxJson).not.toHaveBeenCalled();
+    });
   });
 
   describe('Method: ensureGoModInSharedGlobals', () => {

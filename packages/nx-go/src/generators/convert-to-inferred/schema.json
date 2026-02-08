@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "@nx-go/nx-go:convert-to-inferred",
+  "title": "Convert to Inferred Tasks",
+  "description": "Convert explicit targets in project.json files to use inferred tasks (Project Crystal).",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The name of the project to convert. If not provided, all Go projects will be converted.",
+      "x-priority": "important"
+    },
+    "skipFormat": {
+      "type": "boolean",
+      "description": "Skip formatting files after conversion.",
+      "default": false,
+      "x-priority": "internal"
+    }
+  }
+}

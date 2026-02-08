@@ -15,8 +15,18 @@ import { isGoWorkspace } from './go-bridge';
  */
 export const addNxPlugin = (tree: Tree): void => {
   const nxJson = readNxJson(tree);
-  if (!nxJson.plugins?.includes(NX_PLUGIN_NAME)) {
-    nxJson.plugins = [...(nxJson.plugins || []), NX_PLUGIN_NAME];
+  const plugins = nxJson.plugins || [];
+
+  // Check if plugin already exists (as string or object)
+  const pluginExists = plugins.some((plugin) => {
+    if (typeof plugin === 'string') {
+      return plugin === NX_PLUGIN_NAME;
+    }
+    return plugin.plugin === NX_PLUGIN_NAME;
+  });
+
+  if (!pluginExists) {
+    nxJson.plugins = [...plugins, NX_PLUGIN_NAME];
     updateNxJson(tree, nxJson);
   }
 };
