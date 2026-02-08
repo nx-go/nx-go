@@ -33,6 +33,7 @@ describe('generateTargets', () => {
         cache: true,
         inputs: expect.arrayOf(expect.any(String)),
         outputs: ['{options.outputPath}'],
+        metadata: expect.anything(),
       } as TargetConfiguration);
     });
 
@@ -41,6 +42,7 @@ describe('generateTargets', () => {
 
       expect(result['serve']).toEqual({
         executor: `${NX_PLUGIN_NAME}:serve`,
+        metadata: expect.anything(),
       } as TargetConfiguration);
     });
   });
@@ -53,6 +55,7 @@ describe('generateTargets', () => {
       cache: true,
       inputs: expect.arrayOf(expect.any(String)),
       outputs: ['{options.coverProfile}'],
+      metadata: expect.anything(),
     } as TargetConfiguration);
   });
 
@@ -63,6 +66,7 @@ describe('generateTargets', () => {
       executor: `${NX_PLUGIN_NAME}:lint`,
       cache: true,
       inputs: expect.arrayOf(expect.any(String)),
+      metadata: expect.anything(),
     } as TargetConfiguration);
   });
 
@@ -74,6 +78,7 @@ describe('generateTargets', () => {
       cache: true,
       inputs: expect.arrayOf(expect.any(String)),
       outputs: ['{projectRoot}/go.sum'],
+      metadata: expect.anything(),
     } as TargetConfiguration);
   });
 

@@ -36,9 +36,25 @@ export const generateTargets = (
       cache: true,
       inputs: goProjectInputs,
       outputs: ['{options.outputPath}'],
+      metadata: {
+        technologies: ['go'],
+        description: 'Builds the Go application',
+        help: {
+          command: 'go help build',
+          example: { options: { main: 'main.go' } },
+        },
+      },
     };
     targets[options.serveTargetName] = {
       executor: `${NX_PLUGIN_NAME}:serve`,
+      metadata: {
+        technologies: ['go'],
+        description: 'Runs the Go application',
+        help: {
+          command: 'go help run',
+          example: { options: { main: 'main.go' } },
+        },
+      },
     };
   }
 
@@ -48,12 +64,28 @@ export const generateTargets = (
     cache: true,
     inputs: goProjectInputs,
     outputs: ['{options.coverProfile}'],
+    metadata: {
+      technologies: ['go'],
+      description: 'Tests the Go application',
+      help: {
+        command: 'go help test',
+        example: { options: { cover: true } },
+      },
+    },
   };
 
   targets[options.lintTargetName] = {
     executor: `${NX_PLUGIN_NAME}:lint`,
     cache: true,
     inputs: goProjectInputs,
+    metadata: {
+      technologies: ['go'],
+      description: 'Lints the Go application',
+      help: {
+        command: 'go help fmt',
+        example: {},
+      },
+    },
   };
 
   targets[options.tidyTargetName] = {
@@ -61,6 +93,14 @@ export const generateTargets = (
     cache: true,
     inputs: goProjectInputs,
     outputs: ['{projectRoot}/go.sum'],
+    metadata: {
+      technologies: ['go'],
+      description: 'Tidies the Go application',
+      help: {
+        command: 'go help mod',
+        example: {},
+      },
+    },
   };
 
   return targets;

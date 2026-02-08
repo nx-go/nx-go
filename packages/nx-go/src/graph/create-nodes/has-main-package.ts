@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const PACKAGE_MAIN_REGEX = /^\s*package\s+main\s*$/m;
+const PACKAGE_MAIN_REGEX = /^[ \t]*package[ \t]+main[ \t]*$/m;
 const popularMainFiles = ['main.go', 'cmd.go', 'app.go', 'server.go'];
 
 /**
