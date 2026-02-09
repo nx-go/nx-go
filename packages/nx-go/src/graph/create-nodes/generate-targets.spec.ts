@@ -10,6 +10,7 @@ describe('generateTargets', () => {
     testTargetName: 'test',
     lintTargetName: 'lint',
     tidyTargetName: 'tidy',
+    generateTargetName: 'generate',
   };
 
   describe('when isApplication is true', () => {
@@ -22,6 +23,7 @@ describe('generateTargets', () => {
         'test',
         'lint',
         'tidy',
+        'generate',
       ]);
     });
 
@@ -42,6 +44,7 @@ describe('generateTargets', () => {
 
       expect(result['serve']).toEqual({
         executor: `${NX_PLUGIN_NAME}:serve`,
+        continuous: true,
         metadata: expect.anything(),
       } as TargetConfiguration);
     });
@@ -77,6 +80,17 @@ describe('generateTargets', () => {
       cache: true,
       inputs: expect.arrayOf(expect.any(String)),
       outputs: ['{projectRoot}/go.sum'],
+      metadata: expect.anything(),
+    } as TargetConfiguration);
+  });
+
+  it('should create a generate target with correct configuration', () => {
+    const result = generateTargets(mockOptions, true);
+
+    expect(result['generate']).toEqual({
+      executor: `${NX_PLUGIN_NAME}:generate`,
+      cache: true,
+      inputs: expect.arrayOf(expect.any(String)),
       metadata: expect.anything(),
     } as TargetConfiguration);
   });

@@ -33,6 +33,7 @@ const normalizeOptions = (options: NxGoPluginOptions) => ({
   testTargetName: options.testTargetName ?? 'test',
   lintTargetName: options.lintTargetName ?? 'lint',
   tidyTargetName: options.tidyTargetName ?? 'tidy',
+  generateTargetName: options.generateTargetName ?? 'generate',
 });
 
 const createNodesInternal = async (

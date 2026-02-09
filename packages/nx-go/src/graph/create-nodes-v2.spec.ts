@@ -56,6 +56,10 @@ describe('Create nodes V2', () => {
                     executor: '@nx-go/nx-go:tidy',
                     cache: true,
                   },
+                  generate: {
+                    executor: '@nx-go/nx-go:generate',
+                    cache: true,
+                  },
                 },
               },
             },
@@ -91,6 +95,10 @@ describe('Create nodes V2', () => {
                     executor: '@nx-go/nx-go:tidy',
                     cache: true,
                   },
+                  generate: {
+                    executor: '@nx-go/nx-go:generate',
+                    cache: true,
+                  },
                 },
               },
             },
@@ -112,6 +120,7 @@ describe('Create nodes V2', () => {
         lintTargetName: 'custom-lint',
         tidyTargetName: 'custom-tidy',
         serveTargetName: 'custom-serve',
+        generateTargetName: 'custom-generate',
       };
       const result = await createNodesV2[1](
         ['apps/myapp/go.mod'],
@@ -125,6 +134,7 @@ describe('Create nodes V2', () => {
       expect(targets['custom-test']).toBeDefined();
       expect(targets['custom-lint']).toBeDefined();
       expect(targets['custom-tidy']).toBeDefined();
+      expect(targets['custom-generate']).toBeDefined();
     });
 
     it('should not create nodes for go.mod at workspace root', async () => {

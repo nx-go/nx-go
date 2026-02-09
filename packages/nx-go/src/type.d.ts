@@ -32,4 +32,9 @@ export interface NxGoPluginOptions {
    * Default is 'tidy'.
    */
   tidyTargetName?: string;
+  /**
+   * Custom target name for the generate target.
+   * Default is 'generate'.
+   */
+  generateTargetName?: string;
 }

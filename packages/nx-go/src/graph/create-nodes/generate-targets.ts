@@ -104,5 +104,19 @@ export const generateTargets = (
     },
   };
 
+  targets[options.generateTargetName] = {
+    executor: `${NX_PLUGIN_NAME}:generate`,
+    cache: true,
+    inputs: goProjectInputs,
+    metadata: {
+      technologies: ['go'],
+      description: 'Generates Go source code files',
+      help: {
+        command: 'go help generate',
+        example: { options: { args: ['./...'] } },
+      },
+    },
+  };
+
   return targets;
 };

@@ -43,13 +43,14 @@ describe('nx-go', () => {
     const result = await runNxCommandAsync(`show project ${appName} --json`);
     const projectDetails = JSON.parse(result.stdout);
 
-    // Applications should have build, serve, test, lint, and tidy targets inferred
+    // Applications should have build, serve, test, lint, tidy, and generate targets inferred
     expect(projectDetails.targets).toEqual({
       build: expect.objectContaining({ executor: '@nx-go/nx-go:build' }),
       serve: expect.objectContaining({ executor: '@nx-go/nx-go:serve' }),
       test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
       lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
       tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+      generate: expect.objectContaining({ executor: '@nx-go/nx-go:generate' }),
     });
   });
 
@@ -76,11 +77,14 @@ describe('nx-go', () => {
       const result = await runNxCommandAsync(`show project ${libName} --json`);
       const projectDetails = JSON.parse(result.stdout);
 
-      // Libraries should only have test, lint, and tidy targets inferred (no build/serve)
+      // Libraries should only have test, lint, tidy, and generate targets inferred (no build/serve)
       expect(projectDetails.targets).toEqual({
         test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
         lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
         tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+        generate: expect.objectContaining({
+          executor: '@nx-go/nx-go:generate',
+        }),
       });
     });
 
@@ -112,6 +116,9 @@ describe('nx-go', () => {
         test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
         lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
         tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+        generate: expect.objectContaining({
+          executor: '@nx-go/nx-go:generate',
+        }),
       });
     });
   });
@@ -375,6 +382,9 @@ describe('nx-go', () => {
         test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
         lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
         tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+        generate: expect.objectContaining({
+          executor: '@nx-go/nx-go:generate',
+        }),
       });
     });
   });
