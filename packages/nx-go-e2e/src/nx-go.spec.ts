@@ -4,6 +4,7 @@ import {
   ensureNxProject,
   readFile,
   readJson,
+  renameFile,
   runNxCommandAsync,
   tmpProjPath,
   uniq,
@@ -69,18 +70,49 @@ describe('nx-go', () => {
     expect(projectConfig.targets).toBeUndefined();
   });
 
-  it('should infer targets for library', async () => {
-    // Verify that inferred targets are available by running show project command
-    const result = await runNxCommandAsync(`show project ${libName} --json`);
-    const projectDetails = JSON.parse(result.stdout);
+  describe('Inference', () => {
+    it('should infer targets for library', async () => {
+      // Verify that inferred targets are available by running show project command
+      const result = await runNxCommandAsync(`show project ${libName} --json`);
+      const projectDetails = JSON.parse(result.stdout);
 
-    // Libraries should only have test, lint, and tidy targets inferred (no build/serve)
-    expect(projectDetails.targets).toEqual({
-      build: undefined,
-      serve: undefined,
-      test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
-      lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
-      tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+      // Libraries should only have test, lint, and tidy targets inferred (no build/serve)
+      expect(projectDetails.targets).toEqual({
+        test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
+        lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
+        tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+      });
+    });
+
+    it('should infer targets without project.json', async () => {
+      const noConfigApp = uniq('app');
+
+      // Create a new application
+      await runNxCommandAsync(
+        `generate @nx-go/nx-go:application ${noConfigApp}`
+      );
+
+      // Rename the project.json file to test pure inference capability
+      renameFile(
+        `${noConfigApp}/project.json`,
+        `${noConfigApp}/project.jsonbak`
+      );
+
+      // Verify that nx show project still works without project.json
+      const showResult = await runNxCommandAsync(
+        `show project ${noConfigApp} --json`
+      );
+      const projectDetails = JSON.parse(showResult.stdout);
+
+      // Verify project is recognized and has inferred targets
+      expect(projectDetails.name).toEqual(noConfigApp);
+      expect(projectDetails.targets).toEqual({
+        build: expect.objectContaining({ executor: '@nx-go/nx-go:build' }),
+        serve: expect.objectContaining({ executor: '@nx-go/nx-go:serve' }),
+        test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
+        lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
+        tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+      });
     });
   });
 
@@ -182,6 +214,14 @@ describe('nx-go', () => {
   });
 
   describe('Serve', () => {
+    beforeAll(() => {
+      // Set continuous = false for the serve target in nx.json to avoid hanging tests
+      const nxJson = readJson('nx.json');
+      nxJson.targetDefaults = nxJson.targetDefaults || {};
+      nxJson.targetDefaults.serve = { continuous: false };
+      updateFile('nx.json', JSON.stringify(nxJson, null, 2));
+    });
+
     it('should serve the application', async () => {
       const result = await runNxCommandAsync(`serve ${appName}`);
       expect(result.stdout).toContain(`Executing command: go run .`);

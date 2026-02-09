@@ -32,7 +32,7 @@ describe('generateTargets', () => {
         executor: `${NX_PLUGIN_NAME}:build`,
         cache: true,
         inputs: expect.arrayOf(expect.any(String)),
-        outputs: ['{options.outputPath}'],
+        outputs: ['{workspaceRoot}/dist/{projectRoot}*'],
         metadata: expect.anything(),
       } as TargetConfiguration);
     });
@@ -54,7 +54,6 @@ describe('generateTargets', () => {
       executor: `${NX_PLUGIN_NAME}:test`,
       cache: true,
       inputs: expect.arrayOf(expect.any(String)),
-      outputs: ['{options.coverProfile}'],
       metadata: expect.anything(),
     } as TargetConfiguration);
   });

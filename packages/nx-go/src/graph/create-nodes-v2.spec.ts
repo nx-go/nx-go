@@ -25,15 +25,16 @@ describe('Create nodes V2', () => {
     it('should create inferred tasks for an application with package main', async () => {
       mockedHasMainPackage.mockReturnValue(true);
 
-      const result = await createNodesV2[1](['libs/api/go.mod'], {}, context);
+      const result = await createNodesV2[1](['apps/api/go.mod'], {}, context);
 
       expect(result).toMatchObject([
         [
-          'libs/api/go.mod',
+          'apps/api/go.mod',
           {
             projects: {
-              'libs/api': {
+              'apps/api': {
                 name: 'api',
+                root: 'apps/api',
                 projectType: 'application',
                 targets: {
                   build: {
@@ -75,6 +76,7 @@ describe('Create nodes V2', () => {
             projects: {
               'libs/utils': {
                 name: 'utils',
+                root: 'libs/utils',
                 projectType: 'library',
                 targets: {
                   test: {

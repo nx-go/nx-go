@@ -64,6 +64,7 @@ const createNodesInternal = async (
     projects: {
       [projectRoot]: {
         name: projectName,
+        root: projectRoot,
         projectType,
         targets: generateTargets(options, isApplication),
       },

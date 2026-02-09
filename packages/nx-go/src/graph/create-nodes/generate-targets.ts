@@ -35,7 +35,7 @@ export const generateTargets = (
       executor: `${NX_PLUGIN_NAME}:build`,
       cache: true,
       inputs: goProjectInputs,
-      outputs: ['{options.outputPath}'],
+      outputs: ['{workspaceRoot}/dist/{projectRoot}*'],
       metadata: {
         technologies: ['go'],
         description: 'Builds the Go application',
@@ -47,6 +47,7 @@ export const generateTargets = (
     };
     targets[options.serveTargetName] = {
       executor: `${NX_PLUGIN_NAME}:serve`,
+      continuous: true,
       metadata: {
         technologies: ['go'],
         description: 'Runs the Go application',
@@ -63,10 +64,10 @@ export const generateTargets = (
     executor: `${NX_PLUGIN_NAME}:test`,
     cache: true,
     inputs: goProjectInputs,
-    outputs: ['{options.coverProfile}'],
+    // Note: test target intentionally has no outputs as test execution doesn't produce cacheable artifacts
     metadata: {
       technologies: ['go'],
-      description: 'Tests the Go application',
+      description: 'Tests the Go project',
       help: {
         command: 'go help test',
         example: { options: { cover: true } },
@@ -80,7 +81,7 @@ export const generateTargets = (
     inputs: goProjectInputs,
     metadata: {
       technologies: ['go'],
-      description: 'Lints the Go application',
+      description: 'Lints the Go project',
       help: {
         command: 'go help fmt',
         example: {},
@@ -95,7 +96,7 @@ export const generateTargets = (
     outputs: ['{projectRoot}/go.sum'],
     metadata: {
       technologies: ['go'],
-      description: 'Tidies the Go application',
+      description: 'Tidies the Go project dependencies',
       help: {
         command: 'go help mod',
         example: {},

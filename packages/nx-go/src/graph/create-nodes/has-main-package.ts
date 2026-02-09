@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const PACKAGE_MAIN_REGEX = /^[ \t]*package[ \t]+main[ \t]*$/m;
+const PACKAGE_MAIN_REGEX = /^[ \t]*package[ \t]+main\b/m;
 const popularMainFiles = ['main.go', 'cmd.go', 'app.go', 'server.go'];
 
 /**
@@ -40,7 +40,11 @@ export const hasMainPackage = (
   }
 
   // Check common patterns for main packages
-  const commonPatterns = [...popularMainFiles, `${projectName}.go`];
+  const commonPatterns = [
+    ...popularMainFiles,
+    `${projectName}.go`,
+    `cmd/${projectName}/main.go`,
+  ];
 
   for (const pattern of commonPatterns) {
     const filePath = join(projectPath, pattern);

@@ -21,10 +21,10 @@ describe('hasMainPackage', () => {
     it('should return false', () => {
       mockedExistsSync.mockReturnValueOnce(false);
 
-      const result = hasMainPackage('/workspace', 'libs/api', 'api');
+      const result = hasMainPackage('/workspace', 'apps/api', 'api');
 
       expect(result).toBe(false);
-      expect(mockedExistsSync).toHaveBeenCalledWith('/workspace/libs/api');
+      expect(mockedExistsSync).toHaveBeenCalledWith('/workspace/apps/api');
     });
   });
 
@@ -36,6 +36,7 @@ describe('hasMainPackage', () => {
       ${'app.go'}
       ${'server.go'}
       ${'my-app.go'}
+      ${'cmd/my-app/main.go'}
     `('should return true when $file contains package main', ({ file }) => {
       mockedExistsSync.mockImplementation((path) =>
         ['/workspace/apps/my-app', `/workspace/apps/my-app/${file}`].includes(
