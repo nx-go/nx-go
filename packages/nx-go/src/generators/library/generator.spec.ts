@@ -12,7 +12,7 @@ import * as nxDevkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { join } from 'path';
 import * as shared from '../../utils';
-import libraryGenerator, { defaultTargets } from './generator';
+import libraryGenerator from './generator';
 import type { LibraryGeneratorSchema } from './schema';
 
 jest.mock('@nx/devkit', () => ({
@@ -49,11 +49,9 @@ describe('library generator', () => {
         name: 'data-access',
         projectType: 'library',
         sourceRoot: 'libs/data-access',
-        targets: defaultTargets,
         tags: ['data', 'data-access'],
       }
     );
-    expect(nxDevkit.updateProjectConfiguration).not.toHaveBeenCalled();
   });
 
   it('should generate files', async () => {
@@ -87,28 +85,6 @@ describe('library generator', () => {
     expect(shared.addGoWorkDependency).toHaveBeenCalledWith(
       tree,
       'libs/data-access'
-    );
-  });
-
-  it('should add tidy executor for project if in a Go workspace', async () => {
-    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
-    await libraryGenerator(tree, options);
-    expect(nxDevkit.updateProjectConfiguration).toHaveBeenCalledWith(
-      tree,
-      'data-access',
-      {
-        root: 'libs/data-access',
-        name: 'data-access',
-        projectType: 'library',
-        sourceRoot: 'libs/data-access',
-        targets: {
-          ...defaultTargets,
-          tidy: {
-            executor: '@nx-go/nx-go:tidy',
-          },
-        },
-        tags: ['data', 'data-access'],
-      }
     );
   });
 

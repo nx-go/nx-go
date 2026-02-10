@@ -3,9 +3,9 @@ import {
   CreateDependenciesContext,
   DependencyType,
   ProjectConfiguration,
+  ProjectFileMap,
   RawProjectGraphDependency,
 } from '@nx/devkit';
-import { ProjectFileMap } from 'nx/src/config/project-graph';
 import * as utils from '../utils';
 import { createDependencies } from './create-dependencies';
 

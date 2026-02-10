@@ -18,13 +18,13 @@ export default async function initGenerator(
     createGoWork(tree);
   } else {
     createGoMod(tree, getProjectScope(tree));
+    ensureGoConfigInSharedGlobals(tree);
     logger.warn(
       `Go workspaces are not supported. You need Go >= ${GO_WORK_MINIMUM_VERSION}. Fallback to a single Go module.`
     );
   }
 
   addNxPlugin(tree);
-  ensureGoConfigInSharedGlobals(tree);
 
   if (!options.skipFormat) {
     await formatFiles(tree);

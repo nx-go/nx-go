@@ -43,7 +43,8 @@ describe('init generator', () => {
     expect(nxDevkit.logger.warn).toHaveBeenCalledTimes(1);
   });
 
-  it('should ensure go configuration in shared globals', async () => {
+  it('should ensure go configuration in shared globals if go workspace is not supported', async () => {
+    jest.spyOn(shared, 'supportsGoWorkspace').mockReturnValueOnce(false);
     await initGenerator(tree, options);
     expect(shared.ensureGoConfigInSharedGlobals).toHaveBeenCalledWith(tree);
   });
