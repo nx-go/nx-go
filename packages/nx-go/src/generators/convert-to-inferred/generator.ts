@@ -1,4 +1,11 @@
-import { createProjectGraphAsync, formatFiles, type Tree } from '@nx/devkit';
+import {
+  createProjectGraphAsync,
+  formatFiles,
+  readNxJson,
+  TargetConfiguration,
+  updateNxJson,
+  type Tree,
+} from '@nx/devkit';
 import {
   migrateProjectExecutorsToPlugin,
   NoTargetsToMigrateError,
@@ -25,32 +32,40 @@ export default async function convertToInferredGenerator(
         testTargetName: 'test',
         lintTargetName: 'lint',
         tidyTargetName: 'tidy',
+        generateTargetName: 'generate',
       },
       [
         {
           executors: ['@nx-go/nx-go:build'],
-          postTargetTransformer: (target) => target,
+          postTargetTransformer,
           targetPluginOptionMapper: (target) => ({ buildTargetName: target }),
         },
         {
           executors: ['@nx-go/nx-go:serve'],
-          postTargetTransformer: (target) => target,
+          postTargetTransformer,
           targetPluginOptionMapper: (target) => ({ serveTargetName: target }),
         },
         {
           executors: ['@nx-go/nx-go:test'],
-          postTargetTransformer: (target) => target,
+          postTargetTransformer,
           targetPluginOptionMapper: (target) => ({ testTargetName: target }),
         },
         {
           executors: ['@nx-go/nx-go:lint'],
-          postTargetTransformer: (target) => target,
+          postTargetTransformer,
           targetPluginOptionMapper: (target) => ({ lintTargetName: target }),
         },
         {
           executors: ['@nx-go/nx-go:tidy'],
-          postTargetTransformer: (target) => target,
+          postTargetTransformer,
           targetPluginOptionMapper: (target) => ({ tidyTargetName: target }),
+        },
+        {
+          executors: ['@nx-go/nx-go:generate'],
+          postTargetTransformer,
+          targetPluginOptionMapper: (target) => ({
+            generateTargetName: target,
+          }),
         },
       ],
       options.project
@@ -60,7 +75,26 @@ export default async function convertToInferredGenerator(
     throw new NoTargetsToMigrateError();
   }
 
+  // Remove the old plugin reference from nx.json
+  const nxJson = readNxJson(tree);
+  const initialPluginCount = nxJson.plugins?.length ?? 0;
+  nxJson.plugins = (nxJson.plugins ?? []).filter(
+    (plugin) => plugin !== '@nx-go/nx-go'
+  );
+  if (initialPluginCount !== nxJson.plugins.length) {
+    updateNxJson(tree, nxJson);
+  }
+
   if (!options.skipFormat) {
     await formatFiles(tree);
   }
 }
+
+const postTargetTransformer = (target: TargetConfiguration) => {
+  // If the target only had the 'golang' named input,
+  // remove it to fall back to the default named inputs configuration
+  if (target.inputs?.length === 1 && target.inputs[0] === 'golang') {
+    delete target.inputs;
+  }
+  return target;
+};

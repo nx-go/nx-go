@@ -1,10 +1,6 @@
 import { formatFiles, logger, Tree } from '@nx/devkit';
 import { GO_WORK_FILE } from '../../constants';
-import {
-  createGoMod,
-  ensureGoConfigInSharedGlobals,
-  getProjectScope,
-} from '../../utils';
+import { createGoMod, getProjectScope } from '../../utils';
 import { ConvertToOneModGeneratorSchema } from './schema';
 
 export default async function convertToOneModGenerator(
@@ -25,7 +21,6 @@ export default async function convertToOneModGenerator(
 
   tree.delete(GO_WORK_FILE);
   createGoMod(tree, getProjectScope(tree));
-  ensureGoConfigInSharedGlobals(tree);
 
   if (!options.skipFormat) {
     await formatFiles(tree);

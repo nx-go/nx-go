@@ -12,7 +12,6 @@ jest.mock('@nx/devkit', () => ({
 }));
 jest.mock('../../utils', () => ({
   createGoMod: jest.fn(),
-  ensureGoConfigInSharedGlobals: jest.fn(),
   getProjectScope: jest.fn().mockReturnValue('proj'),
 }));
 
@@ -34,11 +33,6 @@ describe('convert-to-one-mod generator', () => {
   it('should create go mod', async () => {
     await convertToOneModGenerator(tree, options);
     expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj');
-  });
-
-  it('should ensure go config in shared globals', async () => {
-    await convertToOneModGenerator(tree, options);
-    expect(shared.ensureGoConfigInSharedGlobals).toHaveBeenCalledWith(tree);
   });
 
   it('should format files', async () => {

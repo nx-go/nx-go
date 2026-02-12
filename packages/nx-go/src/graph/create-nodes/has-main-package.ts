@@ -31,7 +31,7 @@ const fileHasMainPackage = (filePath: string): boolean => {
 export const hasMainPackage = (
   workspaceRoot: string,
   projectRoot: string,
-  projectName: string
+  projectName: string | undefined
 ): boolean => {
   const projectPath = join(workspaceRoot, projectRoot);
 
@@ -42,8 +42,7 @@ export const hasMainPackage = (
   // Check common patterns for main packages
   const commonPatterns = [
     ...popularMainFiles,
-    `${projectName}.go`,
-    `cmd/${projectName}/main.go`,
+    ...(projectName ? [`${projectName}.go`, `cmd/${projectName}/main.go`] : []),
   ];
 
   for (const pattern of commonPatterns) {

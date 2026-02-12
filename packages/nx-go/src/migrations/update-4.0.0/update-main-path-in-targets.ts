@@ -26,7 +26,7 @@ export default async function update(tree: Tree) {
     let hasChanges = false;
 
     // Iterate through all targets to find any using nx-go build or serve executors
-    for (const [_, target] of Object.entries(projectConfig.targets)) {
+    for (const [, target] of Object.entries(projectConfig.targets)) {
       const isNxGoBuildOrServe =
         target.executor === '@nx-go/nx-go:build' ||
         target.executor === '@nx-go/nx-go:serve';

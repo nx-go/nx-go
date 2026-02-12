@@ -45,13 +45,8 @@ const createNodesInternal = async (
 
   // We assume that the project name is derived from the project root folder name
   // If needed, the user can still rename the project in the configuration file (project.json)
-  const projectName = projectRoot.split(/[/\\]/).pop();
-
-  // We cannot create nodes if go.mod is in the workspace root folder
-  // in this case we let Nx use project.json files (by default)
-  if (projectRoot === '.') {
-    return {};
-  }
+  const projectName =
+    projectRoot === '.' ? undefined : projectRoot.split(/[/\\]/).pop();
 
   // Check if project is an application (has package main) or a library
   const isApplication = hasMainPackage(
@@ -64,8 +59,8 @@ const createNodesInternal = async (
   return {
     projects: {
       [projectRoot]: {
-        name: projectName,
         root: projectRoot,
+        name: projectName,
         projectType,
         targets: generateTargets(options, isApplication),
       },

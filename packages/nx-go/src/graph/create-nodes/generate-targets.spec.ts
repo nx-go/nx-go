@@ -1,5 +1,5 @@
 import { type TargetConfiguration } from '@nx/devkit';
-import { NX_PLUGIN_NAME } from '../../constants';
+import { GO_MOD_FILE, NX_PLUGIN_NAME } from '../../constants';
 import { NxGoPluginOptions } from '../../type';
 import { generateTargets } from './generate-targets';
 
@@ -79,7 +79,7 @@ describe('generateTargets', () => {
       executor: `${NX_PLUGIN_NAME}:tidy`,
       cache: true,
       inputs: expect.arrayOf(expect.any(String)),
-      outputs: ['{projectRoot}/go.sum'],
+      outputs: [`{projectRoot}/${GO_MOD_FILE}`, '{projectRoot}/go.sum'],
       metadata: expect.anything(),
     } as TargetConfiguration);
   });

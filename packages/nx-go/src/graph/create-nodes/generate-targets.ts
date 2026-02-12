@@ -1,18 +1,10 @@
 import { TargetConfiguration } from '@nx/devkit';
-import { NX_PLUGIN_NAME } from '../../constants';
+import {
+  GO_MOD_FILE,
+  GO_PROJECT_INPUTS,
+  NX_PLUGIN_NAME,
+} from '../../constants';
 import { NxGoPluginOptions } from '../../type';
-
-/**
- * Contains all files that are common inputs for Go projects.
- * Used in multiple targets (build, test, lint, tidy) to ensure proper caching and invalidation.
- */
-const goProjectInputs = [
-  '{projectRoot}/go.mod',
-  '{projectRoot}/go.sum',
-  '{projectRoot}/**/*.go',
-  '{workspaceRoot}/go.work',
-  '{workspaceRoot}/go.work.sum',
-];
 
 /**
  * Generates a set of default targets for a Go project based on whether it's an application or a library.
@@ -34,7 +26,7 @@ export const generateTargets = (
     targets[options.buildTargetName] = {
       executor: `${NX_PLUGIN_NAME}:build`,
       cache: true,
-      inputs: goProjectInputs,
+      inputs: GO_PROJECT_INPUTS,
       outputs: ['{workspaceRoot}/dist/{projectRoot}*'],
       metadata: {
         technologies: ['go'],
@@ -63,7 +55,7 @@ export const generateTargets = (
   targets[options.testTargetName] = {
     executor: `${NX_PLUGIN_NAME}:test`,
     cache: true,
-    inputs: goProjectInputs,
+    inputs: GO_PROJECT_INPUTS,
     // Note: test target intentionally has no outputs as test execution doesn't produce cacheable artifacts
     metadata: {
       technologies: ['go'],
@@ -78,7 +70,7 @@ export const generateTargets = (
   targets[options.lintTargetName] = {
     executor: `${NX_PLUGIN_NAME}:lint`,
     cache: true,
-    inputs: goProjectInputs,
+    inputs: GO_PROJECT_INPUTS,
     metadata: {
       technologies: ['go'],
       description: 'Lints the Go project',
@@ -92,8 +84,8 @@ export const generateTargets = (
   targets[options.tidyTargetName] = {
     executor: `${NX_PLUGIN_NAME}:tidy`,
     cache: true,
-    inputs: goProjectInputs,
-    outputs: ['{projectRoot}/go.sum'],
+    inputs: GO_PROJECT_INPUTS,
+    outputs: [`{projectRoot}/${GO_MOD_FILE}`, '{projectRoot}/go.sum'],
     metadata: {
       technologies: ['go'],
       description: 'Tidies the Go project dependencies',
@@ -107,7 +99,7 @@ export const generateTargets = (
   targets[options.generateTargetName] = {
     executor: `${NX_PLUGIN_NAME}:generate`,
     cache: true,
-    inputs: goProjectInputs,
+    inputs: GO_PROJECT_INPUTS,
     metadata: {
       technologies: ['go'],
       description: 'Generates Go source code files',
