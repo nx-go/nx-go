@@ -108,5 +108,17 @@ describe('hasMainPackage', () => {
 
       expect(result).toBe(true);
     });
+
+    it('should not check for projectName based files if it is undefined', () => {
+      mockedExistsSync.mockImplementation((path) =>
+        ['/app', '/app/main.go'].includes(path.toString())
+      );
+      mockedReadFileSync.mockReturnValueOnce('package main\n\nfunc main() {}');
+
+      hasMainPackage('/', 'app', undefined);
+
+      expect(mockedExistsSync).not.toHaveBeenCalledWith('/app/app.go');
+      expect(mockedExistsSync).not.toHaveBeenCalledWith('/app/cmd/app/main.go');
+    });
   });
 });

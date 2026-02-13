@@ -137,11 +137,12 @@ describe('Create nodes V2', () => {
       expect(targets['custom-generate']).toBeDefined();
     });
 
-    it('should not create nodes for go.mod at workspace root', async () => {
+    it('should also create nodes for go.mod at workspace root', async () => {
       const result = await createNodesV2[1](['./go.mod'], {}, context);
-
-      expect(result).toEqual([['./go.mod', {}]]);
-      expect(mockedHasMainPackage).not.toHaveBeenCalled();
+      const rootProject = result[0][1].projects['.'];
+      expect(rootProject).toBeDefined();
+      expect(rootProject.root).toBe('.');
+      expect(rootProject.name).toBeUndefined();
     });
 
     it('should use project name from last path segment', async () => {

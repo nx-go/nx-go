@@ -4,7 +4,6 @@ import {
   addNxPlugin,
   createGoMod,
   createGoWork,
-  ensureGoConfigInSharedGlobals,
   getProjectScope,
   supportsGoWorkspace,
 } from '../../utils';
@@ -18,7 +17,6 @@ export default async function initGenerator(
     createGoWork(tree);
   } else {
     createGoMod(tree, getProjectScope(tree));
-    ensureGoConfigInSharedGlobals(tree);
     logger.warn(
       `Go workspaces are not supported. You need Go >= ${GO_WORK_MINIMUM_VERSION}. Fallback to a single Go module.`
     );

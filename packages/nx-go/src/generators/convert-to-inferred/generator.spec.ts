@@ -21,6 +21,8 @@ const mockedMigrateProjectExecutorsToPlugin = jest.mocked(
 const mockedCreateProjectGraphAsync = jest.mocked(
   devkit.createProjectGraphAsync
 );
+const mockedReadNxJson = jest.mocked(devkit.readNxJson);
+const mockedUpdateNxJson = jest.mocked(devkit.updateNxJson);
 
 describe('convert-to-inferred generator', () => {
   let tree: Tree;
@@ -33,6 +35,7 @@ describe('convert-to-inferred generator', () => {
       dependencies: {},
     };
     mockedCreateProjectGraphAsync.mockResolvedValue(projectGraph);
+    mockedReadNxJson.mockReturnValue({ plugins: ['@nx-go/nx-go'] });
   });
   afterEach(() => jest.clearAllMocks());
 
@@ -54,6 +57,7 @@ describe('convert-to-inferred generator', () => {
         testTargetName: 'test',
         lintTargetName: 'lint',
         tidyTargetName: 'tidy',
+        generateTargetName: 'generate',
       },
       expect.arrayContaining([
         expect.objectContaining({
@@ -70,6 +74,9 @@ describe('convert-to-inferred generator', () => {
         }),
         expect.objectContaining({
           executors: ['@nx-go/nx-go:tidy'],
+        }),
+        expect.objectContaining({
+          executors: ['@nx-go/nx-go:generate'],
         }),
       ]),
       undefined
@@ -92,6 +99,28 @@ describe('convert-to-inferred generator', () => {
       expect.anything(),
       'my-project'
     );
+  });
+
+  it('should remove inputs from migrated targets when only golang input is present', async () => {
+    const targetConfig = {
+      executor: '@nx-go/nx-go:build',
+      inputs: ['golang'],
+      options: {},
+    };
+    mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
+      new Map([['project1', {}]])
+    );
+
+    await convertToInferredGenerator(tree, {});
+
+    mockedMigrateProjectExecutorsToPlugin.mock.calls[0][5][0].postTargetTransformer(
+      targetConfig,
+      null,
+      null,
+      null
+    );
+
+    expect(targetConfig.inputs).toBeUndefined();
   });
 
   it('should throw NoTargetsToMigrateError when no projects are migrated', async () => {
@@ -124,5 +153,32 @@ describe('convert-to-inferred generator', () => {
     await convertToInferredGenerator(tree, {});
 
     expect(formatFilesSpy).toHaveBeenCalledWith(tree);
+  });
+
+  it('should remove old plugin reference from nx.json', async () => {
+    mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
+      new Map([['project1', {}]])
+    );
+    mockedReadNxJson.mockReturnValue({
+      plugins: ['@nx-go/nx-go', 'other-plugin'],
+    });
+
+    await convertToInferredGenerator(tree, {});
+
+    expect(mockedUpdateNxJson).toHaveBeenCalledWith(
+      tree,
+      expect.objectContaining({ plugins: ['other-plugin'] })
+    );
+  });
+
+  it('should handle nx.json without plugins array', async () => {
+    mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
+      new Map([['project1', {}]])
+    );
+    mockedReadNxJson.mockReturnValue({});
+
+    await convertToInferredGenerator(tree, {});
+
+    expect(mockedUpdateNxJson).not.toHaveBeenCalled();
   });
 });

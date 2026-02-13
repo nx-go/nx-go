@@ -38,22 +38,6 @@ describe('nx-go', () => {
     expect(projectConfig.targets).toBeUndefined();
   });
 
-  it('should infer targets for application', async () => {
-    // Verify that inferred targets are available by running show project command
-    const result = await runNxCommandAsync(`show project ${appName} --json`);
-    const projectDetails = JSON.parse(result.stdout);
-
-    // Applications should have build, serve, test, lint, tidy, and generate targets inferred
-    expect(projectDetails.targets).toEqual({
-      build: expect.objectContaining({ executor: '@nx-go/nx-go:build' }),
-      serve: expect.objectContaining({ executor: '@nx-go/nx-go:serve' }),
-      test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
-      lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
-      tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
-      generate: expect.objectContaining({ executor: '@nx-go/nx-go:generate' }),
-    });
-  });
-
   it('should create a library', async () => {
     await runNxCommandAsync(`generate @nx-go/nx-go:library ${libName}`);
 
@@ -72,6 +56,24 @@ describe('nx-go', () => {
   });
 
   describe('Inference', () => {
+    it('should infer targets for application', async () => {
+      // Verify that inferred targets are available by running show project command
+      const result = await runNxCommandAsync(`show project ${appName} --json`);
+      const projectDetails = JSON.parse(result.stdout);
+
+      // Applications should have build, serve, test, lint, tidy, and generate targets inferred
+      expect(projectDetails.targets).toEqual({
+        build: expect.objectContaining({ executor: '@nx-go/nx-go:build' }),
+        serve: expect.objectContaining({ executor: '@nx-go/nx-go:serve' }),
+        test: expect.objectContaining({ executor: '@nx-go/nx-go:test' }),
+        lint: expect.objectContaining({ executor: '@nx-go/nx-go:lint' }),
+        tidy: expect.objectContaining({ executor: '@nx-go/nx-go:tidy' }),
+        generate: expect.objectContaining({
+          executor: '@nx-go/nx-go:generate',
+        }),
+      });
+    });
+
     it('should infer targets for library', async () => {
       // Verify that inferred targets are available by running show project command
       const result = await runNxCommandAsync(`show project ${libName} --json`);
@@ -120,6 +122,18 @@ describe('nx-go', () => {
           executor: '@nx-go/nx-go:generate',
         }),
       });
+    });
+
+    it('should infer workspace root from go.mod', async () => {
+      updateFile('go.mod', '');
+
+      // Verify that it creates a Nx project from the go.mod file at the workspace root
+      const result = await runNxCommandAsync(
+        `show project @proj/source --json`
+      );
+      expect(result.stdout).toBeDefined();
+
+      renameFile('go.mod', 'go.modbak');
     });
   });
 

@@ -13,7 +13,6 @@ jest.mock('../../utils', () => ({
   addNxPlugin: jest.fn(),
   createGoMod: jest.fn(),
   createGoWork: jest.fn(),
-  ensureGoConfigInSharedGlobals: jest.fn(),
   getProjectScope: jest.fn().mockReturnValue('proj'),
   supportsGoWorkspace: jest.fn().mockReturnValue(true),
 }));
@@ -41,12 +40,6 @@ describe('init generator', () => {
     await initGenerator(tree, options);
     expect(shared.createGoMod).toHaveBeenCalledWith(tree, 'proj');
     expect(nxDevkit.logger.warn).toHaveBeenCalledTimes(1);
-  });
-
-  it('should ensure go configuration in shared globals if go workspace is not supported', async () => {
-    jest.spyOn(shared, 'supportsGoWorkspace').mockReturnValueOnce(false);
-    await initGenerator(tree, options);
-    expect(shared.ensureGoConfigInSharedGlobals).toHaveBeenCalledWith(tree);
   });
 
   it('should format files', async () => {

@@ -35,6 +35,10 @@ export const addNxPlugin = (tree: Tree): void => {
  * Ensures that go configuration files are included as a sharedGlobal,
  * so any changes will trigger projects to be flagged as affected.
  *
+ * @deprecated Since v4.0.0. Go files (go.work, go.mod) are now explicitly included
+ * in GO_PROJECT_INPUTS for all Go targets, making their presence in sharedGlobals
+ * redundant. This function is kept for backward compatibility with the v3.0.0 migration.
+ *
  * @param tree project tree object
  */
 export const ensureGoConfigInSharedGlobals = (tree: Tree): void => {
