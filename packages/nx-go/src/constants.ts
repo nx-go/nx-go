@@ -11,6 +11,8 @@ export const GO_PROJECT_INPUTS = [
   '{projectRoot}/go.mod',
   '{projectRoot}/go.sum',
   '{projectRoot}/**/*.go',
+  '{workspaceRoot}/go.mod',
+  '{workspaceRoot}/go.sum',
   '{workspaceRoot}/go.work',
   '{workspaceRoot}/go.work.sum',
 ];
