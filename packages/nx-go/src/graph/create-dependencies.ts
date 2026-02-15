@@ -69,8 +69,6 @@ const getFileModuleImports = (
     return [];
   }
   return parseGoList('import', content)
-    .map((item) => (item.includes('"') ? item.split('"')[1] : item))
-    .filter((item) => item != null)
     .map((item) => ({
       import: item,
       module: modules.find((mod) => item.startsWith(mod.Path)),

@@ -161,6 +161,23 @@ describe('Go bridge', () => {
       const result = parseGoList('use', 'package pkg');
       expect(result).toEqual([]);
     });
+
+    it('should parse multiple import blocks (single and block)', () => {
+      const content = `import "github.com/spf13/cobra"\n\nimport (\n\t"fmt"\n\t"nx-go-playground/geometry"\n\t"nx-go-playground/logger"\n)`;
+      const result = parseGoList('import', content);
+      expect(result).toEqual([
+        'github.com/spf13/cobra',
+        'fmt',
+        'nx-go-playground/geometry',
+        'nx-go-playground/logger',
+      ]);
+    });
+
+    it('should parse multiple use blocks', () => {
+      const content = 'use ./first\n\nuse (\n  ./second\n  ./third\n)';
+      const result = parseGoList('use', content);
+      expect(result).toEqual(['./first', './second', './third']);
+    });
   });
 
   describe('Method: createGoMod', () => {
@@ -228,20 +245,47 @@ describe('Go bridge', () => {
           Buffer.from(content, 'utf-8') as unknown as string
         );
 
-    it.each`
-      content                                        | newContent
-      ${'go 1.21\n'}                                 | ${'go 1.21\n\nuse ./new-app\n'}
-      ${'go 1.21\n\nuse ./app1\n'}                   | ${'go 1.21\n\nuse (\n\t./app1\n\t./new-app\n)\n'}
-      ${'go 1.21\n\nuse (\n\t./app1\n\t./app2\n)\n'} | ${'go 1.21\n\nuse (\n\t./app1\n\t./app2\n\t./new-app\n)\n'}
-    `(
-      'should add new dependency to go.work with content $content',
-      ({ content, newContent }) => {
-        setNextGoWorkContent(content);
-        const spyWrite = jest.spyOn(tree, 'write');
-        addGoWorkDependency(tree, 'new-app');
-        expect(spyWrite).toHaveBeenCalledWith(GO_WORK_FILE, newContent);
-      }
-    );
+    it('should add first dependency to empty go.work', () => {
+      setNextGoWorkContent('go 1.21\n');
+      const spyWrite = jest.spyOn(tree, 'write');
+      addGoWorkDependency(tree, 'new-app');
+      expect(spyWrite).toHaveBeenCalledWith(
+        GO_WORK_FILE,
+        'go 1.21\n\nuse ./new-app\n'
+      );
+    });
+
+    it('should convert single use to block when adding second dependency', () => {
+      setNextGoWorkContent('go 1.21\n\nuse ./app1\n');
+      const spyWrite = jest.spyOn(tree, 'write');
+      addGoWorkDependency(tree, 'new-app');
+      expect(spyWrite).toHaveBeenCalledWith(
+        GO_WORK_FILE,
+        'go 1.21\n\nuse (\n\t./app1\n\t./new-app\n)\n'
+      );
+    });
+
+    it('should add dependency to existing use block', () => {
+      setNextGoWorkContent('go 1.21\n\nuse (\n\t./app1\n\t./app2\n)\n');
+      const spyWrite = jest.spyOn(tree, 'write');
+      addGoWorkDependency(tree, 'new-app');
+      expect(spyWrite).toHaveBeenCalledWith(
+        GO_WORK_FILE,
+        'go 1.21\n\nuse (\n\t./app1\n\t./app2\n\t./new-app\n)\n'
+      );
+    });
+
+    it('should consolidate multiple use blocks into one sorted block', () => {
+      setNextGoWorkContent(
+        'go 1.21\n\nuse ./apps/api\n\nuse (\n\t./apps/cli\n\t./libs/geometry\n\t./libs/logger\n\t./libs/math\n)\n'
+      );
+      const spyWrite = jest.spyOn(tree, 'write');
+      addGoWorkDependency(tree, 'new-app');
+      expect(spyWrite).toHaveBeenCalledWith(
+        GO_WORK_FILE,
+        'go 1.21\n\nuse (\n\t./apps/api\n\t./apps/cli\n\t./libs/geometry\n\t./libs/logger\n\t./libs/math\n\t./new-app\n)\n'
+      );
+    });
 
     it('should not add new dependency to go.work if already exists', () => {
       setNextGoWorkContent('go 1.21\n\nuse ./app1\n');

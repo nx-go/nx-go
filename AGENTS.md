@@ -12,3 +12,12 @@
 - For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
 
 <!-- nx configuration end-->
+
+# GitHub Guidelines
+
+## Pull Requests and Issues
+
+- When creating a pull request, always check for and use the PR template located at `.github/PULL_REQUEST_TEMPLATE.md`
+- When creating an issue, check for issue templates in `.github/ISSUE_TEMPLATE/` and use the appropriate template
+- Fill in all sections of the template with relevant information
+- Ensure all checklist items are properly marked

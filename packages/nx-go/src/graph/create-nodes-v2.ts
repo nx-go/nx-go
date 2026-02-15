@@ -1,6 +1,7 @@
 import {
   type CreateNodesContextV2,
   createNodesFromFiles,
+  type CreateNodesResult,
   type CreateNodesResultV2,
   type CreateNodesV2,
   type ProjectType,
@@ -42,7 +43,7 @@ const createNodesInternal = async (
   configFilePath: string,
   options: NxGoPluginNodeOptions,
   context: CreateNodesContextV2
-) => {
+): Promise<CreateNodesResult> => {
   const projectRoot = dirname(configFilePath);
 
   // We assume that the project name is derived from the project root folder name
