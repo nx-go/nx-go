@@ -7,14 +7,30 @@ import {
   GO_WORK_MINIMUM_VERSION,
 } from '../constants';
 
-export type GoListType = 'import' | 'use';
-
-const REGEXS: Record<GoListType | 'version' | 'directive', RegExp> = {
-  import: /import\s+(?:(\w+)\s+)?"([^"]+)"|\(([\s\S]*?)\)/,
-  use: /use\s+(\(([^)]*)\)|([^\n]*))/,
+const REGEXS = {
+  /**
+   * Regex patterns for parsing Go import statements.
+   * @see https://go.dev/ref/spec#ImportPath
+   */
+  import: {
+    single: /import\s+(?:[.\w]+\s+)?"([^"]+)"/g,
+    block: /import\s+\(([\s\S]*?)\)/g,
+    path: /(?:[.\w]+\s+)?"([^"]+)"/g,
+  },
+  /**
+   * Regex patterns for parsing Go use directives in go.work files.
+   * @see https://go.dev/ref/mod#go-work-file-use
+   */
+  use: {
+    single: /use\s+(?!\()(\S+)/g,
+    block: /use\s+\(([\s\S]*?)\)/g,
+    path: /\S+/g,
+    // Combined pattern for replacing entire use directive
+    all: /use\s+(?:\([\s\S]*?\)|\S+)/g,
+  },
   version: /go(?<version>\S+) /,
-  directive: /^go\s+(?<version>\d+\.\d+)/m,
-};
+  versionDirective: /^go\s+(?<version>\d+\.\d+)/m,
+} as const;
 
 /**
  * Retrieves the current Go version using its CLI.
@@ -46,7 +62,8 @@ export const getGoShortVersion = (): string => {
 export const getGoVersionForNewMod = (tree: Tree): string => {
   if (tree.exists(GO_WORK_FILE)) {
     const goWorkContent = tree.read(GO_WORK_FILE)!.toString();
-    const version = REGEXS.directive.exec(goWorkContent)?.groups?.version;
+    const version =
+      REGEXS.versionDirective.exec(goWorkContent)?.groups?.version;
     if (version) {
       return version;
     }
@@ -98,22 +115,31 @@ export const supportsGoWorkspace = (): boolean => {
 export const isGoWorkspace = (tree: Tree): boolean => tree.exists(GO_WORK_FILE);
 
 /**
- * Parses a Go list (also support list with only one item).
+ * Parses a Go list (also support list with only one item or multiple blocks).
  *
  * @param listType type of list to parse
  * @param content list to parse as a string
  */
 export const parseGoList = (
-  listType: GoListType,
+  listType: 'import' | 'use',
   content: string
 ): string[] => {
-  const exec = REGEXS[listType].exec(content);
-  return (
-    (exec?.[2] ?? exec?.[3])
-      ?.trim()
-      .split(/\n+/)
-      .map((line) => line.trim()) ?? []
-  );
+  const patterns = REGEXS[listType];
+  const paths: string[] = [];
+
+  // Extract from single declarations
+  for (const [, path] of content.matchAll(patterns.single)) {
+    paths.push(path);
+  }
+
+  // Extract from block declarations
+  for (const [, blockContent] of content.matchAll(patterns.block)) {
+    for (const [single, group] of blockContent.matchAll(patterns.path)) {
+      paths.push(group ?? single);
+    }
+  }
+
+  return paths;
 };
 
 /**
@@ -167,10 +193,11 @@ export const addGoWorkDependency = (tree: Tree, projectRoot: string): void => {
       ? 'use (\n' + modules.map((m) => `\t${m}\n`).join('') + ')'
       : `use ${modules[0]}`;
 
-  tree.write(
-    GO_WORK_FILE,
+  // Remove all existing use blocks and append the new consolidated one
+  const contentWithoutUse =
     exisitingModules.length > 0
-      ? goWorkContent.replace(REGEXS['use'], use)
-      : `${goWorkContent}\n${use}\n`
-  );
+      ? goWorkContent.replace(REGEXS.use.all, '')
+      : goWorkContent;
+
+  tree.write(GO_WORK_FILE, `${contentWithoutUse.trimEnd()}\n\n${use}\n`);
 };

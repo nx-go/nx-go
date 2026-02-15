@@ -25,7 +25,7 @@ jest.mock('../utils', () => ({
       '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n' +
         '{ "Path": "proj/datalayer", "Dir": "/tmp/proj/libs/data-layer" }'
     ),
-  parseGoList: jest.fn().mockReturnValue(['"fmt"', 'data "proj/datalayer"']),
+  parseGoList: jest.fn().mockReturnValue(['fmt', 'proj/datalayer']),
 }));
 
 describe('Create dependencies', () => {
