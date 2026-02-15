@@ -59,6 +59,9 @@ jobs:
           pnpm nx affected --target=lint --parallel=3
           pnpm nx run-many --all --target=test --parallel=3 --ci --coverage --coverageReporters=lcov
           pnpm nx affected --target=build --parallel=3
+        env:
+          # Disable color in CI logs to improve GitHub integration
+          FORCE_COLOR: false
 
       - name: ⛳ SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
