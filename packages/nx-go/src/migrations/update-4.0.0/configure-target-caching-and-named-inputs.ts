@@ -31,7 +31,7 @@ export default async function update(tree: Tree) {
 }
 
 const updateNamedInputs = (tree: Tree) => {
-  const nxJson = readNxJson(tree);
+  const nxJson = readNxJson(tree)!;
   let nxJsonUpdated = false;
 
   // Remove go.work and go.mod from sharedGlobals

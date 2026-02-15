@@ -1,10 +1,10 @@
-import { TargetConfiguration } from '@nx/devkit';
+import type { TargetConfiguration } from '@nx/devkit';
 import {
   GO_MOD_FILE,
   GO_PROJECT_INPUTS,
   NX_PLUGIN_NAME,
 } from '../../constants';
-import { NxGoPluginOptions } from '../../type';
+import type { NxGoPluginNodeOptions } from '../../type';
 
 /**
  * Generates a set of default targets for a Go project based on whether it's an application or a library.
@@ -16,7 +16,7 @@ import { NxGoPluginOptions } from '../../type';
  * @see https://nx.dev/docs/extending-nx/project-graph-plugins#identifying-projects
  */
 export const generateTargets = (
-  options: NxGoPluginOptions,
+  options: NxGoPluginNodeOptions,
   isApplication: boolean
 ): Record<string, TargetConfiguration> => {
   const targets: Record<string, TargetConfiguration> = {};

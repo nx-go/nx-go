@@ -14,7 +14,7 @@ import { isGoWorkspace } from './go-bridge';
  * @param tree project tree object
  */
 export const addNxPlugin = (tree: Tree): void => {
-  const nxJson = readNxJson(tree);
+  const nxJson = readNxJson(tree)!;
   const plugins = nxJson.plugins || [];
 
   // Check if plugin already exists (as string or object)
@@ -47,7 +47,7 @@ export const ensureGoConfigInSharedGlobals = (tree: Tree): void => {
   const toRem = `{workspaceRoot}/${useWorkspace ? GO_MOD_FILE : GO_WORK_FILE}`;
 
   const nxJson = readNxJson(tree);
-  const namedInputs = nxJson.namedInputs ?? {};
+  const namedInputs = nxJson?.namedInputs ?? {};
   const sharedGlobals = namedInputs['sharedGlobals'] ?? [];
 
   if (!sharedGlobals.includes(toAdd) || sharedGlobals.includes(toRem)) {
@@ -64,6 +64,6 @@ export const ensureGoConfigInSharedGlobals = (tree: Tree): void => {
  * @param project project configuration object
  */
 export const isProjectUsingNxGo = (project: ProjectConfiguration): boolean =>
-  Object.values(project.targets).some((target: TargetConfiguration) =>
-    target.executor.includes(NX_PLUGIN_NAME)
+  Object.values(project.targets ?? {}).some((target: TargetConfiguration) =>
+    target.executor?.includes(NX_PLUGIN_NAME)
   );

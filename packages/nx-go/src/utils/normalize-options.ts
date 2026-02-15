@@ -9,6 +9,7 @@ export interface GeneratorSchema {
 }
 
 export interface GeneratorNormalizedSchema extends GeneratorSchema {
+  name: string;
   moduleName: string;
   projectName: string;
   projectRoot: string;

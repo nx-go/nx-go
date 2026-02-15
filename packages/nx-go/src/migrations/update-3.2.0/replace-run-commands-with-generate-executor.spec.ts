@@ -37,7 +37,7 @@ describe('replace-run-commands-with-generate-executor migration', () => {
       );
       await update(tree);
       expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
-      expect(updateConfig.mock.calls[0][2].targets.generate).toEqual({
+      expect(updateConfig.mock.calls[0][2].targets?.generate).toEqual({
         executor: '@nx-go/nx-go:generate',
         options: expectedArgs != null ? { args: expectedArgs } : undefined,
       });
@@ -65,7 +65,7 @@ describe('replace-run-commands-with-generate-executor migration', () => {
     const updateConfig = jest.spyOn(devkit, 'updateProjectConfiguration');
     jest
       .spyOn(devkit, 'getProjects')
-      .mockReturnValue(createProjectMapWithTarget(null));
+      .mockReturnValue(new Map<string, ProjectConfiguration>([]));
     await update(tree);
     expect(updateConfig).not.toHaveBeenCalled();
   });

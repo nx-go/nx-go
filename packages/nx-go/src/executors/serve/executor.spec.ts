@@ -12,15 +12,7 @@ jest.mock('../../utils', () => ({
 const options: ServeExecutorSchema = {
   main: 'hello_world.go',
 };
-
-const context: ExecutorContext = {
-  cwd: 'current-dir',
-  root: '',
-  isVerbose: false,
-  projectsConfigurations: undefined,
-  nxJsonConfiguration: undefined,
-  projectGraph: undefined,
-};
+const context = { cwd: 'dir', root: '', isVerbose: false } as ExecutorContext;
 
 describe('Serve Executor', () => {
   it('should run Go program with default parameters', async () => {

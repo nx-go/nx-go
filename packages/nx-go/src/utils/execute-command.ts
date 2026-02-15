@@ -14,7 +14,7 @@ export type RunGoOptions = {
  * @param context the executor context
  */
 export const extractProjectRoot = (context: ExecutorContext): string =>
-  context.projectsConfigurations.projects[context.projectName].root;
+  context.projectsConfigurations.projects[context.projectName!].root;
 
 /**
  * Resolve the working directory for the executor.
@@ -60,7 +60,7 @@ export const executeCommand = async (
  * @param flag the flag to add
  * @param enabled true if flag should be added
  */
-export const buildFlagIfEnabled = (flag: string, enabled: boolean): string[] =>
+export const buildFlagIfEnabled = (flag: string, enabled = false): string[] =>
   enabled ? [flag] : [];
 
 /**

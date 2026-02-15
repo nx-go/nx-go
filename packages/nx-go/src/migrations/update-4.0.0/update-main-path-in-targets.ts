@@ -70,7 +70,7 @@ function updateMainPath(mainPath: string, projectRoot: string): string {
   // Handle edge case where project root is empty (workspace root)
   if (projectRoot === '' && normalizedPath.includes('/')) {
     // For workspace root projects, just get the filename
-    normalizedPath = normalizedPath.split('/').at(-1);
+    normalizedPath = normalizedPath.split('/').at(-1)!;
   }
 
   return normalizedPath;

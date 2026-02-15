@@ -27,7 +27,7 @@ describe('update-executors-options migration', () => {
     );
     await update(tree);
     expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
-    expect(updateConfig.mock.calls[0][2].targets.target.options).toEqual({
+    expect(updateConfig.mock.calls[0][2].targets?.target.options).toEqual({
       linter: 'revive',
       args: ['-config', './revive.toml'],
     });
@@ -43,7 +43,7 @@ describe('update-executors-options migration', () => {
     );
     await update(tree);
     expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
-    expect(updateConfig.mock.calls[0][2].targets.target.options).toEqual({
+    expect(updateConfig.mock.calls[0][2].targets?.target.options).toEqual({
       args: ['--host', '0.0.0.0'],
     });
   });
@@ -68,7 +68,7 @@ describe('update-executors-options migration', () => {
       );
       await update(tree);
       expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
-      expect(updateConfig.mock.calls[0][2].targets.target.options).toEqual(
+      expect(updateConfig.mock.calls[0][2].targets?.target.options).toEqual(
         result
       );
     }

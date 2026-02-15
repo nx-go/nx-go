@@ -18,11 +18,12 @@ const REGEXS: Record<GoListType | 'version' | 'directive', RegExp> = {
 
 /**
  * Retrieves the current Go version using its CLI.
+ * @todo: improve error handling of execSync
  */
 export const getGoVersion = (): string => {
   const rawVersion = execSync('go version');
   if (rawVersion != null) {
-    return REGEXS.version.exec(rawVersion.toString()).groups.version;
+    return REGEXS.version.exec(rawVersion.toString())!.groups!.version;
   }
   throw new Error('Cannot retrieve current Go version');
 };
@@ -44,7 +45,7 @@ export const getGoShortVersion = (): string => {
  */
 export const getGoVersionForNewMod = (tree: Tree): string => {
   if (tree.exists(GO_WORK_FILE)) {
-    const goWorkContent = tree.read(GO_WORK_FILE).toString();
+    const goWorkContent = tree.read(GO_WORK_FILE)!.toString();
     const version = REGEXS.directive.exec(goWorkContent)?.groups?.version;
     if (version) {
       return version;
@@ -152,7 +153,7 @@ export const createGoWork = (tree: Tree): void => {
  * @param projectRoot root of the dependency to add
  */
 export const addGoWorkDependency = (tree: Tree, projectRoot: string): void => {
-  const goWorkContent = tree.read(GO_WORK_FILE).toString();
+  const goWorkContent = tree.read(GO_WORK_FILE)!.toString();
   const exisitingModules = parseGoList('use', goWorkContent);
   const modules = [...new Set([...exisitingModules, `./${projectRoot}`])].sort(
     (m1, m2) => m1.localeCompare(m2)

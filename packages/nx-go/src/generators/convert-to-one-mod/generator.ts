@@ -11,7 +11,7 @@ export default async function convertToOneModGenerator(
     logger.error('Go workspace not found');
     return;
   }
-  const workContent = tree.read(GO_WORK_FILE).toString();
+  const workContent = tree.read(GO_WORK_FILE)!.toString();
   if (/^use /m.test(workContent)) {
     logger.error(
       'Go workspace already in use and cannot be moved to one module'

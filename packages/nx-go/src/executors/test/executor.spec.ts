@@ -15,15 +15,7 @@ jest.mock('../../utils', () => {
 });
 
 const options: TestExecutorSchema = {};
-
-const context: ExecutorContext = {
-  cwd: 'current-dir',
-  root: '',
-  isVerbose: false,
-  projectsConfigurations: undefined,
-  nxJsonConfiguration: undefined,
-  projectGraph: undefined,
-};
+const context = { cwd: 'dir', root: '', isVerbose: false } as ExecutorContext;
 
 describe('Test Executor', () => {
   it('should execute test of a go project with default options', async () => {

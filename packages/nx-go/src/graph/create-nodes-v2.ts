@@ -1,25 +1,25 @@
 import {
-  CreateNodesContextV2,
+  type CreateNodesContextV2,
   createNodesFromFiles,
-  CreateNodesV2,
-  ProjectType,
   type CreateNodesResultV2,
+  type CreateNodesV2,
+  type ProjectType,
 } from '@nx/devkit';
 import { dirname } from 'node:path';
 import { GO_MOD_FILE } from '../constants';
-import { NxGoPluginOptions } from '../type';
+import type { NxGoPluginNodeOptions, NxGoPluginOptions } from '../type';
 import { generateTargets } from './create-nodes/generate-targets';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
 export const createNodesV2: CreateNodesV2<NxGoPluginOptions> = [
   `**/${GO_MOD_FILE}`,
   async (
-    configFiles: string[],
+    configFiles: readonly string[],
     options: NxGoPluginOptions | undefined,
     context: CreateNodesContextV2
   ): Promise<CreateNodesResultV2> =>
     createNodesFromFiles(
-      (configFile, options, context) =>
+      (configFile, options = {}, context) =>
         createNodesInternal(configFile, normalizeOptions(options), context),
       configFiles,
       options ?? {},
@@ -27,7 +27,9 @@ export const createNodesV2: CreateNodesV2<NxGoPluginOptions> = [
     ),
 ];
 
-const normalizeOptions = (options: NxGoPluginOptions) => ({
+const normalizeOptions = (
+  options: NxGoPluginOptions
+): NxGoPluginNodeOptions => ({
   buildTargetName: options.buildTargetName ?? 'build',
   serveTargetName: options.serveTargetName ?? 'serve',
   testTargetName: options.testTargetName ?? 'test',
@@ -38,7 +40,7 @@ const normalizeOptions = (options: NxGoPluginOptions) => ({
 
 const createNodesInternal = async (
   configFilePath: string,
-  options: NxGoPluginOptions,
+  options: NxGoPluginNodeOptions,
   context: CreateNodesContextV2
 ) => {
   const projectRoot = dirname(configFilePath);
