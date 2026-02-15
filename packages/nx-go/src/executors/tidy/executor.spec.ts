@@ -9,15 +9,7 @@ jest.mock('../../utils', () => ({
 }));
 
 const options: TidyExecutorSchema = {};
-
-const context: ExecutorContext = {
-  cwd: 'current-dir',
-  root: '',
-  isVerbose: false,
-  projectsConfigurations: undefined,
-  nxJsonConfiguration: undefined,
-  projectGraph: undefined,
-};
+const context = { cwd: 'dir', root: '', isVerbose: false } as ExecutorContext;
 
 describe('Tidy Executor', () => {
   it('should execute tidy command with default options', async () => {

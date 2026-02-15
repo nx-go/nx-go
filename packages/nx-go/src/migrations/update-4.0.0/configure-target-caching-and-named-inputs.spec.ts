@@ -25,7 +25,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       'should remove $description from sharedGlobals',
       async ({ initialSharedGlobals }) => {
         // Arrange
-        const nxJson = readNxJson(tree);
+        const nxJson = readNxJson(tree)!;
         nxJson.namedInputs = {
           sharedGlobals: [
             '{workspaceRoot}/package.json',
@@ -38,8 +38,8 @@ describe('configure-target-caching-and-named-inputs migration', () => {
         await update(tree);
 
         // Assert
-        const updatedNxJson = readNxJson(tree);
-        expect(updatedNxJson.namedInputs.sharedGlobals).toEqual([
+        const updatedNxJson = readNxJson(tree)!;
+        expect(updatedNxJson.namedInputs?.sharedGlobals).toEqual([
           '{workspaceRoot}/package.json',
         ]);
       }
@@ -47,7 +47,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
 
     it('should not modify sharedGlobals if no Go files present', async () => {
       // Arrange
-      const nxJson = readNxJson(tree);
+      const nxJson = readNxJson(tree)!;
       nxJson.namedInputs = {
         sharedGlobals: ['{workspaceRoot}/package.json'],
       };
@@ -57,15 +57,15 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const updatedNxJson = readNxJson(tree);
-      expect(updatedNxJson.namedInputs.sharedGlobals).toEqual([
+      const updatedNxJson = readNxJson(tree)!;
+      expect(updatedNxJson.namedInputs?.sharedGlobals).toEqual([
         '{workspaceRoot}/package.json',
       ]);
     });
 
     it('should handle missing namedInputs', async () => {
       // Arrange
-      const nxJson = readNxJson(tree);
+      const nxJson = readNxJson(tree)!;
       delete nxJson.namedInputs;
       updateNxJson(tree, nxJson);
 
@@ -75,7 +75,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
 
     it('should handle missing sharedGlobals', async () => {
       // Arrange
-      const nxJson = readNxJson(tree);
+      const nxJson = readNxJson(tree)!;
       nxJson.namedInputs = {};
       updateNxJson(tree, nxJson);
 
@@ -92,13 +92,13 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const nxJson = readNxJson(tree);
-      expect(nxJson.namedInputs.golang).toEqual(GO_PROJECT_INPUTS);
+      const nxJson = readNxJson(tree)!;
+      expect(nxJson.namedInputs?.golang).toEqual(GO_PROJECT_INPUTS);
     });
 
     it('should not override existing golang named input', async () => {
       // Arrange
-      const nxJson = readNxJson(tree);
+      const nxJson = readNxJson(tree)!;
       nxJson.namedInputs = { golang: ['custom-input'] };
       updateNxJson(tree, nxJson);
 
@@ -106,13 +106,13 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const updatedNxJson = readNxJson(tree);
-      expect(updatedNxJson.namedInputs.golang).toEqual(['custom-input']);
+      const updatedNxJson = readNxJson(tree)!;
+      expect(updatedNxJson.namedInputs?.golang).toEqual(['custom-input']);
     });
 
     it('should create namedInputs if it does not exist', async () => {
       // Arrange
-      const nxJson = readNxJson(tree);
+      const nxJson = readNxJson(tree)!;
       delete nxJson.namedInputs;
       updateNxJson(tree, nxJson);
 
@@ -120,9 +120,9 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const updatedNxJson = readNxJson(tree);
+      const updatedNxJson = readNxJson(tree)!;
       expect(updatedNxJson.namedInputs).toBeDefined();
-      expect(updatedNxJson.namedInputs.golang).toEqual(GO_PROJECT_INPUTS);
+      expect(updatedNxJson.namedInputs?.golang).toEqual(GO_PROJECT_INPUTS);
     });
   });
 
@@ -163,12 +163,12 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const goAppConfig = tree.read('apps/go-app/project.json', 'utf-8');
+      const goAppConfig = tree.read('apps/go-app/project.json', 'utf-8')!;
       const goAppProject = JSON.parse(goAppConfig);
       expect(goAppProject.targets.build.cache).toBe(true);
       expect(goAppProject.targets.test.cache).toBe(true);
 
-      const goLibConfig = tree.read('libs/go-lib/project.json', 'utf-8');
+      const goLibConfig = tree.read('libs/go-lib/project.json', 'utf-8')!;
       const goLibProject = JSON.parse(goLibConfig);
       expect(goLibProject.targets.lint.cache).toBe(true);
       expect(goLibProject.targets.tidy.cache).toBe(true);
@@ -187,7 +187,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const config = tree.read('apps/go-serve/project.json', 'utf-8');
+      const config = tree.read('apps/go-serve/project.json', 'utf-8')!;
       const project = JSON.parse(config);
       expect(project.targets.serve.cache).toBeUndefined();
     });
@@ -197,12 +197,12 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const goAppConfig = tree.read('apps/go-app/project.json', 'utf-8');
+      const goAppConfig = tree.read('apps/go-app/project.json', 'utf-8')!;
       const goAppProject = JSON.parse(goAppConfig);
       expect(goAppProject.targets.build.inputs).toEqual(['golang']);
       expect(goAppProject.targets.test.inputs).toEqual(['golang']);
 
-      const goLibConfig = tree.read('libs/go-lib/project.json', 'utf-8');
+      const goLibConfig = tree.read('libs/go-lib/project.json', 'utf-8')!;
       const goLibProject = JSON.parse(goLibConfig);
       expect(goLibProject.targets.lint.inputs).toEqual(['golang']);
       expect(goLibProject.targets.tidy.inputs).toEqual(['golang']);
@@ -213,12 +213,12 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const goAppConfig = tree.read('apps/go-app/project.json', 'utf-8');
+      const goAppConfig = tree.read('apps/go-app/project.json', 'utf-8')!;
       const goAppProject = JSON.parse(goAppConfig);
       expect(goAppProject.targets.build.outputs).toEqual([
         '{workspaceRoot}/dist/{projectRoot}*',
       ]);
-      const goLibConfig = tree.read('libs/go-lib/project.json', 'utf-8');
+      const goLibConfig = tree.read('libs/go-lib/project.json', 'utf-8')!;
       const goLibProject = JSON.parse(goLibConfig);
       expect(goLibProject.targets.tidy.outputs).toEqual([
         `{projectRoot}/${GO_MOD_FILE}`,
@@ -239,7 +239,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const config = tree.read('apps/go-serve/project.json', 'utf-8');
+      const config = tree.read('apps/go-serve/project.json', 'utf-8')!;
       const project = JSON.parse(config);
       expect(project.targets.serve.continuous).toBe(true);
     });
@@ -257,7 +257,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const config = tree.read('apps/go-custom/project.json', 'utf-8');
+      const config = tree.read('apps/go-custom/project.json', 'utf-8')!;
       const project = JSON.parse(config);
       expect(project.targets.build.cache).toBe(false);
     });
@@ -275,7 +275,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const config = tree.read('apps/go-custom/project.json', 'utf-8');
+      const config = tree.read('apps/go-custom/project.json', 'utf-8')!;
       const project = JSON.parse(config);
       expect(project.targets.build.inputs).toEqual(['custom-input']);
     });
@@ -293,7 +293,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const config = tree.read('apps/go-custom/project.json', 'utf-8');
+      const config = tree.read('apps/go-custom/project.json', 'utf-8')!;
       const project = JSON.parse(config);
       expect(project.targets.tidy.outputs).toEqual(['custom-output']);
     });
@@ -311,7 +311,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const config = tree.read('apps/go-custom/project.json', 'utf-8');
+      const config = tree.read('apps/go-custom/project.json', 'utf-8')!;
       const project = JSON.parse(config);
       expect(project.targets.serve.continuous).toBe(false);
     });
@@ -329,7 +329,7 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const config = tree.read('apps/ts-app/project.json', 'utf-8');
+      const config = tree.read('apps/ts-app/project.json', 'utf-8')!;
       const project = JSON.parse(config);
       expect(project.targets.build.cache).toBeUndefined();
       expect(project.targets.build.inputs).toBeUndefined();
@@ -358,12 +358,12 @@ describe('configure-target-caching-and-named-inputs migration', () => {
       await update(tree);
 
       // Assert
-      const goApp1Config = tree.read('apps/go-app/project.json', 'utf-8');
+      const goApp1Config = tree.read('apps/go-app/project.json', 'utf-8')!;
       const goApp1Project = JSON.parse(goApp1Config);
       expect(goApp1Project.targets.build.cache).toBe(true);
       expect(goApp1Project.targets.build.inputs).toEqual(['golang']);
 
-      const goApp2Config = tree.read('apps/go-app-2/project.json', 'utf-8');
+      const goApp2Config = tree.read('apps/go-app-2/project.json', 'utf-8')!;
       const goApp2Project = JSON.parse(goApp2Config);
       expect(goApp2Project.targets.build.cache).toBe(true);
       expect(goApp2Project.targets.build.inputs).toEqual(['golang']);

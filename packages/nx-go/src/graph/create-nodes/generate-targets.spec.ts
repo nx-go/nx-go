@@ -1,10 +1,10 @@
 import { type TargetConfiguration } from '@nx/devkit';
 import { GO_MOD_FILE, NX_PLUGIN_NAME } from '../../constants';
-import { NxGoPluginOptions } from '../../type';
+import { NxGoPluginNodeOptions } from '../../type';
 import { generateTargets } from './generate-targets';
 
 describe('generateTargets', () => {
-  const mockOptions: NxGoPluginOptions = {
+  const mockOptions: NxGoPluginNodeOptions = {
     buildTargetName: 'build',
     serveTargetName: 'serve',
     testTargetName: 'test',

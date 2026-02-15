@@ -38,3 +38,10 @@ export interface NxGoPluginOptions {
    */
   generateTargetName?: string;
 }
+
+/**
+ * All normalized options for the Graph system.
+ */
+export type NxGoPluginNodeOptions = Required<
+  Omit<NxGoPluginOptions, 'skipGoDependencyCheck'>
+>;

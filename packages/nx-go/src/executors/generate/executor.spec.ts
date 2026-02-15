@@ -9,15 +9,7 @@ jest.mock('../../utils', () => ({
 }));
 
 const options: GenerateExecutorSchema = {};
-
-const context: ExecutorContext = {
-  cwd: 'current-dir',
-  root: '',
-  isVerbose: false,
-  projectsConfigurations: undefined,
-  nxJsonConfiguration: undefined,
-  projectGraph: undefined,
-};
+const context = { cwd: 'dir', root: '', isVerbose: false } as ExecutorContext;
 
 describe('Generate Executor', () => {
   it('should execute generate command with default options', async () => {

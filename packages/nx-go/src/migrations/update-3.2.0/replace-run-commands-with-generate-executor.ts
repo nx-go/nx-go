@@ -24,7 +24,7 @@ export default async function update(tree: Tree) {
 
     const goGenerateTarget = getGoGenerateTarget(projectConfig);
 
-    if (goGenerateTarget != null) {
+    if (goGenerateTarget != undefined) {
       const command = goGenerateTarget[1].options?.command;
       const args: string = command?.replace(generateCommand, '').trim() ?? '';
 
@@ -42,9 +42,9 @@ export default async function update(tree: Tree) {
 
 const getGoGenerateTarget = (
   projectConfig: ProjectConfiguration
-): [string, TargetConfiguration] | null =>
+): [string, TargetConfiguration] | undefined =>
   // do not detect shorthand target because the command needs to be executed in the project directory
-  Object.entries(projectConfig.targets).find(
+  Object.entries(projectConfig.targets ?? {}).find(
     ([, target]) =>
       target.executor === 'nx:run-commands' &&
       target.options != null &&

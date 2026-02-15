@@ -64,7 +64,11 @@ export default async function update(tree: Tree) {
   await formatFiles(tree);
 }
 
-const toggleOption = (options: object, skipName: string, name: string) => {
+const toggleOption = (
+  options: Record<string, unknown>,
+  skipName: string,
+  name: string
+) => {
   if (skipName in options && options[skipName]) {
     delete options[name];
   } else {

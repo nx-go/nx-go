@@ -69,7 +69,9 @@ describe('Nx bridge', () => {
         jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue(nxJson);
         jest.spyOn(goBridge, 'isGoWorkspace').mockReturnValue(isGoWorkspace);
         ensureGoConfigInSharedGlobals(tree);
-        expect(nxJson.namedInputs.sharedGlobals).toEqual(expectedSharedGlobals);
+        expect(nxJson.namedInputs?.sharedGlobals).toEqual(
+          expectedSharedGlobals
+        );
         expect(spyUpdateNxJson).toHaveBeenCalledTimes(updated ? 1 : 0);
       }
     );

@@ -75,7 +75,7 @@ const getFileModuleImports = (
       import: item,
       module: modules.find((mod) => item.startsWith(mod.Path)),
     }))
-    .filter((item) => item.module);
+    .filter((item): item is GoImportWithModule => item.module != null);
 };
 
 /**
@@ -119,8 +119,8 @@ export const createDependencies: CreateDependencies<NxGoPluginOptions> = async (
 ) => {
   const dependencies: RawProjectGraphDependency[] = [];
 
-  let goModules: GoModule[] = null;
-  let projectRootMap: ProjectRootMap = null;
+  let goModules: GoModule[] | null = null;
+  let projectRootMap: ProjectRootMap | null = null;
 
   for (const projectName in context.filesToProcess.projectFileMap) {
     const files = context.filesToProcess.projectFileMap[projectName].filter(
@@ -134,11 +134,11 @@ export const createDependencies: CreateDependencies<NxGoPluginOptions> = async (
 
     for (const file of files) {
       dependencies.push(
-        ...getFileModuleImports(file, goModules)
+        ...getFileModuleImports(file, goModules!)
           .map((goImport) =>
-            getProjectNameForGoImport(projectRootMap, goImport)
+            getProjectNameForGoImport(projectRootMap!, goImport)
           )
-          .filter((target) => target != null)
+          .filter((target): target is string => target != null)
           .map((target) => ({
             type: DependencyType.static,
             source: projectName,

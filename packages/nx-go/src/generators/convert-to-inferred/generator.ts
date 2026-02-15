@@ -76,7 +76,7 @@ export default async function convertToInferredGenerator(
   }
 
   // Remove the old plugin reference from nx.json
-  const nxJson = readNxJson(tree);
+  const nxJson = readNxJson(tree)!;
   const initialPluginCount = nxJson.plugins?.length ?? 0;
   nxJson.plugins = (nxJson.plugins ?? []).filter(
     (plugin) => plugin !== '@nx-go/nx-go'

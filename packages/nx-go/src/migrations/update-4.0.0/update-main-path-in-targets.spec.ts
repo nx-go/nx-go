@@ -51,7 +51,7 @@ describe('update-main-path-in-targets migration', () => {
           'api',
           expect.anything()
         );
-        expect(updateConfig.mock.calls[0][2].targets.target.options.main).toBe(
+        expect(updateConfig.mock.calls[0][2].targets?.target.options.main).toBe(
           expectedPath
         );
       }
@@ -138,16 +138,16 @@ describe('update-main-path-in-targets migration', () => {
       );
       await update(tree);
       expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
-      expect(updateConfig.mock.calls[0][2].targets.build.options.main).toBe(
+      expect(updateConfig.mock.calls[0][2].targets?.build.options.main).toBe(
         'main.go'
       );
-      expect(updateConfig.mock.calls[0][2].targets.serve.options.main).toBe(
+      expect(updateConfig.mock.calls[0][2].targets?.serve.options.main).toBe(
         'main.go'
       );
       expect(
-        updateConfig.mock.calls[0][2].targets['build:prod'].options.main
+        updateConfig.mock.calls[0][2].targets?.['build:prod'].options.main
       ).toBe('cmd/main.go');
-      expect(updateConfig.mock.calls[0][2].targets.start.options.main).toBe(
+      expect(updateConfig.mock.calls[0][2].targets?.start.options.main).toBe(
         'server.go'
       );
     });

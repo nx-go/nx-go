@@ -106,9 +106,10 @@ describe('Create nodes V2', () => {
         ],
       ]);
 
-      const targets = result[0][1].projects['libs/utils'].targets;
-      expect(targets.build).toBeUndefined();
-      expect(targets.serve).toBeUndefined();
+      const targets = result[0][1].projects?.['libs/utils'].targets;
+      expect(targets).toBeDefined();
+      expect(targets!.build).toBeUndefined();
+      expect(targets!.serve).toBeUndefined();
     });
 
     it('should use custom target names from options', async () => {
@@ -128,21 +129,22 @@ describe('Create nodes V2', () => {
         context
       );
 
-      const targets = result[0][1].projects['apps/myapp'].targets;
-      expect(targets['custom-build']).toBeDefined();
-      expect(targets['custom-serve']).toBeDefined();
-      expect(targets['custom-test']).toBeDefined();
-      expect(targets['custom-lint']).toBeDefined();
-      expect(targets['custom-tidy']).toBeDefined();
-      expect(targets['custom-generate']).toBeDefined();
+      const targets = result[0][1].projects?.['apps/myapp'].targets;
+      expect(targets).toBeDefined();
+      expect(targets!['custom-build']).toBeDefined();
+      expect(targets!['custom-serve']).toBeDefined();
+      expect(targets!['custom-test']).toBeDefined();
+      expect(targets!['custom-lint']).toBeDefined();
+      expect(targets!['custom-tidy']).toBeDefined();
+      expect(targets!['custom-generate']).toBeDefined();
     });
 
     it('should also create nodes for go.mod at workspace root', async () => {
       const result = await createNodesV2[1](['./go.mod'], {}, context);
-      const rootProject = result[0][1].projects['.'];
+      const rootProject = result[0][1].projects?.['.'];
       expect(rootProject).toBeDefined();
-      expect(rootProject.root).toBe('.');
-      expect(rootProject.name).toBeUndefined();
+      expect(rootProject!.root).toBe('.');
+      expect(rootProject!.name).toBeUndefined();
     });
 
     it('should use project name from last path segment', async () => {
@@ -150,7 +152,7 @@ describe('Create nodes V2', () => {
 
       const result = await createNodesV2[1](['apps/api/go.mod'], {}, context);
 
-      expect(result[0][1].projects['apps/api'].name).toBe('api');
+      expect(result[0][1].projects?.['apps/api'].name).toBe('api');
     });
   });
 });

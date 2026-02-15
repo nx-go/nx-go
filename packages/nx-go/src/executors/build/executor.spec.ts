@@ -17,15 +17,7 @@ const options: BuildExecutorSchema = {
   main: 'main.go',
   env: { hello: 'world' },
 };
-
-const context: ExecutorContext = {
-  cwd: '',
-  root: '',
-  isVerbose: false,
-  projectsConfigurations: undefined,
-  nxJsonConfiguration: undefined,
-  projectGraph: undefined,
-};
+const context = { cwd: 'dir', root: '', isVerbose: false } as ExecutorContext;
 
 describe('Build Executor', () => {
   it.each`

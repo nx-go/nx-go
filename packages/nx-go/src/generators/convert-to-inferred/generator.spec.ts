@@ -115,9 +115,9 @@ describe('convert-to-inferred generator', () => {
 
     mockedMigrateProjectExecutorsToPlugin.mock.calls[0][5][0].postTargetTransformer(
       targetConfig,
-      null,
-      null,
-      null
+      tree,
+      { projectName: 'project1', root: '' },
+      { ...targetConfig, name: 'build' }
     );
 
     expect(targetConfig.inputs).toBeUndefined();

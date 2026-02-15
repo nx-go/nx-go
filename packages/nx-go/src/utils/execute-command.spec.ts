@@ -1,4 +1,4 @@
-import { logger } from '@nx/devkit';
+import { type ExecutorContext, logger } from '@nx/devkit';
 import * as child_process from 'node:child_process';
 import { join } from 'node:path';
 import {
@@ -15,22 +15,29 @@ jest.mock('@nx/devkit', () => ({
 }));
 jest.mock('node:child_process');
 
+const createExecutorContext = (overrides: Partial<ExecutorContext>) =>
+  ({
+    isVerbose: false,
+    nxJsonConfiguration: {},
+    projectGraph: { nodes: {}, dependencies: {} },
+    ...overrides,
+  } as ExecutorContext);
+
 describe('Execute command', () => {
   describe('Method: extractProjectRoot', () => {
     it('should use project configuration to extract its root', () => {
       expect(
-        extractProjectRoot({
-          projectName: 'proj',
-          cwd: '',
-          isVerbose: false,
-          root: '/root',
-          projectsConfigurations: {
-            projects: { proj: { root: '/root/project' } },
-            version: 1,
-          },
-          nxJsonConfiguration: undefined,
-          projectGraph: undefined,
-        })
+        extractProjectRoot(
+          createExecutorContext({
+            projectName: 'proj',
+            cwd: '',
+            root: '/root',
+            projectsConfigurations: {
+              projects: { proj: { root: '/root/project' } },
+              version: 1,
+            },
+          })
+        )
       ).toBe('/root/project');
     });
   });
@@ -38,52 +45,49 @@ describe('Execute command', () => {
   describe('Method: resolveWorkingDirectory', () => {
     it('should return workspace root when project root is workspace root', () => {
       expect(
-        resolveWorkingDirectory({
-          projectName: 'proj',
-          cwd: '/workspace/apps/frontend',
-          isVerbose: false,
-          root: '/workspace',
-          projectsConfigurations: {
-            projects: { proj: { root: '' } },
-            version: 1,
-          },
-          nxJsonConfiguration: undefined,
-          projectGraph: undefined,
-        })
+        resolveWorkingDirectory(
+          createExecutorContext({
+            projectName: 'proj',
+            cwd: '/workspace/apps/frontend',
+            root: '/workspace',
+            projectsConfigurations: {
+              projects: { proj: { root: '' } },
+              version: 1,
+            },
+          })
+        )
       ).toBe(join('/workspace'));
     });
 
     it('should return absolute path to project when running from different directory', () => {
       expect(
-        resolveWorkingDirectory({
-          projectName: 'backend',
-          cwd: '/workspace/apps/frontend',
-          isVerbose: false,
-          root: '/workspace',
-          projectsConfigurations: {
-            projects: { backend: { root: 'apps/backend' } },
-            version: 1,
-          },
-          nxJsonConfiguration: undefined,
-          projectGraph: undefined,
-        })
+        resolveWorkingDirectory(
+          createExecutorContext({
+            projectName: 'backend',
+            cwd: '/workspace/apps/frontend',
+            root: '/workspace',
+            projectsConfigurations: {
+              projects: { backend: { root: 'apps/backend' } },
+              version: 1,
+            },
+          })
+        )
       ).toBe(join('/workspace/apps/backend'));
     });
 
     it('should return absolute path to project when running from workspace root', () => {
       expect(
-        resolveWorkingDirectory({
-          projectName: 'backend',
-          cwd: '/workspace',
-          isVerbose: false,
-          root: '/workspace',
-          projectsConfigurations: {
-            projects: { backend: { root: 'apps/backend' } },
-            version: 1,
-          },
-          nxJsonConfiguration: undefined,
-          projectGraph: undefined,
-        })
+        resolveWorkingDirectory(
+          createExecutorContext({
+            projectName: 'backend',
+            cwd: '/workspace',
+            root: '/workspace',
+            projectsConfigurations: {
+              projects: { backend: { root: 'apps/backend' } },
+              version: 1,
+            },
+          })
+        )
       ).toBe(join('/workspace/apps/backend'));
     });
   });

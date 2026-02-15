@@ -34,7 +34,7 @@ describe('add-tidy-target-to-libraries-and-applications migration', () => {
       );
       await update(tree);
       expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
-      expect(updateConfig.mock.calls[0][2].targets.tidy).toEqual({
+      expect(updateConfig.mock.calls[0][2].targets?.tidy).toEqual({
         executor: '@nx-go/nx-go:tidy',
       });
     });
@@ -53,7 +53,7 @@ describe('add-tidy-target-to-libraries-and-applications migration', () => {
       );
       await update(tree);
       expect(updateConfig).toHaveBeenCalledWith(tree, 'api', expect.anything());
-      expect(updateConfig.mock.calls[0][2].targets.tidy).toEqual({
+      expect(updateConfig.mock.calls[0][2].targets?.tidy).toEqual({
         executor: '@nx-go/nx-go:tidy',
       });
     });

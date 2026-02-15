@@ -13,6 +13,7 @@
     "lib": ["es2020"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strict": true,
     "baseUrl": ".",
     "paths": {
       "nx-go": ["packages/nx-go/src/index.ts"]

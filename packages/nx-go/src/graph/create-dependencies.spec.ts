@@ -43,7 +43,7 @@ describe('Create dependencies', () => {
   const validContext = {
     filesToProcess: { projectFileMap, nonProjectFiles: [] },
     projects: projects,
-  } as CreateDependenciesContext;
+  } as unknown as CreateDependenciesContext;
 
   const expectedDependencies: RawProjectGraphDependency[] = [
     {
@@ -63,7 +63,7 @@ describe('Create dependencies', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('should create dependencies', async () => {
-    const dependencies = await createDependencies(null, validContext);
+    const dependencies = await createDependencies(undefined, validContext);
     expect(dependencies).toEqual(expectedDependencies);
   });
 
@@ -78,23 +78,23 @@ describe('Create dependencies', () => {
         '{ "Path": "proj/api", "Dir": "/tmp/proj/apps/api" }\n' +
           '{ "Path": "proj/datalayer", "Dir": "C:\\\\tmp\\\\proj\\\\libs\\\\data-layer" }'
       );
-    const dependencies = await createDependencies(null, validContext);
+    const dependencies = await createDependencies(undefined, validContext);
     Object.defineProperty(nxDevkit, 'workspaceRoot', { value: oldWorkspace });
     expect(dependencies).toEqual(expectedDependencies);
   });
 
   describe('Go modules', () => {
     it('should not compute Go if there is no file to process', async () => {
-      const dependencies = await createDependencies(null, {
+      const dependencies = await createDependencies(undefined, {
         filesToProcess: { projectFileMap: {}, nonProjectFiles: [] },
-      } as CreateDependenciesContext);
+      } as unknown as CreateDependenciesContext);
       expect(utils.getGoModules).not.toHaveBeenCalled();
       expect(dependencies).toEqual([]);
     });
 
     it('should compute Go modules but there is no', async () => {
       (utils.getGoModules as jest.Mock).mockReturnValueOnce('');
-      const dependencies = await createDependencies(null, validContext);
+      const dependencies = await createDependencies(undefined, validContext);
       expect(utils.getGoModules).toHaveBeenCalledWith('/tmp/proj', false);
       expect(dependencies).toEqual([]);
     });
@@ -106,7 +106,7 @@ describe('Create dependencies', () => {
 
     it('should throw an error if Go modules cannot be computed', async () => {
       (utils.getGoModules as jest.Mock).mockReturnValueOnce(null);
-      await expect(createDependencies(null, validContext)).rejects.toThrow(
+      await expect(createDependencies(undefined, validContext)).rejects.toThrow(
         'Cannot get list of Go modules'
       );
     });

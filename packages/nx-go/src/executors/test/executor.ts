@@ -27,7 +27,9 @@ export default async function runExecutor(
       ...buildStringFlagIfValid(`-run`, options.run),
       ...buildStringFlagIfValid(
         '-count',
-        options.count > 0 ? options.count.toString() : undefined
+        options.count && options.count > 0
+          ? options.count.toString()
+          : undefined
       ),
       ...buildStringFlagIfValid(`-timeout`, options.timeout),
       './...',

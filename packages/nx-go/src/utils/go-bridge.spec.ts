@@ -35,7 +35,9 @@ describe('Go bridge', () => {
     });
 
     it('should throw error if go version not found', () => {
-      jest.spyOn(child_process, 'execSync').mockImplementationOnce(() => null);
+      jest
+        .spyOn(child_process, 'execSync')
+        .mockImplementationOnce(() => null as unknown as string);
       expect(() => getGoVersion()).toThrow(
         'Cannot retrieve current Go version'
       );
@@ -48,7 +50,9 @@ describe('Go bridge', () => {
     });
 
     it('should throw error if go version not found', () => {
-      jest.spyOn(child_process, 'execSync').mockImplementationOnce(() => null);
+      jest
+        .spyOn(child_process, 'execSync')
+        .mockImplementationOnce(() => null as unknown as string);
       expect(() => getGoShortVersion()).toThrow(
         'Cannot retrieve current Go version'
       );
