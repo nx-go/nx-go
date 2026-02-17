@@ -9,6 +9,7 @@ import {
 import { dirname } from 'node:path';
 import { GO_MOD_FILE } from '../constants';
 import type { NxGoPluginNodeOptions, NxGoPluginOptions } from '../type';
+import { shouldCreateAirTarget } from '../utils';
 import { generateTargets } from './create-nodes/generate-targets';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
@@ -33,6 +34,7 @@ const normalizeOptions = (
 ): NxGoPluginNodeOptions => ({
   buildTargetName: options.buildTargetName ?? 'build',
   serveTargetName: options.serveTargetName ?? 'serve',
+  serveAirTargetName: options.serveAirTargetName ?? 'serve:air',
   testTargetName: options.testTargetName ?? 'test',
   lintTargetName: options.lintTargetName ?? 'lint',
   tidyTargetName: options.tidyTargetName ?? 'tidy',
@@ -59,13 +61,17 @@ const createNodesInternal = async (
   );
   const projectType: ProjectType = isApplication ? 'application' : 'library';
 
+  // Check if Air should be configured (only for applications)
+  const hasAirSetup =
+    isApplication && shouldCreateAirTarget(context.workspaceRoot, projectRoot);
+
   return {
     projects: {
       [projectRoot]: {
         root: projectRoot,
         name: projectName,
         projectType,
-        targets: generateTargets(options, isApplication),
+        targets: generateTargets(options, isApplication, hasAirSetup),
       },
     },
   };

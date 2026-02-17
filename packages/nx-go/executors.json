@@ -25,6 +25,11 @@
       "schema": "./src/executors/serve/schema.json",
       "description": "Run a Go program"
     },
+    "serve-air": {
+      "implementation": "./src/executors/serve-air/executor",
+      "schema": "./src/executors/serve-air/schema.json",
+      "description": "Run and watch a Go program using Air live reload"
+    },
     "test": {
       "implementation": "./src/executors/test/executor",
       "schema": "./src/executors/test/schema.json",

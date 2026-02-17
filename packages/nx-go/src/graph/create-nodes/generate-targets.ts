@@ -12,12 +12,14 @@ import type { NxGoPluginNodeOptions } from '../../type';
  *
  * @param options - The plugin options containing target names
  * @param isApplication - A boolean indicating if the project is an application (has package main) or a library
+ * @param hasAirSetup - A boolean indicating if Air config exists and air executable is available
  * @returns An object containing the generated targets for the project
  * @see https://nx.dev/docs/extending-nx/project-graph-plugins#identifying-projects
  */
 export const generateTargets = (
   options: NxGoPluginNodeOptions,
-  isApplication: boolean
+  isApplication: boolean,
+  hasAirSetup = false
 ): Record<string, TargetConfiguration> => {
   const targets: Record<string, TargetConfiguration> = {};
 
@@ -49,6 +51,22 @@ export const generateTargets = (
         },
       },
     };
+
+    // Air serve target - only if config exists and executable is available
+    if (hasAirSetup) {
+      targets[options.serveAirTargetName] = {
+        executor: `${NX_PLUGIN_NAME}:serve-air`,
+        continuous: true,
+        metadata: {
+          technologies: ['go'],
+          description: 'Runs the Go application with Air live reload',
+          help: {
+            command: 'air -h',
+            example: { options: { config: '.air.toml' } },
+          },
+        },
+      };
+    }
   }
 
   // Test, Lint, and Tidy targets - for all Go projects

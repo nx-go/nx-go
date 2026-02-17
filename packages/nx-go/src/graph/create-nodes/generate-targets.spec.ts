@@ -7,6 +7,7 @@ describe('generateTargets', () => {
   const mockOptions: NxGoPluginNodeOptions = {
     buildTargetName: 'build',
     serveTargetName: 'serve',
+    serveAirTargetName: 'serve:air',
     testTargetName: 'test',
     lintTargetName: 'lint',
     tidyTargetName: 'tidy',
@@ -47,6 +48,22 @@ describe('generateTargets', () => {
         continuous: true,
         metadata: expect.anything(),
       } as TargetConfiguration);
+    });
+
+    it('should create air target with default name when hasAirSetup is true', () => {
+      const result = generateTargets(mockOptions, true, true);
+
+      expect(result['serve:air']).toEqual({
+        executor: `${NX_PLUGIN_NAME}:serve-air`,
+        continuous: true,
+        metadata: expect.anything(),
+      } as TargetConfiguration);
+    });
+
+    it('should not create air target when hasAirSetup is false', () => {
+      const result = generateTargets(mockOptions, true, false);
+
+      expect(result['serve:air']).toBeUndefined();
     });
   });
 
