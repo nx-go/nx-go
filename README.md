@@ -14,11 +14,11 @@
 
 </div>
 
-> [!IMPORTANT] \
-> **v4.0.0-beta.0 is now available!** 🎉 \
-> This version brings support for Nx 20+. We look forward to your feedback in [#XXX](https://github.com/nx-go/nx-go/issues/XXX).
+> [!IMPORTANT]
+> **v4.0.0-beta is now available!** 🎉 \
+> This version brings support for Nx 21+. We look forward to your feedback in [#176](https://github.com/nx-go/nx-go/issues/176).
 
-## ✨ Features
+## Features
 
 - 🚀 Generate Go applications and libraries **in seconds** within your Nx workspace
 - ⚡ **Zero-config setup** – Automatic task inference for projects with `go.mod`
@@ -67,6 +67,15 @@ The plugin configures a [multi-module Go workspace](https://go.dev/doc/tutorial/
 nx g @nx-go/nx-go:convert-to-one-mod
 ```
 
+### Convert to inferred tasks
+
+You need to have a multi-module Go workspace to use inferred tasks. \
+Convert existing projects from executor-based to inferred task configuration:
+
+```shell
+nx g infer-targets
+```
+
 ## 📖 Generators & executors
 
 ### Generators
@@ -93,12 +102,12 @@ Need more customization? A [plugin configuration](./docs/options.md) is also ava
 
 ## 🧩 Compatibility
 
-| nx-go version | Nx version   |
-| ------------- | ------------ |
-| 4.x           | 20.x to 22.x |
-| 3.x           | 17.x to 20.x |
-| 2.x           | 13.x to 16.x |
-| 1.x           | < 13.x       |
+| nx-go version | Nx version       |
+| ------------- | ---------------- |
+| 4.x           | 20.x to 22.x     |
+| 3.x           | 17.x to 20.x     |
+| ~~2.x~~       | ~~13.x to 16.x~~ |
+| ~~1.x~~       | ~~< 13.x~~       |
 
 This plugin is only tested on [stable versions of Go](https://go.dev/dl/), older versions does not receive support. However, you can expect a fair degree of compatibility. Please note that multi-module Go workspaces require Go 1.18 or later.
 
