@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Serve with Air executor",
+  "description": "Runs and watches a Go program using Air live reload",
+  "type": "object",
+  "properties": {
+    "config": {
+      "type": "string",
+      "description": "Path to Air config file (default: .air.toml)",
+      "default": ".air.toml",
+      "x-completion-type": "file",
+      "x-completion-glob": ".air.{toml,yaml,yml,conf}"
+    },
+    "cmd": {
+      "type": "string",
+      "description": "Name of the air binary to use, default is air",
+      "default": "air"
+    },
+    "cwd": {
+      "type": "string",
+      "description": "Working directory from which to run the application",
+      "x-completion-type": "directory"
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Extra args to pass to air",
+      "alias": "arguments"
+    }
+  }
+}

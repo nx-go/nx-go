@@ -18,6 +18,12 @@ export interface NxGoPluginOptions {
    */
   serveTargetName?: string;
   /**
+   * Custom target name for the serve-air target.
+   * When an Air config file exists and air is available, an Air serve target will be automatically created.
+   * Default is 'serve:air'.
+   */
+  serveAirTargetName?: string;
+  /**
    * Custom target name for the test target.
    * Default is 'test'.
    */
