@@ -14,12 +14,17 @@
 
 </div>
 
+> [!IMPORTANT] \
+> **v4.0.0-beta.0 is now available!** 🎉 \
+> This version brings support for Nx 20+. We look forward to your feedback in [#XXX](https://github.com/nx-go/nx-go/issues/XXX).
+
 ## ✨ Features
 
-- Generate Go applications and libraries **in seconds** within your Nx workspace
-- Execute, build, format and test projects with a customizable configuration
-- Efficient caching and dependency graph tools for Go projects
-- Use official Go commands in the background
+- 🚀 Generate Go applications and libraries **in seconds** within your Nx workspace
+- ⚡ **Zero-config setup** – Automatic task inference for projects with `go.mod`
+- 💨 **Blazing-fast tasks** – Optimized caching with smart inputs and outputs
+- 🤝 **Community friendly** – Integration with recognized community projects such as [Air](https://github.com/air-verse/air)
+- 🗃️ **Reliable** – Use official Go commands in the background
 
 ## 🚀 Getting started
 
@@ -43,6 +48,17 @@ nx add @nx-go/nx-go
 nx migrate @nx-go/nx-go
 ```
 
+### Want to try the beta?
+
+```shell
+# Install it manually in your Nx workspace
+npm install -D @nx-go/nx-go@beta
+nx g @nx-go/nx-go:init
+
+# Migrate if already using nx-go
+nx migrate @nx-go/nx-go@beta
+```
+
 ### Don't want to use a multi-module Go workspace?
 
 The plugin configures a [multi-module Go workspace](https://go.dev/doc/tutorial/workspaces) by default, to simplify project management and improve the quality of the Nx graph. If you don't want to take advantage of this feature, you can use generator `convert-to-one-mod` after the plugin installation. Generators will automatically adapt to your configuration.
@@ -64,6 +80,7 @@ nx g @nx-go/nx-go:convert-to-one-mod
 - `generate`: [Generate code using Go](./docs/executors/generate.md)
 - `lint`: [Format and lint a Go project](./docs/executors/lint.md)
 - `serve`: [Run a Go application](./docs/executors/serve.md)
+- `serve-air`: [Run a Go application with Air live reload](./docs/executors/serve-air.md)
 - `test`: [Run tests of a Go project](./docs/executors/test.md)
 - `tidy`: [Ensures go.mod file matches a project source code](./docs/executors/tidy.md)
 
@@ -78,6 +95,7 @@ Need more customization? A [plugin configuration](./docs/options.md) is also ava
 
 | nx-go version | Nx version   |
 | ------------- | ------------ |
+| 4.x           | 20.x to 22.x |
 | 3.x           | 17.x to 20.x |
 | 2.x           | 13.x to 16.x |
 | 1.x           | < 13.x       |
