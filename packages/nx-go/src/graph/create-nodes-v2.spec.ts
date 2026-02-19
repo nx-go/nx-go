@@ -1,13 +1,16 @@
 import { CreateNodesContextV2 } from '@nx/devkit';
+import { existsSync } from 'node:fs';
 import { shouldCreateAirTarget } from '../utils';
 import { createNodesV2 } from './create-nodes-v2';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
 jest.mock('./create-nodes/has-main-package');
 jest.mock('../utils');
+jest.mock('node:fs');
 
 const mockedHasMainPackage = jest.mocked(hasMainPackage);
 const mockedShouldCreateAirTarget = jest.mocked(shouldCreateAirTarget);
+const mockedExistsSync = jest.mocked(existsSync);
 
 describe('Create nodes V2', () => {
   let context: CreateNodesContextV2;
@@ -20,6 +23,8 @@ describe('Create nodes V2', () => {
     jest.clearAllMocks();
     // Default: no air setup
     mockedShouldCreateAirTarget.mockReturnValue(false);
+    // Default: project.json exists
+    mockedExistsSync.mockReturnValue(true);
   });
 
   it('should compute all go.mod files', () => {
@@ -144,12 +149,20 @@ describe('Create nodes V2', () => {
       expect(targets!['custom-generate']).toBeDefined();
     });
 
-    it('should also create nodes for go.mod at workspace root', async () => {
+    it('should create project for go.mod at workspace root with project.json', async () => {
       const result = await createNodesV2[1](['./go.mod'], {}, context);
       const rootProject = result[0][1].projects?.['.'];
       expect(rootProject).toBeDefined();
       expect(rootProject!.root).toBe('.');
       expect(rootProject!.name).toBeUndefined();
+    });
+
+    it('should not create project for workspace root go.mod without project.json', async () => {
+      mockedExistsSync.mockReturnValue(false);
+
+      const result = await createNodesV2[1](['./go.mod'], {}, context);
+
+      expect(result).toMatchObject([['./go.mod', { projects: {} }]]);
     });
 
     it('should use project name from last path segment', async () => {

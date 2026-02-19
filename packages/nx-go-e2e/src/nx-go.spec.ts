@@ -126,6 +126,7 @@ describe('nx-go', () => {
 
     it('should infer workspace root from go.mod', async () => {
       updateFile('go.mod', '');
+      updateFile('project.json', JSON.stringify({ name: '@proj/source' }));
 
       // Verify that it creates a Nx project from the go.mod file at the workspace root
       const result = await runNxCommandAsync(
@@ -134,6 +135,7 @@ describe('nx-go', () => {
       expect(result.stdout).toBeDefined();
 
       renameFile('go.mod', 'go.modbak');
+      renameFile('project.json', 'project.jsonbak');
     });
   });
 
