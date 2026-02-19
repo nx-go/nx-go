@@ -46,7 +46,7 @@ jobs:
 
       - name: 🏷 Version
         shell: bash
-        run: pnpm nx run nx-go:version${{ inputs.beta && ':beta' }} --dry-run=${{ inputs.dryRun }}
+        run: pnpm nx run nx-go:version${{ inputs.beta && ':beta' || '' }} --dry-run=${{ inputs.dryRun }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
