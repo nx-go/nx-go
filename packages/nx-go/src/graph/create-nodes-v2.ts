@@ -6,7 +6,8 @@ import {
   type CreateNodesV2,
   type ProjectType,
 } from '@nx/devkit';
-import { dirname } from 'node:path';
+import { existsSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { GO_MOD_FILE } from '../constants';
 import type { NxGoPluginNodeOptions, NxGoPluginOptions } from '../type';
 import { shouldCreateAirTarget } from '../utils';
@@ -47,6 +48,15 @@ const createNodesInternal = async (
   context: CreateNodesContextV2
 ): Promise<CreateNodesResult> => {
   const projectRoot = dirname(configFilePath);
+
+  // Skip creating a project if this is the workspace root and it doesn't have a project.json file
+  // This prevents unnecessary project creation in single-module repositories
+  if (
+    projectRoot === '.' &&
+    !existsSync(join(context.workspaceRoot, 'project.json'))
+  ) {
+    return { projects: {} };
+  }
 
   // We assume that the project name is derived from the project root folder name
   // If needed, the user can still rename the project in the configuration file (project.json)
