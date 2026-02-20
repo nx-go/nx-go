@@ -2,6 +2,32 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [4.0.0-beta.0](https://github.com/nx-go/nx-go/compare/v3.3.1...v4.0.0-beta.0) (2026-02-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* build executor is now running from project folder
+* require Nx 20+
+
+### Features
+
+* add Air live reload executor ([#174](https://github.com/nx-go/nx-go/issues/174)) ([5ead589](https://github.com/nx-go/nx-go/commit/5ead589454f668e9df8cd17c6eb856d3dc666e3d))
+* add flags property to serve executor ([#149](https://github.com/nx-go/nx-go/issues/149)) ([0df9805](https://github.com/nx-go/nx-go/commit/0df98057ab86f3915090c190c0f712e27c168955))
+* add Nx 21+ support ([#161](https://github.com/nx-go/nx-go/issues/161)) ([1732d2e](https://github.com/nx-go/nx-go/commit/1732d2edcbfad58b8cd39ae4c5d7c6d8f519d0e8))
+* add support for inferred tasks ([#169](https://github.com/nx-go/nx-go/issues/169)) ([92b08f0](https://github.com/nx-go/nx-go/commit/92b08f0a3e9e030bf77bdd89abb963050e12433f))
+* allow optional main file in executors ([#168](https://github.com/nx-go/nx-go/issues/168)) ([cb4a729](https://github.com/nx-go/nx-go/commit/cb4a72900a07ed5a1164b3d46a5ccfd8c47a3035))
+* improve default task configuration ([#170](https://github.com/nx-go/nx-go/issues/170)) ([2fb178b](https://github.com/nx-go/nx-go/commit/2fb178be7e86841233989feb8a6114fb7fa40d58))
+
+
+### Bug Fixes
+
+* better path handling when executing Go commands ([#155](https://github.com/nx-go/nx-go/issues/155)) ([dfb29b1](https://github.com/nx-go/nx-go/commit/dfb29b12d8a22c493ee80470bcad891eaf65fd6a))
+* respect GOOS environment variable in build executor ([#160](https://github.com/nx-go/nx-go/issues/160)) ([a0f4d7c](https://github.com/nx-go/nx-go/commit/a0f4d7c6666afccbc817757eb070187801bb24c3))
+* skip project creation for workspace root without project.json ([#177](https://github.com/nx-go/nx-go/issues/177)) ([851d962](https://github.com/nx-go/nx-go/commit/851d962aa9333663fd360a02a652bb0b2cdadfee))
+* support multiple import/use blocks in Go files ([#173](https://github.com/nx-go/nx-go/issues/173)) ([faad139](https://github.com/nx-go/nx-go/commit/faad1397a9248faf972b0cc6971f899275dbcb1f))
+* use Go version from go.work if exists ([#166](https://github.com/nx-go/nx-go/issues/166)) ([2e7df46](https://github.com/nx-go/nx-go/commit/2e7df46bbe6578879179d7ac37d16d5a69b58065))
+
 ## [3.3.1](https://github.com/nx-go/nx-go/compare/v3.3.0...v3.3.1) (2024-12-11)
 
 
