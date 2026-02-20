@@ -2,10 +2,24 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      beta:
+        description: 'Whether to publish a beta release'
+        required: false
+        default: false
+        type: boolean
+      dryRun:
+        description: 'Whether to perform a dry run of the release process'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: 📥 Checkout Repo
         uses: actions/checkout@v6
@@ -32,7 +46,8 @@ jobs:
 
       - name: 🏷 Version
         shell: bash
-        run: pnpm nx run-many --projects=nx-go --target=version
+        run: pnpm nx run nx-go:version${{ inputs.beta && ':beta' || '' }} --dry-run=${{ inputs.dryRun }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true

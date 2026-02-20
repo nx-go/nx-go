@@ -58,6 +58,13 @@
         "preset": "conventionalcommits",
         "push": true,
         "tagPrefix": "v"
+      },
+      "configurations": {
+        "beta": {
+          "postTargets": ["build", "deploy:beta", "github"],
+          "releaseAs": "prerelease",
+          "preid": "beta"
+        }
       }
     },
     "github": {
@@ -72,6 +79,11 @@
       "options": {
         "access": "public",
         "distFolderPath": "dist/packages/nx-go"
+      },
+      "configurations": {
+        "beta": {
+          "tag": "beta"
+        }
       }
     }
   }
