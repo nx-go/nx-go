@@ -61,7 +61,7 @@
       },
       "configurations": {
         "beta": {
-          "postTargets": ["build", "deploy:beta", "github"],
+          "postTargets": ["build", "deploy-beta", "github"],
           "releaseAs": "prerelease",
           "preid": "beta"
         }
@@ -79,11 +79,14 @@
       "options": {
         "access": "public",
         "distFolderPath": "dist/packages/nx-go"
-      },
-      "configurations": {
-        "beta": {
-          "tag": "beta"
-        }
+      }
+    },
+    "deploy-beta": {
+      "executor": "ngx-deploy-npm:deploy",
+      "options": {
+        "access": "public",
+        "distFolderPath": "dist/packages/nx-go",
+        "tag": "beta"
       }
     }
   }
