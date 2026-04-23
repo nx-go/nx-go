@@ -13,6 +13,11 @@ on:
         required: false
         default: false
         type: boolean
+      releaseAs:
+        description: 'The version to release as (patch, minor, major)'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   release:
@@ -46,7 +51,7 @@ jobs:
 
       - name: 🏷 Version
         shell: bash
-        run: pnpm nx run nx-go:version${{ inputs.beta && ':beta' || '' }} --dry-run=${{ inputs.dryRun }}
+        run: pnpm nx run nx-go:version${{ inputs.beta && ':beta' || '' }} --dry-run=${{ inputs.dryRun }}${{ inputs.releaseAs && format(' --releaseAs={0}', inputs.releaseAs) || '' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
