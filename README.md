@@ -14,10 +14,6 @@
 
 </div>
 
-> [!IMPORTANT]
-> **v4.0.0-beta is now available!** 🎉 \
-> This version brings support for Nx 21+. We look forward to your feedback in [#176](https://github.com/nx-go/nx-go/issues/176).
-
 ## Features
 
 - 🚀 Generate Go applications and libraries **in seconds** within your Nx workspace
@@ -46,17 +42,6 @@ nx add @nx-go/nx-go
 
 ```shell
 nx migrate @nx-go/nx-go
-```
-
-### Want to try the beta?
-
-```shell
-# Install it manually in your Nx workspace
-npm install -D @nx-go/nx-go@beta
-nx g @nx-go/nx-go:init
-
-# Migrate if already using nx-go
-nx migrate @nx-go/nx-go@beta
 ```
 
 ### Don't want to use a multi-module Go workspace?
