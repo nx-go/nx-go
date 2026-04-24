@@ -31,3 +31,7 @@ Uses `go test` command to run tests of a Go project.
 ### timeout
 
 - (string): If a test binary runs longer than duration d, panic. If d is 0, the timeout is disabled. The default is 10 minutes (10m).
+
+### tags
+
+- (array): Build tags to pass to the go test command
