@@ -32,6 +32,7 @@ export default async function runExecutor(
           : undefined
       ),
       ...buildStringFlagIfValid(`-timeout`, options.timeout),
+      ...buildStringFlagIfValid('-tags', options.tags?.join(',')),
       './...',
     ],
     { cwd: resolveWorkingDirectory(context) }

@@ -6,4 +6,5 @@ export interface TestExecutorSchema {
   verbose?: boolean;
   count?: number;
   timeout?: string;
+  tags?: string[];
 }
