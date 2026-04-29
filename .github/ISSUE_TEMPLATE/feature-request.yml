@@ -1,6 +1,6 @@
 name: ✨ Feature Request
 description: This form is to request a new feature in nx-go.
-labels: [ "type: enhancement" ]
+type: feature
 body:
   - type: textarea
     id: solution
