@@ -22,9 +22,6 @@ jobs:
 
       - name: ⚙ Setup
         uses: ./.github/actions/setup
-        with:
-          go_version: 1.25.6
-          node_version: 22.x
 
       - name: 🎭 End-to-end tests
         run: pnpm nx affected --target=e2e --parallel
@@ -42,9 +39,6 @@ jobs:
 
       - name: ⚙ Setup
         uses: ./.github/actions/setup
-        with:
-          go_version: 1.25.6
-          node_version: 22.x
 
       - name: 💭 Validate current commit (last commit) with commitlint
         if: github.event_name == 'push'
@@ -64,7 +58,7 @@ jobs:
           FORCE_COLOR: false
 
       - name: ⛳ SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8.0.0
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
