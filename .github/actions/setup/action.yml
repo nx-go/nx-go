@@ -4,37 +4,46 @@ description: Setup Node, Go and install dependencies
 inputs:
   node_version:
     description: Node Version
-    required: true
+    required: false
+    default: 22.x
   go_version:
     description: Go Version
-    required: true
+    required: false
+    default: 1.26.3
+  use_cache:
+    description: Whether to use cache
+    required: false
+    default: true
 
 runs:
   using: composite
   steps:
     - name: Derive appropriate SHAs for base and head for `nx affected` commands
-      uses: nrwl/nx-set-shas@v3
+      uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5.0.1
 
     - name: Use Go ${{ inputs.go_version }}
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         cache: false # we do not install Go modules, so we do not need to cache them
         go-version: ${{ inputs.go_version }}
 
     - name: Install pnpm
-      uses: pnpm/action-setup@v4.0.0
+      uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
 
-    - name: Use pnpm
-      uses: pnpm/action-setup@v4.0.0
-      with:
-        run_install: false
-
-    - name: Use Node.js ${{ inputs.node_version }}
-      uses: actions/setup-node@v4
+    - name: Use Node.js ${{ inputs.node_version }} with cache
+      uses: actions/setup-node@v6
+      if: ${{ inputs.use_cache == 'true' }}
       with:
         node-version: ${{ inputs.node_version }}
-        registry-url: 'https://registry.npmjs.org'
-        cache: 'pnpm'
+        registry-url: https://registry.npmjs.org
+        cache: pnpm
+
+    - name: Use Node.js ${{ inputs.node_version }}
+      uses: actions/setup-node@v6
+      if: ${{ inputs.use_cache != 'true' }}
+      with:
+        node-version: ${{ inputs.node_version }}
+        registry-url: https://registry.npmjs.org
 
     - name: Install dependencies
       shell: bash

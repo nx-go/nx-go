@@ -36,8 +36,7 @@ jobs:
       - name: ⚙ Setup
         uses: ./.github/actions/setup
         with:
-          go_version: 1.25.6
-          node_version: 22.x
+          use_cache: false
 
       - name: Configure Git
         run: |
