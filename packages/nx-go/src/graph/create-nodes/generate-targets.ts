@@ -5,6 +5,17 @@ import {
   NX_PLUGIN_NAME,
 } from '../../constants';
 import type { NxGoPluginNodeOptions } from '../../type';
+import { REVIVE_INPUTS } from '../../utils/tool-detection/revive-bridge';
+
+/**
+ * Detected external tools that influence target generation.
+ */
+export interface DetectedTools {
+  /** Whether Air is available and configured (application-only). */
+  air?: boolean;
+  /** Whether Revive is available and configured. */
+  revive?: boolean;
+}
 
 /**
  * Generates a set of default targets for a Go project based on whether it's an application or a library.
@@ -12,14 +23,14 @@ import type { NxGoPluginNodeOptions } from '../../type';
  *
  * @param options - The plugin options containing target names
  * @param isApplication - A boolean indicating if the project is an application (has package main) or a library
- * @param hasAirSetup - A boolean indicating if Air config exists and air executable is available
+ * @param detectedTools - Optional detected external tools that influence target generation
  * @returns An object containing the generated targets for the project
  * @see https://nx.dev/docs/extending-nx/project-graph-plugins#identifying-projects
  */
 export const generateTargets = (
   options: NxGoPluginNodeOptions,
   isApplication: boolean,
-  hasAirSetup = false
+  detectedTools: DetectedTools = {}
 ): Record<string, TargetConfiguration> => {
   const targets: Record<string, TargetConfiguration> = {};
 
@@ -53,7 +64,7 @@ export const generateTargets = (
     };
 
     // Air serve target - only if config exists and executable is available
-    if (hasAirSetup) {
+    if (detectedTools.air) {
       targets[options.serveAirTargetName] = {
         executor: `${NX_PLUGIN_NAME}:serve-air`,
         continuous: true,
@@ -88,7 +99,10 @@ export const generateTargets = (
   targets[options.lintTargetName] = {
     executor: `${NX_PLUGIN_NAME}:lint`,
     cache: true,
-    inputs: GO_PROJECT_INPUTS,
+    inputs: detectedTools.revive
+      ? [...GO_PROJECT_INPUTS, ...REVIVE_INPUTS]
+      : GO_PROJECT_INPUTS,
+    ...(detectedTools.revive ? { options: { linter: 'revive' } } : {}),
     metadata: {
       technologies: ['go'],
       description: 'Lints the Go project',

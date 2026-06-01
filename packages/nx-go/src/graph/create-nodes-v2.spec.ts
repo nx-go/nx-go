@@ -1,6 +1,6 @@
 import { CreateNodesContextV2 } from '@nx/devkit';
 import { existsSync } from 'node:fs';
-import { shouldCreateAirTarget } from '../utils';
+import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
 import { createNodesV2 } from './create-nodes-v2';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
@@ -10,6 +10,7 @@ jest.mock('node:fs');
 
 const mockedHasMainPackage = jest.mocked(hasMainPackage);
 const mockedShouldCreateAirTarget = jest.mocked(shouldCreateAirTarget);
+const mockedShouldUseReviveLinter = jest.mocked(shouldUseReviveLinter);
 const mockedExistsSync = jest.mocked(existsSync);
 
 describe('Create nodes V2', () => {
@@ -23,6 +24,8 @@ describe('Create nodes V2', () => {
     jest.clearAllMocks();
     // Default: no air setup
     mockedShouldCreateAirTarget.mockReturnValue(false);
+    // Default: no revive setup
+    mockedShouldUseReviveLinter.mockReturnValue(false);
     // Default: project.json exists
     mockedExistsSync.mockReturnValue(true);
   });
@@ -238,6 +241,55 @@ describe('Create nodes V2', () => {
         const targets = result[0][1].projects?.['libs/utils'].targets;
         expect(targets).toBeDefined();
         expect(targets!['serve:air']).toBeUndefined();
+      });
+    });
+
+    describe('Revive linter', () => {
+      it('should set revive linter option on lint target for an application', async () => {
+        mockedHasMainPackage.mockReturnValue(true);
+        mockedShouldUseReviveLinter.mockReturnValue(true);
+
+        const result = await createNodesV2[1](
+          ['apps/myapp/go.mod'],
+          {},
+          context
+        );
+
+        const targets = result[0][1].projects?.['apps/myapp'].targets;
+        expect(targets).toBeDefined();
+        expect(targets!['lint']?.inputs).toContain('{projectRoot}/revive.toml');
+        expect(targets!['lint']?.options).toEqual({ linter: 'revive' });
+      });
+
+      it('should set revive linter option on lint target for a library', async () => {
+        mockedHasMainPackage.mockReturnValue(false);
+        mockedShouldUseReviveLinter.mockReturnValue(true);
+
+        const result = await createNodesV2[1](
+          ['libs/utils/go.mod'],
+          {},
+          context
+        );
+
+        const targets = result[0][1].projects?.['libs/utils'].targets;
+        expect(targets).toBeDefined();
+        expect(targets!['lint']?.inputs).toContain('{projectRoot}/revive.toml');
+        expect(targets!['lint']?.options).toEqual({ linter: 'revive' });
+      });
+
+      it('should not set linter option when revive setup is not detected', async () => {
+        mockedHasMainPackage.mockReturnValue(true);
+        mockedShouldUseReviveLinter.mockReturnValue(false);
+
+        const result = await createNodesV2[1](
+          ['apps/myapp/go.mod'],
+          {},
+          context
+        );
+
+        const targets = result[0][1].projects?.['apps/myapp'].targets;
+        expect(targets).toBeDefined();
+        expect(targets!['lint']?.options).toBeUndefined();
       });
     });
   });

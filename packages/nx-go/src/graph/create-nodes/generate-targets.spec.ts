@@ -50,8 +50,8 @@ describe('generateTargets', () => {
       } as TargetConfiguration);
     });
 
-    it('should create air target with default name when hasAirSetup is true', () => {
-      const result = generateTargets(mockOptions, true, true);
+    it('should create air target with default name when air is detected', () => {
+      const result = generateTargets(mockOptions, true, { air: true });
 
       expect(result['serve:air']).toEqual({
         executor: `${NX_PLUGIN_NAME}:serve-air`,
@@ -60,8 +60,8 @@ describe('generateTargets', () => {
       } as TargetConfiguration);
     });
 
-    it('should not create air target when hasAirSetup is false', () => {
-      const result = generateTargets(mockOptions, true, false);
+    it('should not create air target when air is not detected', () => {
+      const result = generateTargets(mockOptions, true, {});
 
       expect(result['serve:air']).toBeUndefined();
     });
