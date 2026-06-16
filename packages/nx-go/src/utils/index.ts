@@ -1,4 +1,4 @@
-export * from './air-bridge';
+export * from './tool-detection';
 export * from './execute-command';
 export * from './go-bridge';
 export * from './normalize-options';

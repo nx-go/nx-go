@@ -1,6 +1,6 @@
 import {
-  type CreateNodesContextV2,
   createNodesFromFiles,
+  type CreateNodesContextV2,
   type CreateNodesResult,
   type CreateNodesResultV2,
   type CreateNodesV2,
@@ -10,8 +10,11 @@ import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { GO_MOD_FILE } from '../constants';
 import type { NxGoPluginNodeOptions, NxGoPluginOptions } from '../type';
-import { shouldCreateAirTarget } from '../utils';
-import { generateTargets } from './create-nodes/generate-targets';
+import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
+import {
+  generateTargets,
+  type DetectedTools,
+} from './create-nodes/generate-targets';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
 export const createNodesV2: CreateNodesV2<NxGoPluginOptions> = [
@@ -71,9 +74,12 @@ const createNodesInternal = async (
   );
   const projectType: ProjectType = isApplication ? 'application' : 'library';
 
-  // Check if Air should be configured (only for applications)
-  const hasAirSetup =
-    isApplication && shouldCreateAirTarget(context.workspaceRoot, projectRoot);
+  const detectedTools: DetectedTools = {
+    air:
+      isApplication &&
+      shouldCreateAirTarget(context.workspaceRoot, projectRoot),
+    revive: shouldUseReviveLinter(context.workspaceRoot, projectRoot),
+  };
 
   return {
     projects: {
@@ -81,7 +87,7 @@ const createNodesInternal = async (
         root: projectRoot,
         name: projectName,
         projectType,
-        targets: generateTargets(options, isApplication, hasAirSetup),
+        targets: generateTargets(options, isApplication, detectedTools),
       },
     },
   };
