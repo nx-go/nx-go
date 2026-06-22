@@ -30,19 +30,28 @@ export const hasAirConfig = (
   );
 };
 
+let cachedAirAvailability: boolean | null = null;
+
 /**
  * Checks if the Air executable is available in the system PATH.
+ * This function caches the result after the first check to avoid redundant executions in subsequent calls.
  *
  * @returns true if the air executable is available, false otherwise
  */
 export const isAirAvailable = (): boolean => {
+  if (cachedAirAvailability !== null) {
+    return cachedAirAvailability;
+  }
+
   try {
     // Try to get the version to verify air is available
     execSync('air -v', { stdio: 'ignore' });
-    return true;
+    cachedAirAvailability = true;
   } catch {
-    return false;
+    cachedAirAvailability = false;
   }
+
+  return cachedAirAvailability;
 };
 
 /**

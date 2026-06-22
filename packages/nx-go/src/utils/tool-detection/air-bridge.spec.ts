@@ -1,21 +1,22 @@
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import {
-  hasAirConfig,
-  isAirAvailable,
-  shouldCreateAirTarget,
-} from './air-bridge';
+import { hasAirConfig, shouldCreateAirTarget } from './air-bridge';
 
 jest.mock('node:fs');
 jest.mock('node:child_process');
 
 const mockExistsSync = existsSync as jest.MockedFunction<typeof existsSync>;
-const mockExecSync = execSync as jest.MockedFunction<typeof execSync>;
 
 describe('Air Detection', () => {
+  let mockExecSync: jest.MockedFunction<typeof execSync>;
+
   beforeEach(() => {
+    jest.resetModules();
     jest.clearAllMocks();
+
+    const { execSync: execSyncFromModule } = require('node:child_process');
+    mockExecSync = execSyncFromModule as jest.MockedFunction<typeof execSync>;
   });
 
   describe('hasAirConfig', () => {
@@ -64,6 +65,8 @@ describe('Air Detection', () => {
     it('should return true when air command is available', () => {
       mockExecSync.mockReturnValue(Buffer.from('air version 1.0.0'));
 
+      const { isAirAvailable } = require('./air-bridge');
+
       expect(isAirAvailable()).toBe(true);
       expect(mockExecSync).toHaveBeenCalledWith('air -v', { stdio: 'ignore' });
     });
@@ -73,7 +76,19 @@ describe('Air Detection', () => {
         throw new Error('Command not found');
       });
 
+      const { isAirAvailable } = require('./air-bridge');
+
       expect(isAirAvailable()).toBe(false);
+    });
+
+    it('should cache result and not re-execute command', () => {
+      mockExecSync.mockReturnValue(Buffer.from('air version 1.0.0'));
+
+      const { isAirAvailable } = require('./air-bridge');
+
+      expect(isAirAvailable()).toBe(true);
+      expect(isAirAvailable()).toBe(true); // Second call uses cache
+      expect(mockExecSync).toHaveBeenCalledTimes(1); // Proves caching works
     });
   });
 
@@ -91,6 +106,8 @@ describe('Air Detection', () => {
         throw new Error('Command not found');
       });
 
+      const { shouldCreateAirTarget } = require('./air-bridge');
+
       expect(shouldCreateAirTarget('/workspace', 'apps/myapp')).toBe(false);
     });
 
@@ -106,6 +123,8 @@ describe('Air Detection', () => {
       mockExecSync.mockImplementation(() => {
         throw new Error('Command not found');
       });
+
+      const { shouldCreateAirTarget } = require('./air-bridge');
 
       expect(shouldCreateAirTarget('/workspace', 'apps/myapp')).toBe(false);
     });
