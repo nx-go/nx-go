@@ -20,7 +20,7 @@
 - ⚡ **Zero-config setup** – Automatic task inference for projects with `go.mod`
 - 💨 **Blazing-fast tasks** – Optimized caching with smart inputs and outputs
 - 🤝 **Community friendly** – Integration with recognized community projects such as [Air](https://github.com/air-verse/air)
-- 🗃️ **Reliable** – Use official Go commands in the background
+- 🗃️ **Reliable** – Use official Go commands in the background with no external dependency
 
 ## 🚀 Getting started
 
@@ -89,7 +89,7 @@ Need more customization? A [plugin configuration](./docs/options.md) is also ava
 
 | nx-go version | Nx version       |
 | ------------- | ---------------- |
-| 4.x           | 20.x to 22.x     |
+| 4.x           | 20.x to 23.x     |
 | 3.x           | 17.x to 20.x     |
 | ~~2.x~~       | ~~13.x to 16.x~~ |
 | ~~1.x~~       | ~~< 13.x~~       |
@@ -101,7 +101,7 @@ This plugin is only tested on [stable versions of Go](https://go.dev/dl/), older
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top"><a href="https://github.com/beeman"><img src="https://github.com/beeman.png" width="100" alt="Utarwyn"/><br /><b>Bram Borggreve</b></a><br />Creator</td>
+      <td align="center" valign="top"><a href="https://github.com/beeman"><img src="https://github.com/beeman.png" width="100" alt="Beeman"/><br /><b>Bram Borggreve</b></a><br />Creator</td>
       <td align="center" valign="top"><a href="https://github.com/utarwyn"><img src="https://github.com/utarwyn.png" width="100" alt="Utarwyn"/><br /><b>Maxime Malgorn</b></a><br />Maintainer</td>
     </tr>
   </tbody>
