@@ -5,7 +5,7 @@ inputs:
   node_version:
     description: Node Version
     required: false
-    default: 22.x
+    default: 24.x
   go_version:
     description: Go Version
     required: false
