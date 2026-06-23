@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [4.1.0](https://github.com/nx-go/nx-go/compare/v4.0.0...v4.1.0) (2026-06-23)
+
+
+### Features
+
+* add Nx 23 support ([#186](https://github.com/nx-go/nx-go/issues/186)) ([2cd3185](https://github.com/nx-go/nx-go/commit/2cd3185fe724bff91b2a64d1c9cc9f93adcc40c9))
+* add support for build tags in test executor ([#182](https://github.com/nx-go/nx-go/issues/182)) ([741655e](https://github.com/nx-go/nx-go/commit/741655e7a48f4b88ee640f92b0cec8b4e6369183))
+* cache air availability check ([#188](https://github.com/nx-go/nx-go/issues/188)) ([fe94372](https://github.com/nx-go/nx-go/commit/fe9437264630f7fd78191d92054592634fc7ed5a))
+* implement auto-infer revive linter ([#187](https://github.com/nx-go/nx-go/issues/187)) ([820e949](https://github.com/nx-go/nx-go/commit/820e949fdc6e1c29acd6d35e175ae7685a4e2071))
+
 ## [4.0.0](https://github.com/nx-go/nx-go/compare/v4.0.0-beta.0...v4.0.0) (2026-04-23)
 
 ## [4.0.0-beta.0](https://github.com/nx-go/nx-go/compare/v3.3.1...v4.0.0-beta.0) (2026-02-20)
