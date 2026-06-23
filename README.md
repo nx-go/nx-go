@@ -7,7 +7,7 @@
 **First-class support of [Go](https://go.dev) in a [Nx](https://nx.dev) workspace**
 
 [![GitHub release](https://img.shields.io/github/v/release/nx-go/nx-go)](https://github.com/nx-go/nx-go/releases/latest)
-[![Nx version](https://img.shields.io/npm/dependency-version/%40nx-go%2Fnx-go/%40nx%2Fdevkit?label=Nx&logo=nx)](https://nx.dev)
+[![Nx version](https://img.shields.io/badge/Nx-20.x%20to%2023.x-blue?logo=nx&label=Nx)](https://nx.dev)
 [![npm Downloads](https://img.shields.io/npm/dt/@nx-go/nx-go?color=eb2f06&logo=npm)](https://npmjs.com/package/@nx-go/nx-go)
 [![LICENSE](https://img.shields.io/github/license/nx-go/nx-go)](https://github.com/nx-go/nx-go/blob/main/LICENSE)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nx-go_nx-go&metric=alert_status)](https://sonarcloud.io/dashboard?id=nx-go_nx-go)
