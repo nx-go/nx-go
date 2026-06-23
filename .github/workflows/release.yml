@@ -27,7 +27,7 @@ jobs:
       id-token: write
     steps:
       - name: 📥 Checkout Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
@@ -43,15 +43,8 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-      - name: Check npm credentials
-        run: npm whoami
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: 🏷 Version
         shell: bash
         run: pnpm nx run nx-go:version${{ inputs.beta && ':beta' || '' }} --dry-run=${{ inputs.dryRun }}${{ inputs.releaseAs && format(' --releaseAs={0}', inputs.releaseAs) || '' }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
