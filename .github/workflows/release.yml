@@ -45,6 +45,20 @@ jobs:
 
       - name: 🏷 Version
         shell: bash
-        run: pnpm nx run nx-go:version${{ inputs.beta && ':beta' || '' }} --dry-run=${{ inputs.dryRun }}${{ inputs.releaseAs && format(' --releaseAs={0}', inputs.releaseAs) || '' }}
+        run: |
+          target="nx-go:version"
+          if [[ "$BETA" == "true" ]]; then
+            target="nx-go:version:beta"
+          fi
+
+          args=(--dry-run="$DRY_RUN")
+          if [[ -n "$RELEASE_AS" ]]; then
+            args+=(--releaseAs="$RELEASE_AS")
+          fi
+
+          pnpm nx run "$target" "${args[@]}"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          BETA: ${{ inputs.beta }}
+          DRY_RUN: ${{ inputs.dryRun }}
+          RELEASE_AS: ${{ inputs.releaseAs }}
