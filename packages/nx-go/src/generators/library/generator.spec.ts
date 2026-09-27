@@ -25,6 +25,8 @@ jest.mock('@nx/devkit', () => ({
 jest.mock('../../utils', () => ({
   addGoWorkDependency: jest.fn(),
   createGoMod: jest.fn(),
+  detectModulePrefix: jest.fn().mockReturnValue(undefined),
+  getNxGoPluginOptions: jest.fn().mockReturnValue(undefined),
   isGoWorkspace: jest.fn().mockReturnValue(false),
   normalizeOptions: jest.fn().mockImplementation((_, { skipFormat }) => ({
     ...normalizeOptions,
@@ -70,6 +72,36 @@ describe('library generator', () => {
     expect(shared.createGoMod).toHaveBeenCalledWith(
       tree,
       'libs/data-access',
+      'libs/data-access'
+    );
+  });
+
+  it('should create Go mod with the module prefix configured on the plugin', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
+    jest
+      .spyOn(shared, 'getNxGoPluginOptions')
+      .mockReturnValueOnce({ modulePrefix: 'github.com/org/repo' });
+
+    await libraryGenerator(tree, options);
+
+    expect(shared.createGoMod).toHaveBeenCalledWith(
+      tree,
+      'github.com/org/repo/libs/data-access',
+      'libs/data-access'
+    );
+  });
+
+  it('should create Go mod with the detected module prefix if not configured on the plugin', async () => {
+    jest.spyOn(shared, 'isGoWorkspace').mockReturnValueOnce(true);
+    jest
+      .spyOn(shared, 'detectModulePrefix')
+      .mockReturnValueOnce('github.com/org/repo');
+
+    await libraryGenerator(tree, options);
+
+    expect(shared.createGoMod).toHaveBeenCalledWith(
+      tree,
+      'github.com/org/repo/libs/data-access',
       'libs/data-access'
     );
   });

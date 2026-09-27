@@ -6,6 +6,7 @@ import * as goBridge from './go-bridge';
 import {
   addNxPlugin,
   ensureGoConfigInSharedGlobals,
+  getNxGoPluginOptions,
   isProjectUsingNxGo,
 } from './nx-bridge';
 
@@ -75,6 +76,37 @@ describe('Nx bridge', () => {
         expect(spyUpdateNxJson).toHaveBeenCalledTimes(updated ? 1 : 0);
       }
     );
+  });
+
+  describe('Method: getNxGoPluginOptions', () => {
+    it('should return undefined if there are no plugins', () => {
+      jest
+        .spyOn(nxDevkit, 'readNxJson')
+        .mockReturnValue({ plugins: [] } as NxJsonConfiguration);
+      expect(getNxGoPluginOptions(tree)).toBeUndefined();
+    });
+
+    it('should return undefined if the plugin is registered as a bare string', () => {
+      jest
+        .spyOn(nxDevkit, 'readNxJson')
+        .mockReturnValue({ plugins: [NX_PLUGIN_NAME] } as NxJsonConfiguration);
+      expect(getNxGoPluginOptions(tree)).toBeUndefined();
+    });
+
+    it('should return undefined if the plugin is registered without options', () => {
+      jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue({
+        plugins: [{ plugin: NX_PLUGIN_NAME }],
+      } as NxJsonConfiguration);
+      expect(getNxGoPluginOptions(tree)).toBeUndefined();
+    });
+
+    it('should return the configured options if the plugin is registered as an object', () => {
+      const options = { modulePrefix: 'github.com/org/repo' };
+      jest.spyOn(nxDevkit, 'readNxJson').mockReturnValue({
+        plugins: [{ plugin: NX_PLUGIN_NAME, options }],
+      } as NxJsonConfiguration);
+      expect(getNxGoPluginOptions(tree)).toEqual(options);
+    });
   });
 
   describe('Method: isProjectUsingNxGo', () => {

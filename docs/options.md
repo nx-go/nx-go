@@ -26,6 +26,10 @@ Here is an example:
 
 - (boolean): if true, the plugin will not require to have Go installed to compute a Nx workspace graph. Be aware that if Go is not installed, the plugin will not be able to detect dependencies between Go projects and this is source of misunderstanding.
 
+### modulePrefix
+
+- (string): Common Go module path prefix (e.g. `github.com/org/repo`) used when generating `go.mod` files for new libraries/applications in a Go workspace. If not set, nx-go tries to auto-detect it from sibling projects' existing `go.mod` files.
+
 ### buildTargetName
 
 - (string): Custom target name for the build target. Default is `build`.

@@ -1,4 +1,4 @@
-import { type Tree } from '@nx/devkit';
+import { getProjects, type Tree } from '@nx/devkit';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import {
@@ -30,6 +30,11 @@ const REGEXS = {
   },
   version: /go(?<version>\S+) /,
   versionDirective: /^go\s+(?<version>\d+\.\d+)/m,
+  /**
+   * Regex pattern for parsing the module directive in go.mod files.
+   * @see https://go.dev/ref/mod#go-mod-file-module
+   */
+  module: /^module\s+(\S+)/m,
 } as const;
 
 /**
@@ -140,6 +145,48 @@ export const parseGoList = (
   }
 
   return paths;
+};
+
+/**
+ * Detects the common Go module path prefix shared by other projects in the
+ * workspace, based on the `module` directive of their existing go.mod files.
+ *
+ * @param tree the project tree
+ * @param projectRoot root of the project about to be created (excluded from detection)
+ * @returns the detected prefix, or undefined if it can't be reliably determined
+ */
+export const detectModulePrefix = (
+  tree: Tree,
+  projectRoot: string
+): string | undefined => {
+  const prefixes = new Set<string>();
+
+  for (const project of getProjects(tree).values()) {
+    if (project.root === projectRoot) {
+      continue;
+    }
+
+    const filePath = join(project.root, GO_MOD_FILE);
+    if (!tree.exists(filePath)) {
+      continue;
+    }
+
+    const modulePath = REGEXS.module.exec(tree.read(filePath)!.toString())?.[1];
+    if (!modulePath) {
+      continue;
+    }
+
+    if (modulePath === project.root) {
+      prefixes.add('');
+    } else if (modulePath.endsWith(`/${project.root}`)) {
+      prefixes.add(modulePath.slice(0, -(project.root.length + 1)));
+    }
+    // Otherwise the module path doesn't relate to its own project root,
+    // so it can't be used as a reliable signal and is skipped.
+  }
+
+  const [prefix] = prefixes;
+  return prefixes.size === 1 && prefix ? prefix : undefined;
 };
 
 /**

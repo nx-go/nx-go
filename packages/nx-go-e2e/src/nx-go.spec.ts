@@ -55,6 +55,42 @@ describe('nx-go', () => {
     expect(projectConfig.targets).toBeUndefined();
   });
 
+  describe('Module prefix', () => {
+    const modulePrefix = 'github.com/org/repo';
+
+    const setModulePrefixOption = (prefix?: string) => {
+      const nxJson = readJson('nx.json');
+      nxJson.plugins = (nxJson.plugins || []).map(
+        (plugin: string | { plugin: string; options?: object }) => {
+          const pluginName =
+            typeof plugin === 'string' ? plugin : plugin.plugin;
+          if (pluginName !== '@nx-go/nx-go') {
+            return plugin;
+          }
+          return prefix
+            ? { plugin: pluginName, options: { modulePrefix: prefix } }
+            : pluginName;
+        }
+      );
+      updateFile('nx.json', JSON.stringify(nxJson, null, 2));
+    };
+
+    afterAll(() => setModulePrefixOption(undefined));
+
+    it('should prefix the go.mod module path with the configured modulePrefix option', async () => {
+      const prefixedLibName = uniq('lib');
+      setModulePrefixOption(modulePrefix);
+
+      await runNxCommandAsync(
+        `generate @nx-go/nx-go:library ${prefixedLibName}`
+      );
+
+      expect(readFile(`${prefixedLibName}/go.mod`)).toContain(
+        `module ${modulePrefix}/${prefixedLibName}`
+      );
+    });
+  });
+
   describe('Inference', () => {
     it('should infer targets for application', async () => {
       // Verify that inferred targets are available by running show project command
