@@ -10,6 +10,10 @@ Create an library named **data-access**:
 nx g @nx-go/nx-go:library data-access
 ```
 
+## Module naming
+
+In a Go workspace (`go.work`), the generated `go.mod` module path is prefixed automatically with the `modulePrefix` [plugin option](../options.md#moduleprefix) if configured, otherwise nx-go tries to detect it from other projects' existing `go.mod` files. If neither is available, the module path defaults to the project root.
+
 ## Options
 
 ### name (required)

@@ -1,4 +1,5 @@
 import {
+  type ExpandedPluginConfiguration,
   type ProjectConfiguration,
   readNxJson,
   type TargetConfiguration,
@@ -6,7 +7,24 @@ import {
   updateNxJson,
 } from '@nx/devkit';
 import { GO_MOD_FILE, GO_WORK_FILE, NX_PLUGIN_NAME } from '../constants';
+import type { NxGoPluginOptions } from '../type';
 import { isGoWorkspace } from './go-bridge';
+
+/**
+ * Retrieves the options configured for the nx-go plugin in nx.json, if any.
+ *
+ * @param tree project tree object
+ */
+export const getNxGoPluginOptions = (
+  tree: Tree
+): NxGoPluginOptions | undefined => {
+  const plugins = readNxJson(tree)?.plugins ?? [];
+  const entry = plugins.find(
+    (plugin): plugin is ExpandedPluginConfiguration<NxGoPluginOptions> =>
+      typeof plugin !== 'string' && plugin.plugin === NX_PLUGIN_NAME
+  );
+  return entry?.options;
+};
 
 /**
  * Adds the nx-go plugin to the nx.json if it's not already there.

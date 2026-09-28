@@ -1,4 +1,4 @@
-import type { Tree } from '@nx/devkit';
+import { addProjectConfiguration, type Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as child_process from 'child_process';
 import { join } from 'path';
@@ -7,6 +7,7 @@ import {
   addGoWorkDependency,
   createGoMod,
   createGoWork,
+  detectModulePrefix,
   getGoModules,
   getGoShortVersion,
   getGoVersion,
@@ -17,6 +18,7 @@ import {
 } from './go-bridge';
 
 jest.mock('child_process', () => ({
+  ...jest.requireActual('child_process'),
   execSync: jest
     .fn()
     .mockReturnValue(
@@ -177,6 +179,74 @@ describe('Go bridge', () => {
       const content = 'use ./first\n\nuse (\n  ./second\n  ./third\n)';
       const result = parseGoList('use', content);
       expect(result).toEqual(['./first', './second', './third']);
+    });
+  });
+
+  describe('Method: detectModulePrefix', () => {
+    it('should return undefined if no other project has a go.mod', () => {
+      addProjectConfiguration(tree, 'lib1', { root: 'libs/lib1' });
+      expect(detectModulePrefix(tree, 'libs/lib2')).toBeUndefined();
+    });
+
+    it('should return undefined if the only sibling has no prefix', () => {
+      addProjectConfiguration(tree, 'lib1', { root: 'libs/lib1' });
+      tree.write('libs/lib1/go.mod', 'module libs/lib1\n\ngo 1.21\n');
+      expect(detectModulePrefix(tree, 'libs/lib2')).toBeUndefined();
+    });
+
+    it('should return the detected prefix if a sibling shares one', () => {
+      addProjectConfiguration(tree, 'lib1', { root: 'libs/lib1' });
+      tree.write(
+        'libs/lib1/go.mod',
+        'module github.com/org/repo/libs/lib1\n\ngo 1.21\n'
+      );
+      expect(detectModulePrefix(tree, 'libs/lib2')).toBe('github.com/org/repo');
+    });
+
+    it('should return the common prefix when multiple siblings agree', () => {
+      addProjectConfiguration(tree, 'lib1', { root: 'libs/lib1' });
+      addProjectConfiguration(tree, 'app1', { root: 'apps/app1' });
+      tree.write(
+        'libs/lib1/go.mod',
+        'module github.com/org/repo/libs/lib1\n\ngo 1.21\n'
+      );
+      tree.write(
+        'apps/app1/go.mod',
+        'module github.com/org/repo/apps/app1\n\ngo 1.21\n'
+      );
+      expect(detectModulePrefix(tree, 'libs/lib2')).toBe('github.com/org/repo');
+    });
+
+    it('should return undefined if siblings disagree on the prefix', () => {
+      addProjectConfiguration(tree, 'lib1', { root: 'libs/lib1' });
+      addProjectConfiguration(tree, 'app1', { root: 'apps/app1' });
+      tree.write(
+        'libs/lib1/go.mod',
+        'module github.com/org/repo/libs/lib1\n\ngo 1.21\n'
+      );
+      tree.write(
+        'apps/app1/go.mod',
+        'module github.com/other/repo/apps/app1\n\ngo 1.21\n'
+      );
+      expect(detectModulePrefix(tree, 'libs/lib2')).toBeUndefined();
+    });
+
+    it('should ignore a sibling whose module path is unrelated to its own root', () => {
+      addProjectConfiguration(tree, 'lib1', { root: 'libs/lib1' });
+      addProjectConfiguration(tree, 'app1', { root: 'apps/app1' });
+      tree.write('libs/lib1/go.mod', 'module some/unrelated/name\n\ngo 1.21\n');
+      tree.write(
+        'apps/app1/go.mod',
+        'module github.com/org/repo/apps/app1\n\ngo 1.21\n'
+      );
+      expect(detectModulePrefix(tree, 'libs/lib2')).toBe('github.com/org/repo');
+    });
+
+    it('should skip the project being created, even if already registered', () => {
+      addProjectConfiguration(tree, 'lib2', { root: 'libs/lib2' });
+      const spyExists = jest.spyOn(tree, 'exists');
+      expect(detectModulePrefix(tree, 'libs/lib2')).toBeUndefined();
+      expect(spyExists).not.toHaveBeenCalledWith(join('libs/lib2', 'go.mod'));
     });
   });
 

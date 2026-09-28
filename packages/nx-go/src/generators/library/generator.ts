@@ -10,6 +10,8 @@ import { join } from 'path';
 import {
   addGoWorkDependency,
   createGoMod,
+  detectModulePrefix,
+  getNxGoPluginOptions,
   isGoWorkspace,
   normalizeOptions,
 } from '../../utils';
@@ -37,7 +39,14 @@ export default async function libraryGenerator(
   });
 
   if (isGoWorkspace(tree)) {
-    createGoMod(tree, options.projectRoot, options.projectRoot);
+    const modulePrefix =
+      getNxGoPluginOptions(tree)?.modulePrefix ??
+      detectModulePrefix(tree, options.projectRoot);
+    const moduleName = modulePrefix
+      ? `${modulePrefix}/${options.projectRoot}`
+      : options.projectRoot;
+
+    createGoMod(tree, moduleName, options.projectRoot);
     addGoWorkDependency(tree, options.projectRoot);
   }
 

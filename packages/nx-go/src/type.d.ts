@@ -8,6 +8,13 @@ export interface NxGoPluginOptions {
    */
   skipGoDependencyCheck?: boolean;
   /**
+   * Common Go module path prefix (e.g. `github.com/org/repo`) used when
+   * generating go.mod files for new libraries/applications.
+   *
+   * If not set, nx-go tries to auto-detect it from sibling projects' existing go.mod files.
+   */
+  modulePrefix?: string;
+  /**
    * Custom target name for the build target.
    * Default is 'build'.
    */
@@ -49,5 +56,5 @@ export interface NxGoPluginOptions {
  * All normalized options for the Graph system.
  */
 export type NxGoPluginNodeOptions = Required<
-  Omit<NxGoPluginOptions, 'skipGoDependencyCheck'>
+  Omit<NxGoPluginOptions, 'skipGoDependencyCheck' | 'modulePrefix'>
 >;
