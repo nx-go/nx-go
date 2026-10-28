@@ -19,7 +19,12 @@
     },
     "@nx/eslint:lint": {
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/eslint.config.js"]
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/eslint.config.js",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
+      ]
     }
   },
   "namedInputs": {
@@ -58,5 +63,6 @@
       },
       "include": ["packages/nx-go-e2e/**/*"]
     }
-  ]
+  ],
+  "analytics": true
 }

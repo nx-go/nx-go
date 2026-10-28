@@ -7,7 +7,10 @@
   "targets": {
     "e2e": {
       "options": {
-        "runInBand": true
+        "runInBand": true,
+        "env": {
+          "PNPM_CONFIG_ALLOW_BUILDS": "{\"nx\":true}"
+        }
       },
       "dependsOn": ["^build"],
       "configurations": {

@@ -1,25 +1,20 @@
 import type { ProjectGraph, Tree } from '@nx/devkit';
 import * as devkit from '@nx/devkit';
-import { migrateProjectExecutorsToPlugin } from '@nx/devkit/src/generators/plugin-migrations/executor-to-plugin-migrator';
+import { migrateProjectExecutorsToPlugin } from '@nx/devkit/internal';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import convertToInferredGenerator from './generator';
 
 jest.mock('@nx/devkit');
-jest.mock(
-  '@nx/devkit/src/generators/plugin-migrations/executor-to-plugin-migrator',
-  () => ({
-    ...jest.requireActual(
-      '@nx/devkit/src/generators/plugin-migrations/executor-to-plugin-migrator'
-    ),
-    migrateProjectExecutorsToPlugin: jest.fn(),
-  })
-);
+jest.mock('@nx/devkit/internal', () => ({
+  ...jest.requireActual('@nx/devkit/internal'),
+  migrateProjectExecutorsToPlugin: jest.fn(),
+}));
 
 const mockedMigrateProjectExecutorsToPlugin = jest.mocked(
-  migrateProjectExecutorsToPlugin
+  migrateProjectExecutorsToPlugin,
 );
 const mockedCreateProjectGraphAsync = jest.mocked(
-  devkit.createProjectGraphAsync
+  devkit.createProjectGraphAsync,
 );
 const mockedReadNxJson = jest.mocked(devkit.readNxJson);
 const mockedUpdateNxJson = jest.mocked(devkit.updateNxJson);
@@ -41,7 +36,7 @@ describe('convert-to-inferred generator', () => {
 
   it('should call migrateProjectExecutorsToPlugin with correct parameters', async () => {
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
-      new Map([['project1', {}]])
+      new Map([['project1', {}]]),
     );
 
     await convertToInferredGenerator(tree, {});
@@ -79,13 +74,13 @@ describe('convert-to-inferred generator', () => {
           executors: ['@nx-go/nx-go:generate'],
         }),
       ]),
-      undefined
+      undefined,
     );
   });
 
   it('should pass project option to migrateProjectExecutorsToPlugin', async () => {
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
-      new Map([['project1', {}]])
+      new Map([['project1', {}]]),
     );
 
     await convertToInferredGenerator(tree, { project: 'my-project' });
@@ -97,7 +92,7 @@ describe('convert-to-inferred generator', () => {
       expect.anything(),
       expect.anything(),
       expect.anything(),
-      'my-project'
+      'my-project',
     );
   });
 
@@ -108,7 +103,7 @@ describe('convert-to-inferred generator', () => {
       options: {},
     };
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
-      new Map([['project1', {}]])
+      new Map([['project1', {}]]),
     );
 
     await convertToInferredGenerator(tree, {});
@@ -117,7 +112,7 @@ describe('convert-to-inferred generator', () => {
       targetConfig,
       tree,
       { projectName: 'project1', root: '' },
-      { ...targetConfig, name: 'build' }
+      { ...targetConfig, name: 'build' },
     );
 
     expect(targetConfig.inputs).toBeUndefined();
@@ -127,7 +122,7 @@ describe('convert-to-inferred generator', () => {
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(new Map());
 
     await expect(convertToInferredGenerator(tree, {})).rejects.toThrow(
-      'Could not find any targets to migrate.'
+      'Could not find any targets to migrate.',
     );
   });
 
@@ -135,7 +130,7 @@ describe('convert-to-inferred generator', () => {
     const formatFilesSpy = jest.spyOn(devkit, 'formatFiles');
 
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
-      new Map([['project1', {}]])
+      new Map([['project1', {}]]),
     );
 
     await convertToInferredGenerator(tree, { skipFormat: true });
@@ -147,7 +142,7 @@ describe('convert-to-inferred generator', () => {
     const formatFilesSpy = jest.spyOn(devkit, 'formatFiles');
 
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
-      new Map([['project1', {}]])
+      new Map([['project1', {}]]),
     );
 
     await convertToInferredGenerator(tree, {});
@@ -157,7 +152,7 @@ describe('convert-to-inferred generator', () => {
 
   it('should remove old plugin reference from nx.json', async () => {
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
-      new Map([['project1', {}]])
+      new Map([['project1', {}]]),
     );
     mockedReadNxJson.mockReturnValue({
       plugins: ['@nx-go/nx-go', 'other-plugin'],
@@ -167,13 +162,13 @@ describe('convert-to-inferred generator', () => {
 
     expect(mockedUpdateNxJson).toHaveBeenCalledWith(
       tree,
-      expect.objectContaining({ plugins: ['other-plugin'] })
+      expect.objectContaining({ plugins: ['other-plugin'] }),
     );
   });
 
   it('should handle nx.json without plugins array', async () => {
     mockedMigrateProjectExecutorsToPlugin.mockResolvedValue(
-      new Map([['project1', {}]])
+      new Map([['project1', {}]]),
     );
     mockedReadNxJson.mockReturnValue({});
 

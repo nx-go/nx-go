@@ -9,14 +9,14 @@ import {
 import {
   migrateProjectExecutorsToPlugin,
   NoTargetsToMigrateError,
-} from '@nx/devkit/src/generators/plugin-migrations/executor-to-plugin-migrator';
+} from '@nx/devkit/internal';
 import { createNodesV2 } from '../../graph/create-nodes-v2';
 import type { NxGoPluginOptions } from '../../type';
 import type { ConvertToInferredSchema } from './schema';
 
 export default async function convertToInferredGenerator(
   tree: Tree,
-  options: ConvertToInferredSchema
+  options: ConvertToInferredSchema,
 ) {
   const projectGraph = await createProjectGraphAsync();
 
@@ -68,7 +68,7 @@ export default async function convertToInferredGenerator(
           }),
         },
       ],
-      options.project
+      options.project,
     );
 
   if (migratedProjects.size === 0) {
@@ -79,7 +79,7 @@ export default async function convertToInferredGenerator(
   const nxJson = readNxJson(tree)!;
   const initialPluginCount = nxJson.plugins?.length ?? 0;
   nxJson.plugins = (nxJson.plugins ?? []).filter(
-    (plugin) => plugin !== '@nx-go/nx-go'
+    (plugin) => plugin !== '@nx-go/nx-go',
   );
   if (initialPluginCount !== nxJson.plugins.length) {
     updateNxJson(tree, nxJson);
