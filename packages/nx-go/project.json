@@ -51,42 +51,11 @@
         }
       }
     },
-    "version": {
-      "executor": "@jscutlery/semver:version",
-      "options": {
-        "postTargets": ["build", "deploy", "github"],
-        "preset": "conventionalcommits",
-        "push": true,
-        "tagPrefix": "v"
-      },
-      "configurations": {
-        "beta": {
-          "postTargets": ["build", "deploy-beta", "github"],
-          "releaseAs": "prerelease",
-          "preid": "beta"
-        }
-      }
-    },
-    "github": {
-      "executor": "@jscutlery/semver:github",
-      "options": {
-        "tag": "{tag}",
-        "notes": "{notes}"
-      }
-    },
-    "deploy": {
-      "executor": "ngx-deploy-npm:deploy",
+    "nx-release-publish": {
+      "executor": "@nx/js:release-publish",
       "options": {
         "access": "public",
-        "distFolderPath": "dist/packages/nx-go"
-      }
-    },
-    "deploy-beta": {
-      "executor": "ngx-deploy-npm:deploy",
-      "options": {
-        "access": "public",
-        "distFolderPath": "dist/packages/nx-go",
-        "tag": "beta"
+        "packageRoot": "dist/packages/nx-go"
       }
     }
   }
