@@ -39,6 +39,11 @@ testem.log
 Thumbs.db
 
 .nx/cache
+.nx/migrate-runs
+.nx/polygraph
+.nx/self-healing
 .nx/workspace-data
+
+.claude/worktrees
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md

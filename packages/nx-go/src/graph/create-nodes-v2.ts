@@ -1,9 +1,9 @@
 import {
   createNodesFromFiles,
-  type CreateNodesContextV2,
+  type CreateNodesContext,
   type CreateNodesResult,
-  type CreateNodesResultV2,
-  type CreateNodesV2,
+  type CreateNodesResultArray,
+  type CreateNodes,
   type ProjectType,
 } from '@nx/devkit';
 import { existsSync } from 'node:fs';
@@ -17,24 +17,24 @@ import {
 } from './create-nodes/generate-targets';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
-export const createNodesV2: CreateNodesV2<NxGoPluginOptions> = [
+export const createNodesV2: CreateNodes<NxGoPluginOptions> = [
   `**/${GO_MOD_FILE}`,
   async (
     configFiles: readonly string[],
     options: NxGoPluginOptions | undefined,
-    context: CreateNodesContextV2
-  ): Promise<CreateNodesResultV2> =>
+    context: CreateNodesContext,
+  ): Promise<CreateNodesResultArray> =>
     createNodesFromFiles(
       (configFile, options = {}, context) =>
         createNodesInternal(configFile, normalizeOptions(options), context),
       configFiles,
       options ?? {},
-      context
+      context,
     ),
 ];
 
 const normalizeOptions = (
-  options: NxGoPluginOptions
+  options: NxGoPluginOptions,
 ): NxGoPluginNodeOptions => ({
   buildTargetName: options.buildTargetName ?? 'build',
   serveTargetName: options.serveTargetName ?? 'serve',
@@ -48,7 +48,7 @@ const normalizeOptions = (
 const createNodesInternal = async (
   configFilePath: string,
   options: NxGoPluginNodeOptions,
-  context: CreateNodesContextV2
+  context: CreateNodesContext,
 ): Promise<CreateNodesResult> => {
   const projectRoot = dirname(configFilePath);
 
@@ -70,7 +70,7 @@ const createNodesInternal = async (
   const isApplication = hasMainPackage(
     context.workspaceRoot,
     projectRoot,
-    projectName
+    projectName,
   );
   const projectType: ProjectType = isApplication ? 'application' : 'library';
 

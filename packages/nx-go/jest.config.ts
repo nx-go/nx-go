@@ -1,5 +1,4 @@
- 
-export default {
+module.exports = {
   displayName: 'nx-go',
   preset: '../../jest.preset.js',
   transform: {

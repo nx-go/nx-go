@@ -1,4 +1,4 @@
-import { CreateNodesContextV2 } from '@nx/devkit';
+import { CreateNodesContext } from '@nx/devkit';
 import { existsSync } from 'node:fs';
 import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
 import { createNodesV2 } from './create-nodes-v2';
@@ -14,7 +14,7 @@ const mockedShouldUseReviveLinter = jest.mocked(shouldUseReviveLinter);
 const mockedExistsSync = jest.mocked(existsSync);
 
 describe('Create nodes V2', () => {
-  let context: CreateNodesContextV2;
+  let context: CreateNodesContext;
 
   beforeEach(() => {
     context = {
@@ -139,7 +139,7 @@ describe('Create nodes V2', () => {
       const result = await createNodesV2[1](
         ['apps/myapp/go.mod'],
         options,
-        context
+        context,
       );
 
       const targets = result[0][1].projects?.['apps/myapp'].targets;
@@ -184,7 +184,7 @@ describe('Create nodes V2', () => {
         const result = await createNodesV2[1](
           ['apps/myapp/go.mod'],
           {},
-          context
+          context,
         );
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
@@ -203,7 +203,7 @@ describe('Create nodes V2', () => {
         const result = await createNodesV2[1](
           ['apps/myapp/go.mod'],
           options,
-          context
+          context,
         );
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
@@ -220,7 +220,7 @@ describe('Create nodes V2', () => {
         const result = await createNodesV2[1](
           ['apps/myapp/go.mod'],
           {},
-          context
+          context,
         );
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
@@ -235,7 +235,7 @@ describe('Create nodes V2', () => {
         const result = await createNodesV2[1](
           ['libs/utils/go.mod'],
           {},
-          context
+          context,
         );
 
         const targets = result[0][1].projects?.['libs/utils'].targets;
@@ -252,7 +252,7 @@ describe('Create nodes V2', () => {
         const result = await createNodesV2[1](
           ['apps/myapp/go.mod'],
           {},
-          context
+          context,
         );
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
@@ -268,7 +268,7 @@ describe('Create nodes V2', () => {
         const result = await createNodesV2[1](
           ['libs/utils/go.mod'],
           {},
-          context
+          context,
         );
 
         const targets = result[0][1].projects?.['libs/utils'].targets;
@@ -284,7 +284,7 @@ describe('Create nodes V2', () => {
         const result = await createNodesV2[1](
           ['apps/myapp/go.mod'],
           {},
-          context
+          context,
         );
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;

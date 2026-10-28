@@ -1,7 +1,6 @@
 import * as devkit from '@nx/devkit';
-import { ProjectConfiguration, Tree } from '@nx/devkit';
+import { ProjectConfiguration, TargetConfiguration, Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { TargetConfiguration } from 'nx/src/config/workspace-json-project-json';
 import update from './replace-run-commands-with-generate-executor';
 
 jest.mock('@nx/devkit');

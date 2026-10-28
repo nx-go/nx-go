@@ -17,7 +17,11 @@
     "baseUrl": ".",
     "paths": {
       "nx-go": ["packages/nx-go/src/index.ts"]
-    }
+    },
+    "noUncheckedSideEffectImports": false,
+    "types": ["*"],
+    "esModuleInterop": false,
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["node_modules", "tmp"]
 }

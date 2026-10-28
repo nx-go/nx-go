@@ -6,7 +6,7 @@ jest.mock('@nx/devkit', () => ({
   names: jest.fn().mockReturnValue({ propertyName: 'backendFilename' }),
   readJson: jest.fn().mockReturnValue({ name: '@nx-go/backend' }),
 }));
-jest.mock('@nx/devkit/src/generators/project-name-and-root-utils', () => ({
+jest.mock('@nx/devkit/internal', () => ({
   determineProjectNameAndRootOptions: jest.fn().mockReturnValue({
     projectName: 'backend',
     projectRoot: '/tmp',
@@ -23,7 +23,7 @@ describe('normalizeOptions', () => {
     const output = await normalizeOptions(
       tree,
       { name: 'backend', directory: 'backend-dir' },
-      'application'
+      'application',
     );
     expect(output.name).toBe('backend');
     expect(output.moduleName).toBe('backendfilename');
@@ -38,7 +38,7 @@ describe('normalizeOptions', () => {
     const output = await normalizeOptions(
       tree,
       { directory: 'backend', tags: 'api,web' },
-      'application'
+      'application',
     );
     expect(output.parsedTags).toEqual(['api', 'web']);
   });

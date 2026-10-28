@@ -6,3 +6,4 @@
 pnpm-lock.yaml
 
 /.nx/workspace-data
+.nx/self-healing
