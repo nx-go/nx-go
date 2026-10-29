@@ -29,7 +29,7 @@ jobs:
       - name: 📥 Checkout Repo
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.ref }}
           fetch-depth: 0
           token: ${{ secrets.GH_RELEASE_TOKEN }}
 
@@ -43,22 +43,49 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-      - name: 🏷 Version
+      - name: 🏷 Create release
+        id: create-release
         shell: bash
         run: |
-          target="nx-go:version"
+          current_version=$(node -p "require('./packages/nx-go/package.json').version")
+          args=(--skip-publish)
+          if [[ "$DRY_RUN" == "true" ]]; then
+            args+=(--dry-run)
+          fi
+
           if [[ "$BETA" == "true" ]]; then
-            target="nx-go:version:beta"
+            args+=(--specifier="${RELEASE_AS:-prerelease}" --preid=beta)
+          elif [[ -n "$RELEASE_AS" ]]; then
+            args+=(--specifier="$RELEASE_AS")
           fi
 
-          args=(--dry-run="$DRY_RUN")
-          if [[ -n "$RELEASE_AS" ]]; then
-            args+=(--releaseAs="$RELEASE_AS")
+          pnpm nx release "${args[@]}"
+          new_version=$(node -p "require('./packages/nx-go/package.json').version")
+          if [[ "$current_version" != "$new_version" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
-
-          pnpm nx run "$target" "${args[@]}"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
           BETA: ${{ inputs.beta }}
           DRY_RUN: ${{ inputs.dryRun }}
           RELEASE_AS: ${{ inputs.releaseAs }}
+
+      - name: 🏗 Build package
+        if: ${{ !inputs.dryRun && steps.create-release.outputs.changed == 'true' }}
+        run: pnpm nx build nx-go
+
+      - name: 📦 Publish package
+        if: ${{ !inputs.dryRun && steps.create-release.outputs.changed == 'true' }}
+        shell: bash
+        run: |
+          args=()
+          if [[ "$BETA" == "true" ]]; then
+            args+=(--tag=beta)
+          fi
+
+          pnpm nx release publish "${args[@]}"
+        env:
+          BETA: ${{ inputs.beta }}
+          NPM_CONFIG_PROVENANCE: true

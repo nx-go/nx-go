@@ -14,6 +14,7 @@ It's people like you that make nx-go such a great tool. We welcome contributions
 - [Testing](#testing)
 - [Code Style and Linting](#code-style-and-linting)
 - [Commit Guidelines](#commit-guidelines)
+- [Release Process](#release-process)
 - [Pull Request Process](#pull-request-process)
 - [Reporting Issues](#reporting-issues)
 - [Documentation](#documentation)
@@ -184,6 +185,10 @@ fix(generator): correct import paths in library templates
 docs(readme): update installation instructions
 test(build): add tests for build executor options
 ```
+
+## Release Process
+
+Releases are run from GitHub Actions using the **Release** workflow on the branch being released. Select `main` for current releases or `Y.x` for maintenance releases, then choose a stable or beta release. Ensure the release configuration is present on the selected branch. Nx Release determines stable version bumps from Conventional Commits; beta releases use the `beta` npm dist-tag.
 
 ## Pull Request Process
 

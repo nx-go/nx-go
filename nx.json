@@ -42,6 +42,25 @@
   },
   "useInferencePlugins": false,
   "defaultBase": "main",
+  "release": {
+    "projects": ["nx-go"],
+    "version": {
+      "conventionalCommits": true
+    },
+    "conventionalCommits": {
+      "useCommitScope": false
+    },
+    "changelog": {
+      "projectChangelogs": {
+        "createRelease": "github"
+      }
+    },
+    "git": {
+      "commit": true,
+      "tag": true,
+      "push": true
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/eslint/plugin",
