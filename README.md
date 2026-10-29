@@ -87,12 +87,14 @@ Need more customization? A [plugin configuration](./docs/options.md) is also ava
 
 ## 🧩 Compatibility
 
-| nx-go version | Nx version       |
-| ------------- | ---------------- |
-| 4.x           | 20.x to 23.x     |
-| 3.x           | 17.x to 20.x     |
-| ~~2.x~~       | ~~13.x to 16.x~~ |
-| ~~1.x~~       | ~~< 13.x~~       |
+> [!NOTE]
+> Starting with nx-go 24.x, nx-go major versions align with the corresponding Nx major version. This makes compatibility easier to identify and simplifies maintenance.
+
+| nx-go version | Nx version     | Support status |
+| ------------- | -------------- | -------------- |
+| 24.x          | 24.x           | Beta           |
+| 4.x           | 20.x to 23.x   | Active         |
+| ~~3.x~~       | ~~up to 20.x~~ | End of support |
 
 This plugin is only tested on [stable versions of Go](https://go.dev/dl/), older versions does not receive support. However, you can expect a fair degree of compatibility. Please note that multi-module Go workspaces require Go 1.18 or later.
 

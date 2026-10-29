@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        nx_version: [23.3.1]
+        nx_version: [24.0.2]
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - name: 📥 Checkout Repo

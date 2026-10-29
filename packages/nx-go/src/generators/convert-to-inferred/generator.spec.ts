@@ -45,7 +45,7 @@ describe('convert-to-inferred generator', () => {
       tree,
       projectGraph,
       '@nx-go/nx-go',
-      expect.anything(), // createNodesV2
+      expect.anything(), // createNodes
       {
         buildTargetName: 'build',
         serveTargetName: 'serve',

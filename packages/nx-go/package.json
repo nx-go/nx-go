@@ -18,7 +18,7 @@
     "url": "https://github.com/nx-go/nx-go/issues"
   },
   "dependencies": {
-    "@nx/devkit": "^23.0.0",
+    "@nx/devkit": "^24.0.0",
     "tslib": "^2.8.1"
   },
   "type": "commonjs",
