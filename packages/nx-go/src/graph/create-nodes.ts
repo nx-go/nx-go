@@ -17,7 +17,7 @@ import {
 } from './create-nodes/generate-targets';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
-export const createNodesV2: CreateNodes<NxGoPluginOptions> = [
+export const createNodes: CreateNodes<NxGoPluginOptions> = [
   `**/${GO_MOD_FILE}`,
   async (
     configFiles: readonly string[],

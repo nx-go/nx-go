@@ -10,7 +10,7 @@ import {
   migrateProjectExecutorsToPlugin,
   NoTargetsToMigrateError,
 } from '@nx/devkit/internal';
-import { createNodesV2 } from '../../graph/create-nodes-v2';
+import { createNodes } from '../../graph/create-nodes';
 import type { NxGoPluginOptions } from '../../type';
 import type { ConvertToInferredSchema } from './schema';
 
@@ -25,7 +25,7 @@ export default async function convertToInferredGenerator(
       tree,
       projectGraph,
       '@nx-go/nx-go',
-      createNodesV2,
+      createNodes,
       {
         buildTargetName: 'build',
         serveTargetName: 'serve',

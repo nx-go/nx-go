@@ -1,7 +1,7 @@
 import { CreateNodesContext } from '@nx/devkit';
 import { existsSync } from 'node:fs';
 import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
-import { createNodesV2 } from './create-nodes-v2';
+import { createNodes } from './create-nodes';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
 jest.mock('./create-nodes/has-main-package');
@@ -13,7 +13,7 @@ const mockedShouldCreateAirTarget = jest.mocked(shouldCreateAirTarget);
 const mockedShouldUseReviveLinter = jest.mocked(shouldUseReviveLinter);
 const mockedExistsSync = jest.mocked(existsSync);
 
-describe('Create nodes V2', () => {
+describe('Create nodes', () => {
   let context: CreateNodesContext;
 
   beforeEach(() => {
@@ -31,14 +31,14 @@ describe('Create nodes V2', () => {
   });
 
   it('should compute all go.mod files', () => {
-    expect(createNodesV2[0]).toEqual('**/go.mod');
+    expect(createNodes[0]).toEqual('**/go.mod');
   });
 
   describe('with inferred tasks', () => {
     it('should create inferred tasks for an application with package main', async () => {
       mockedHasMainPackage.mockReturnValue(true);
 
-      const result = await createNodesV2[1](['apps/api/go.mod'], {}, context);
+      const result = await createNodes[1](['apps/api/go.mod'], {}, context);
 
       expect(result).toMatchObject([
         [
@@ -84,7 +84,7 @@ describe('Create nodes V2', () => {
     it('should create inferred tasks for a library without package main', async () => {
       mockedHasMainPackage.mockReturnValue(false);
 
-      const result = await createNodesV2[1](['libs/utils/go.mod'], {}, context);
+      const result = await createNodes[1](['libs/utils/go.mod'], {}, context);
 
       expect(result).toMatchObject([
         [
@@ -136,7 +136,7 @@ describe('Create nodes V2', () => {
         serveTargetName: 'custom-serve',
         generateTargetName: 'custom-generate',
       };
-      const result = await createNodesV2[1](
+      const result = await createNodes[1](
         ['apps/myapp/go.mod'],
         options,
         context,
@@ -153,7 +153,7 @@ describe('Create nodes V2', () => {
     });
 
     it('should create project for go.mod at workspace root with project.json', async () => {
-      const result = await createNodesV2[1](['./go.mod'], {}, context);
+      const result = await createNodes[1](['./go.mod'], {}, context);
       const rootProject = result[0][1].projects?.['.'];
       expect(rootProject).toBeDefined();
       expect(rootProject!.root).toBe('.');
@@ -163,7 +163,7 @@ describe('Create nodes V2', () => {
     it('should not create project for workspace root go.mod without project.json', async () => {
       mockedExistsSync.mockReturnValue(false);
 
-      const result = await createNodesV2[1](['./go.mod'], {}, context);
+      const result = await createNodes[1](['./go.mod'], {}, context);
 
       expect(result).toMatchObject([['./go.mod', { projects: {} }]]);
     });
@@ -171,7 +171,7 @@ describe('Create nodes V2', () => {
     it('should use project name from last path segment', async () => {
       mockedHasMainPackage.mockReturnValue(false);
 
-      const result = await createNodesV2[1](['apps/api/go.mod'], {}, context);
+      const result = await createNodes[1](['apps/api/go.mod'], {}, context);
 
       expect(result[0][1].projects?.['apps/api'].name).toBe('api');
     });
@@ -181,11 +181,7 @@ describe('Create nodes V2', () => {
         mockedHasMainPackage.mockReturnValue(true);
         mockedShouldCreateAirTarget.mockReturnValue(true);
 
-        const result = await createNodesV2[1](
-          ['apps/myapp/go.mod'],
-          {},
-          context,
-        );
+        const result = await createNodes[1](['apps/myapp/go.mod'], {}, context);
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
         expect(targets).toBeDefined();
@@ -200,7 +196,7 @@ describe('Create nodes V2', () => {
         const options = {
           serveAirTargetName: 'air',
         };
-        const result = await createNodesV2[1](
+        const result = await createNodes[1](
           ['apps/myapp/go.mod'],
           options,
           context,
@@ -217,11 +213,7 @@ describe('Create nodes V2', () => {
         mockedHasMainPackage.mockReturnValue(true);
         mockedShouldCreateAirTarget.mockReturnValue(false);
 
-        const result = await createNodesV2[1](
-          ['apps/myapp/go.mod'],
-          {},
-          context,
-        );
+        const result = await createNodes[1](['apps/myapp/go.mod'], {}, context);
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
         expect(targets).toBeDefined();
@@ -232,11 +224,7 @@ describe('Create nodes V2', () => {
         mockedHasMainPackage.mockReturnValue(false);
         mockedShouldCreateAirTarget.mockReturnValue(true);
 
-        const result = await createNodesV2[1](
-          ['libs/utils/go.mod'],
-          {},
-          context,
-        );
+        const result = await createNodes[1](['libs/utils/go.mod'], {}, context);
 
         const targets = result[0][1].projects?.['libs/utils'].targets;
         expect(targets).toBeDefined();
@@ -249,11 +237,7 @@ describe('Create nodes V2', () => {
         mockedHasMainPackage.mockReturnValue(true);
         mockedShouldUseReviveLinter.mockReturnValue(true);
 
-        const result = await createNodesV2[1](
-          ['apps/myapp/go.mod'],
-          {},
-          context,
-        );
+        const result = await createNodes[1](['apps/myapp/go.mod'], {}, context);
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
         expect(targets).toBeDefined();
@@ -265,11 +249,7 @@ describe('Create nodes V2', () => {
         mockedHasMainPackage.mockReturnValue(false);
         mockedShouldUseReviveLinter.mockReturnValue(true);
 
-        const result = await createNodesV2[1](
-          ['libs/utils/go.mod'],
-          {},
-          context,
-        );
+        const result = await createNodes[1](['libs/utils/go.mod'], {}, context);
 
         const targets = result[0][1].projects?.['libs/utils'].targets;
         expect(targets).toBeDefined();
@@ -281,11 +261,7 @@ describe('Create nodes V2', () => {
         mockedHasMainPackage.mockReturnValue(true);
         mockedShouldUseReviveLinter.mockReturnValue(false);
 
-        const result = await createNodesV2[1](
-          ['apps/myapp/go.mod'],
-          {},
-          context,
-        );
+        const result = await createNodes[1](['apps/myapp/go.mod'], {}, context);
 
         const targets = result[0][1].projects?.['apps/myapp'].targets;
         expect(targets).toBeDefined();
