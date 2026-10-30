@@ -1,3 +1,14 @@
+## 24.0.0-beta.0 (2026-10-30)
+
+### 🚀 Features
+
+- support Nx 24 ([#196](https://github.com/nx-go/nx-go/pull/196))
+- add module prefix detection when generating ([#192](https://github.com/nx-go/nx-go/pull/192))
+
+### ❤️ Thank You
+
+- Maxime Malgorn @utarwyn
+
 ## [4.1.1](https://github.com/nx-go/nx-go/compare/v4.1.0...v4.1.1) (2026-06-23)
 
 ### Bug Fixes
