@@ -32,6 +32,9 @@
       "useCommitScope": false
     },
     "changelog": {
+      "workspaceChangelog": {
+        "file": false
+      },
       "projectChangelogs": {
         "createRelease": "github"
       }
