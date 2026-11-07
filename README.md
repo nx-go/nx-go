@@ -7,7 +7,7 @@
 **First-class support of [Go](https://go.dev) in a [Nx](https://nx.dev) workspace**
 
 [![GitHub release](https://img.shields.io/github/v/release/nx-go/nx-go)](https://github.com/nx-go/nx-go/releases/latest)
-[![Nx version](https://img.shields.io/badge/Nx-20.x%20to%2023.x-blue?logo=nx&label=Nx)](https://nx.dev)
+[![Nx version](https://img.shields.io/badge/Nx-20.x%20to%2024.x-blue?logo=nx&label=Nx)](https://nx.dev)
 [![npm Downloads](https://img.shields.io/npm/dt/@nx-go/nx-go?color=eb2f06&logo=npm)](https://npmjs.com/package/@nx-go/nx-go)
 [![LICENSE](https://img.shields.io/github/license/nx-go/nx-go)](https://github.com/nx-go/nx-go/blob/main/LICENSE)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nx-go_nx-go&metric=alert_status)](https://sonarcloud.io/dashboard?id=nx-go_nx-go)
@@ -92,7 +92,7 @@ Need more customization? A [plugin configuration](./docs/options.md) is also ava
 
 | nx-go version | Nx version     | Support status |
 | ------------- | -------------- | -------------- |
-| 24.x          | 24.x           | Beta           |
+| 24.x          | 24.x           | Active         |
 | 4.x           | 20.x to 23.x   | Active         |
 | ~~3.x~~       | ~~up to 20.x~~ | End of support |
 
