@@ -190,6 +190,8 @@ test(build): add tests for build executor options
 
 Releases are run from GitHub Actions using the **Release** workflow on the branch being released. Select `main` for current releases or `Y.x` for maintenance releases, then choose a stable or beta release. Ensure the release configuration is present on the selected branch. Nx Release determines stable version bumps from Conventional Commits; beta releases use the `beta` npm dist-tag.
 
+If publishing fails after a release tag has been created, run the **Release** workflow again with `existingTag` set to the exact tag name (without the `refs/tags/` prefix). The workflow checks out that tag, skips versioning and release creation, then builds and publishes the existing version. `releaseAs` is ignored in this mode; enable `beta` when retrying a beta release. With `dryRun` enabled, no build or publish occurs. Check npm first: an already published version cannot be overwritten.
+
 ## Pull Request Process
 
 1. **Update your branch** with the latest changes from upstream:

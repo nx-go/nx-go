@@ -18,6 +18,11 @@ on:
         required: false
         default: ''
         type: string
+      existingTag:
+        description: 'Existing release tag to publish without creating a new release (ignores releaseAs)'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   release:
@@ -29,7 +34,7 @@ jobs:
       - name: 📥 Checkout Repo
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ inputs.existingTag && format('refs/tags/{0}', inputs.existingTag) || github.ref }}
           fetch-depth: 0
           token: ${{ secrets.GH_RELEASE_TOKEN }}
 
@@ -39,12 +44,14 @@ jobs:
           use_cache: false
 
       - name: Configure Git
+        if: ${{ inputs.existingTag == '' }}
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
       - name: 🏷 Create release
         id: create-release
+        if: ${{ inputs.existingTag == '' }}
         shell: bash
         run: |
           current_version=$(node -p "require('./packages/nx-go/package.json').version")
@@ -73,11 +80,11 @@ jobs:
           RELEASE_AS: ${{ inputs.releaseAs }}
 
       - name: 🏗 Build package
-        if: ${{ !inputs.dryRun && steps.create-release.outputs.changed == 'true' }}
+        if: ${{ !inputs.dryRun && (inputs.existingTag != '' || steps.create-release.outputs.changed == 'true') }}
         run: pnpm nx build nx-go
 
       - name: 📦 Publish package
-        if: ${{ !inputs.dryRun && steps.create-release.outputs.changed == 'true' }}
+        if: ${{ !inputs.dryRun && (inputs.existingTag != '' || steps.create-release.outputs.changed == 'true') }}
         shell: bash
         run: |
           args=()
