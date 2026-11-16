@@ -43,6 +43,13 @@
       "items": {
         "type": "string"
       }
+    },
+    "packages": {
+      "description": "Go packages to test, relative to the project root. All packages of the project by default (./...)",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": []

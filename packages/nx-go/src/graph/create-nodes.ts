@@ -4,6 +4,7 @@ import {
   type CreateNodesResult,
   type CreateNodesResultArray,
   type CreateNodes,
+  type ProjectConfiguration,
   type ProjectType,
 } from '@nx/devkit';
 import { existsSync } from 'node:fs';
@@ -11,6 +12,10 @@ import { dirname, join } from 'node:path';
 import { GO_MOD_FILE } from '../constants';
 import type { NxGoPluginNodeOptions, NxGoPluginOptions } from '../type';
 import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
+import {
+  findGlobProjects,
+  type GlobProject,
+} from './create-nodes/find-glob-projects';
 import {
   generateTargets,
   type DetectedTools,
@@ -36,6 +41,7 @@ export const createNodes: CreateNodes<NxGoPluginOptions> = [
 const normalizeOptions = (
   options: NxGoPluginOptions,
 ): NxGoPluginNodeOptions => ({
+  projectGlobs: options.projectGlobs ?? [],
   buildTargetName: options.buildTargetName ?? 'build',
   serveTargetName: options.serveTargetName ?? 'serve',
   serveAirTargetName: options.serveAirTargetName ?? 'serve:air',
@@ -50,15 +56,37 @@ const createNodesInternal = async (
   options: NxGoPluginNodeOptions,
   context: CreateNodesContext,
 ): Promise<CreateNodesResult> => {
-  const projectRoot = dirname(configFilePath);
+  const moduleRoot = dirname(configFilePath);
 
+  // Glob patterns only apply to the Go module located at the workspace root
+  const globProjects: GlobProject[] =
+    moduleRoot === '.' && options.projectGlobs.length > 0
+      ? findGlobProjects(context.workspaceRoot, options.projectGlobs)
+      : [{ root: moduleRoot }];
+
+  const projects: Record<string, ProjectConfiguration> = {};
+  for (const globProject of globProjects) {
+    const project = createProject(globProject, moduleRoot, options, context);
+    if (project != null) {
+      projects[globProject.root] = project;
+    }
+  }
+  return { projects };
+};
+
+const createProject = (
+  { root: projectRoot, packages }: GlobProject,
+  moduleRoot: string,
+  options: NxGoPluginNodeOptions,
+  context: CreateNodesContext,
+): ProjectConfiguration | null => {
   // Skip creating a project if this is the workspace root and it doesn't have a project.json file
   // This prevents unnecessary project creation in single-module repositories
   if (
     projectRoot === '.' &&
     !existsSync(join(context.workspaceRoot, 'project.json'))
   ) {
-    return { projects: {} };
+    return null;
   }
 
   // We assume that the project name is derived from the project root folder name
@@ -81,14 +109,20 @@ const createNodesInternal = async (
     revive: shouldUseReviveLinter(context.workspaceRoot, projectRoot),
   };
 
+  // A project without go.mod file shares its module with other projects
+  const hasGoMod = projectRoot === moduleRoot;
+
   return {
-    projects: {
-      [projectRoot]: {
-        root: projectRoot,
-        name: projectName,
-        projectType,
-        targets: generateTargets(options, isApplication, detectedTools),
-      },
-    },
+    root: projectRoot,
+    // Folder names are not unique in a module, so the project is named after its path
+    name: hasGoMod ? projectName : projectRoot,
+    projectType,
+    targets: generateTargets(
+      options,
+      isApplication,
+      detectedTools,
+      packages,
+      hasGoMod,
+    ),
   };
 };

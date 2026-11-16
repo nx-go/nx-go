@@ -7,4 +7,5 @@ export interface TestExecutorSchema {
   count?: number;
   timeout?: string;
   tags?: string[];
+  packages?: string[];
 }

@@ -15,6 +15,14 @@ export interface NxGoPluginOptions {
    */
   modulePrefix?: string;
   /**
+   * Glob patterns of the directories to turn into projects
+   * when a single go.mod file is located at the workspace root (e.g. `["apps/*", "libs/*"]`).
+   *
+   * Each matching directory with Go files becomes a project named after its path.
+   * Default is no pattern, projects are only created from go.mod files.
+   */
+  projectGlobs?: string[];
+  /**
    * Custom target name for the build target.
    * Default is 'build'.
    */

@@ -35,3 +35,7 @@ Uses `go test` command to run tests of a Go project.
 ### tags
 
 - (array): Build tags to pass to the go test command
+
+### packages
+
+- (array): Go packages to test, relative to the project root. All packages of the project by default (`./...`)

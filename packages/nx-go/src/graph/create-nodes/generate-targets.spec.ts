@@ -5,6 +5,7 @@ import { generateTargets } from './generate-targets';
 
 describe('generateTargets', () => {
   const mockOptions: NxGoPluginNodeOptions = {
+    projectGlobs: [],
     buildTargetName: 'build',
     serveTargetName: 'serve',
     serveAirTargetName: 'serve:air',
@@ -136,6 +137,33 @@ describe('generateTargets', () => {
     const result = generateTargets(mockOptions, true, { revive: true });
 
     expect(result[target].inputs).toEqual(expect.arrayOf(expect.any(String)));
+  });
+
+  it('should set packages option on test and lint targets', () => {
+    const result = generateTargets(mockOptions, false, { revive: true }, [
+      '.',
+      './internal/...',
+    ]);
+
+    expect(result['test'].options).toEqual({
+      packages: ['.', './internal/...'],
+    });
+    expect(result['lint'].options).toEqual({
+      linter: 'revive',
+      packages: ['.', './internal/...'],
+    });
+  });
+
+  it('should not create test and lint targets without any package', () => {
+    const result = generateTargets(mockOptions, false, {}, []);
+
+    expect(Object.keys(result)).toEqual(['tidy', 'generate']);
+  });
+
+  it('should not create a tidy target without go.mod file', () => {
+    const result = generateTargets(mockOptions, false, {}, undefined, false);
+
+    expect(Object.keys(result)).toEqual(['test', 'lint', 'generate']);
   });
 
   it('should not include build and serve targets when isApplication is false', () => {
