@@ -16,3 +16,12 @@ export const GO_PROJECT_INPUTS = [
   '{workspaceRoot}/go.work',
   '{workspaceRoot}/go.work.sum',
 ];
+
+/**
+ * Go files of the projects a project depends on.
+ * Used in targets that compile them (build, test), so a change in a dependency invalidates their cache.
+ */
+export const GO_DEPENDENCIES_INPUTS = [
+  { fileset: '{projectRoot}/**/*.go', dependencies: true },
+  { fileset: '{projectRoot}/go.mod', dependencies: true },
+];

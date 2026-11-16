@@ -1,5 +1,6 @@
 import type { TargetConfiguration } from '@nx/devkit';
 import {
+  GO_DEPENDENCIES_INPUTS,
   GO_MOD_FILE,
   GO_PROJECT_INPUTS,
   NX_PLUGIN_NAME,
@@ -39,7 +40,7 @@ export const generateTargets = (
     targets[options.buildTargetName] = {
       executor: `${NX_PLUGIN_NAME}:build`,
       cache: true,
-      inputs: GO_PROJECT_INPUTS,
+      inputs: [...GO_PROJECT_INPUTS, ...GO_DEPENDENCIES_INPUTS],
       outputs: ['{workspaceRoot}/dist/{projectRoot}*'],
       metadata: {
         technologies: ['go'],
@@ -84,7 +85,7 @@ export const generateTargets = (
   targets[options.testTargetName] = {
     executor: `${NX_PLUGIN_NAME}:test`,
     cache: true,
-    inputs: GO_PROJECT_INPUTS,
+    inputs: [...GO_PROJECT_INPUTS, ...GO_DEPENDENCIES_INPUTS],
     // Note: test target intentionally has no outputs as test execution doesn't produce cacheable artifacts
     metadata: {
       technologies: ['go'],
