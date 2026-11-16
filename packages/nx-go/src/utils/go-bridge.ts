@@ -77,6 +77,15 @@ export const getGoVersionForNewMod = (tree: Tree): string => {
 };
 
 /**
+ * Parses the module path declared in a go.mod file.
+ *
+ * @param content the content of the go.mod file
+ * @returns The module path, or `undefined` without module directive.
+ */
+export const parseGoModulePath = (content: string): string | undefined =>
+  REGEXS.module.exec(content)?.[1];
+
+/**
  * Executes the `go list -m -json` command in the
  * specified directory and returns the output as a string.
  *

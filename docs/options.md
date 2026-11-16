@@ -30,6 +30,14 @@ Here is an example:
 
 - (string): Common Go module path prefix (e.g. `github.com/org/repo`) used when generating `go.mod` files for new libraries/applications in a Go workspace. If not set, nx-go tries to auto-detect it from sibling projects' existing `go.mod` files.
 
+### testDependenciesAsInputs
+
+- (boolean): if true, imports of test files (`_test.go`) do not create dependencies in the graph. The imported projects are added to the inputs of the `test` target instead. Default is `false`.
+
+With `libs/a` importing `libs/b` in its tests only, a change in `libs/b` still runs the tests of `libs/a`, but the projects depending on `libs/a` are not affected anymore.
+
+This relies on `nx affected` selecting tasks, the default since Nx 24. With `affected.legacy` enabled in `nx.json`, the tests of `libs/a` would not be selected.
+
 ### buildTargetName
 
 - (string): Custom target name for the build target. Default is `build`.

@@ -12,6 +12,11 @@ import { GO_MOD_FILE } from '../constants';
 import type { NxGoPluginNodeOptions, NxGoPluginOptions } from '../type';
 import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
 import {
+  findTestDependencies,
+  readGoModules,
+  type GoModule,
+} from './create-nodes/find-test-dependencies';
+import {
   generateTargets,
   type DetectedTools,
 } from './create-nodes/generate-targets';
@@ -23,19 +28,30 @@ export const createNodes: CreateNodes<NxGoPluginOptions> = [
     configFiles: readonly string[],
     options: NxGoPluginOptions | undefined,
     context: CreateNodesContext,
-  ): Promise<CreateNodesResultArray> =>
-    createNodesFromFiles(
+  ): Promise<CreateNodesResultArray> => {
+    const goModules = options?.testDependenciesAsInputs
+      ? readGoModules(context.workspaceRoot, configFiles)
+      : [];
+
+    return createNodesFromFiles(
       (configFile, options = {}, context) =>
-        createNodesInternal(configFile, normalizeOptions(options), context),
+        createNodesInternal(
+          configFile,
+          normalizeOptions(options),
+          context,
+          goModules,
+        ),
       configFiles,
       options ?? {},
       context,
-    ),
+    );
+  },
 ];
 
 const normalizeOptions = (
   options: NxGoPluginOptions,
 ): NxGoPluginNodeOptions => ({
+  testDependenciesAsInputs: options.testDependenciesAsInputs ?? false,
   buildTargetName: options.buildTargetName ?? 'build',
   serveTargetName: options.serveTargetName ?? 'serve',
   serveAirTargetName: options.serveAirTargetName ?? 'serve:air',
@@ -49,6 +65,7 @@ const createNodesInternal = async (
   configFilePath: string,
   options: NxGoPluginNodeOptions,
   context: CreateNodesContext,
+  goModules: GoModule[],
 ): Promise<CreateNodesResult> => {
   const projectRoot = dirname(configFilePath);
 
@@ -81,13 +98,22 @@ const createNodesInternal = async (
     revive: shouldUseReviveLinter(context.workspaceRoot, projectRoot),
   };
 
+  const testDependencies = options.testDependenciesAsInputs
+    ? findTestDependencies(context.workspaceRoot, projectRoot, goModules)
+    : [];
+
   return {
     projects: {
       [projectRoot]: {
         root: projectRoot,
         name: projectName,
         projectType,
-        targets: generateTargets(options, isApplication, detectedTools),
+        targets: generateTargets(
+          options,
+          isApplication,
+          detectedTools,
+          testDependencies,
+        ),
       },
     },
   };
