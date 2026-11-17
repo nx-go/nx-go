@@ -34,7 +34,7 @@ describe('generateTargets', () => {
       expect(result['build']).toEqual({
         executor: `${NX_PLUGIN_NAME}:build`,
         cache: true,
-        inputs: expect.arrayOf(expect.any(String)),
+        inputs: expect.any(Array),
         outputs: ['{workspaceRoot}/dist/{projectRoot}*'],
         metadata: expect.anything(),
       } as TargetConfiguration);
@@ -73,7 +73,7 @@ describe('generateTargets', () => {
     expect(result['test']).toEqual({
       executor: `${NX_PLUGIN_NAME}:test`,
       cache: true,
-      inputs: expect.arrayOf(expect.any(String)),
+      inputs: expect.any(Array),
       metadata: expect.anything(),
     } as TargetConfiguration);
   });
@@ -110,6 +110,32 @@ describe('generateTargets', () => {
       inputs: expect.arrayOf(expect.any(String)),
       metadata: expect.anything(),
     } as TargetConfiguration);
+  });
+
+  it.each`
+    target
+    ${'build'}
+    ${'test'}
+  `('should add Go files of dependencies to $target inputs', ({ target }) => {
+    const result = generateTargets(mockOptions, true);
+
+    expect(result[target].inputs).toEqual(
+      expect.arrayContaining([
+        { fileset: '{projectRoot}/**/*.go', dependencies: true },
+        { fileset: '{projectRoot}/go.mod', dependencies: true },
+      ]),
+    );
+  });
+
+  it.each`
+    target
+    ${'lint'}
+    ${'tidy'}
+    ${'generate'}
+  `('should not add dependencies to $target inputs', ({ target }) => {
+    const result = generateTargets(mockOptions, true, { revive: true });
+
+    expect(result[target].inputs).toEqual(expect.arrayOf(expect.any(String)));
   });
 
   it('should not include build and serve targets when isApplication is false', () => {

@@ -340,6 +340,21 @@ describe('nx-go', () => {
       expect(appDependencies[0].target).toBe(libName);
     });
 
+    it('should rebuild the application when a dependency changes', async () => {
+      const cacheMessage = 'Nx read the output from the cache';
+      await runNxCommandAsync(`build ${appName}`);
+      const cached = await runNxCommandAsync(`build ${appName}`);
+      expect(cached.stdout).toContain(cacheMessage);
+
+      updateFile(
+        `${libName}/${libName}.go`,
+        (content) => `${content}\n// changed`
+      );
+
+      const result = await runNxCommandAsync(`build ${appName}`);
+      expect(result.stdout).not.toContain(cacheMessage);
+    });
+
     it('should work with packages with import in the name', async () => {
       const dataimportLib = 'dataimport';
       await runNxCommandAsync(`generate @nx-go/nx-go:library ${dataimportLib}`);
