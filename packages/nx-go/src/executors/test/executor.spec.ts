@@ -27,6 +27,18 @@ describe('Test Executor', () => {
     });
   });
 
+  it('should execute test of the given packages', async () => {
+    const spyExecute = jest.spyOn(commonFunctions, 'executeCommand');
+    const output = await executor(
+      { ...options, packages: ['.', './internal/...'] },
+      context,
+    );
+    expect(output.success).toBeTruthy();
+    expect(spyExecute).toHaveBeenCalledWith(['test', '.', './internal/...'], {
+      cwd: 'apps/project',
+    });
+  });
+
   it.each`
     config                              | flag
     ${{ verbose: true }}                | ${'-v'}

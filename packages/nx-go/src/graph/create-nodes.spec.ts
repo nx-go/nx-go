@@ -2,12 +2,15 @@ import { CreateNodesContext } from '@nx/devkit';
 import { existsSync } from 'node:fs';
 import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
 import { createNodes } from './create-nodes';
+import { findGlobProjects } from './create-nodes/find-glob-projects';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
+jest.mock('./create-nodes/find-glob-projects');
 jest.mock('./create-nodes/has-main-package');
 jest.mock('../utils');
 jest.mock('node:fs');
 
+const mockedFindGlobProjects = jest.mocked(findGlobProjects);
 const mockedHasMainPackage = jest.mocked(hasMainPackage);
 const mockedShouldCreateAirTarget = jest.mocked(shouldCreateAirTarget);
 const mockedShouldUseReviveLinter = jest.mocked(shouldUseReviveLinter);
@@ -174,6 +177,97 @@ describe('Create nodes', () => {
       const result = await createNodes[1](['apps/api/go.mod'], {}, context);
 
       expect(result[0][1].projects?.['apps/api'].name).toBe('api');
+    });
+
+    describe('Project globs', () => {
+      const options = { projectGlobs: ['apps/*', 'libs/*'] };
+
+      it('should not look for projects without glob patterns', async () => {
+        await createNodes[1](['go.mod'], { projectGlobs: [] }, context);
+
+        expect(mockedFindGlobProjects).not.toHaveBeenCalled();
+      });
+
+      it('should create a project per directory named after its path', async () => {
+        mockedExistsSync.mockReturnValue(false);
+        mockedHasMainPackage.mockImplementation(
+          (_, projectRoot) => projectRoot === 'apps/api',
+        );
+        mockedFindGlobProjects.mockReturnValue([
+          { root: '.', packages: [] },
+          { root: 'apps/api' },
+          { root: 'libs/a' },
+        ]);
+
+        const result = await createNodes[1](['go.mod'], options, context);
+
+        expect(mockedFindGlobProjects).toHaveBeenCalledWith(
+          '/workspace',
+          options.projectGlobs,
+        );
+        expect(mockedHasMainPackage).toHaveBeenCalledWith(
+          '/workspace',
+          'apps/api',
+          'api',
+        );
+        expect(result).toMatchObject([
+          [
+            'go.mod',
+            {
+              projects: {
+                'apps/api': {
+                  name: 'apps/api',
+                  root: 'apps/api',
+                  projectType: 'application',
+                },
+                'libs/a': {
+                  name: 'libs/a',
+                  root: 'libs/a',
+                  projectType: 'library',
+                },
+              },
+            },
+          ],
+        ]);
+        expect(result[0][1].projects?.['.']).toBeUndefined();
+        expect(
+          result[0][1].projects?.['libs/a'].targets?.['tidy'],
+        ).toBeUndefined();
+      });
+
+      it('should not look for projects in a nested go.mod file', async () => {
+        const result = await createNodes[1](
+          ['libs/a/go.mod'],
+          options,
+          context,
+        );
+
+        expect(mockedFindGlobProjects).not.toHaveBeenCalled();
+        expect(result[0][1].projects?.['libs/a'].name).toBe('a');
+      });
+
+      it('should only test and lint the packages of the project', async () => {
+        mockedFindGlobProjects.mockReturnValue([
+          { root: 'libs/a/sub' },
+          { root: 'libs/a', packages: ['.', './internal/...'] },
+          { root: '.', packages: [] },
+        ]);
+
+        const result = await createNodes[1](['go.mod'], options, context);
+
+        const projects = result[0][1].projects;
+        expect(
+          projects?.['libs/a/sub'].targets?.['test']?.options,
+        ).toBeUndefined();
+        expect(projects?.['libs/a'].targets?.['test']?.options).toEqual({
+          packages: ['.', './internal/...'],
+        });
+        expect(projects?.['libs/a'].targets?.['lint']?.options).toEqual({
+          packages: ['.', './internal/...'],
+        });
+        expect(projects?.['.'].targets?.['test']).toBeUndefined();
+        expect(projects?.['.'].targets?.['lint']).toBeUndefined();
+      });
     });
 
     describe('Air target', () => {

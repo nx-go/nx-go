@@ -25,13 +25,17 @@ export interface DetectedTools {
  * @param options - The plugin options containing target names
  * @param isApplication - A boolean indicating if the project is an application (has package main) or a library
  * @param detectedTools - Optional detected external tools that influence target generation
+ * @param packages - Optional Go packages to test and lint instead of all packages of the project
+ * @param hasGoMod - A boolean indicating if the project has its own go.mod file
  * @returns An object containing the generated targets for the project
  * @see https://nx.dev/docs/extending-nx/project-graph-plugins#identifying-projects
  */
 export const generateTargets = (
   options: NxGoPluginNodeOptions,
   isApplication: boolean,
-  detectedTools: DetectedTools = {}
+  detectedTools: DetectedTools = {},
+  packages?: string[],
+  hasGoMod = true
 ): Record<string, TargetConfiguration> => {
   const targets: Record<string, TargetConfiguration> = {};
 
@@ -81,53 +85,64 @@ export const generateTargets = (
     }
   }
 
-  // Test, Lint, and Tidy targets - for all Go projects
-  targets[options.testTargetName] = {
-    executor: `${NX_PLUGIN_NAME}:test`,
-    cache: true,
-    inputs: [...GO_PROJECT_INPUTS, ...GO_DEPENDENCIES_INPUTS],
-    // Note: test target intentionally has no outputs as test execution doesn't produce cacheable artifacts
-    metadata: {
-      technologies: ['go'],
-      description: 'Tests the Go project',
-      help: {
-        command: 'go help test',
-        example: { options: { cover: true } },
-      },
-    },
-  };
+  // Test and Lint targets - for all Go projects with packages left to them
+  if (packages == null || packages.length > 0) {
+    const lintOptions = {
+      ...(detectedTools.revive ? { linter: 'revive' } : {}),
+      ...(packages ? { packages } : {}),
+    };
 
-  targets[options.lintTargetName] = {
-    executor: `${NX_PLUGIN_NAME}:lint`,
-    cache: true,
-    inputs: detectedTools.revive
-      ? [...GO_PROJECT_INPUTS, ...REVIVE_INPUTS]
-      : GO_PROJECT_INPUTS,
-    ...(detectedTools.revive ? { options: { linter: 'revive' } } : {}),
-    metadata: {
-      technologies: ['go'],
-      description: 'Lints the Go project',
-      help: {
-        command: 'go help fmt',
-        example: {},
+    targets[options.testTargetName] = {
+      executor: `${NX_PLUGIN_NAME}:test`,
+      cache: true,
+      inputs: [...GO_PROJECT_INPUTS, ...GO_DEPENDENCIES_INPUTS],
+      ...(packages ? { options: { packages } } : {}),
+      // Note: test target intentionally has no outputs as test execution doesn't produce cacheable artifacts
+      metadata: {
+        technologies: ['go'],
+        description: 'Tests the Go project',
+        help: {
+          command: 'go help test',
+          example: { options: { cover: true } },
+        },
       },
-    },
-  };
+    };
 
-  targets[options.tidyTargetName] = {
-    executor: `${NX_PLUGIN_NAME}:tidy`,
-    cache: true,
-    inputs: GO_PROJECT_INPUTS,
-    outputs: [`{projectRoot}/${GO_MOD_FILE}`, '{projectRoot}/go.sum'],
-    metadata: {
-      technologies: ['go'],
-      description: 'Tidies the Go project dependencies',
-      help: {
-        command: 'go help mod',
-        example: {},
+    targets[options.lintTargetName] = {
+      executor: `${NX_PLUGIN_NAME}:lint`,
+      cache: true,
+      inputs: detectedTools.revive
+        ? [...GO_PROJECT_INPUTS, ...REVIVE_INPUTS]
+        : GO_PROJECT_INPUTS,
+      ...(Object.keys(lintOptions).length > 0 ? { options: lintOptions } : {}),
+      metadata: {
+        technologies: ['go'],
+        description: 'Lints the Go project',
+        help: {
+          command: 'go help fmt',
+          example: {},
+        },
       },
-    },
-  };
+    };
+  }
+
+  // Tidy target - only for projects with their own go.mod file
+  if (hasGoMod) {
+    targets[options.tidyTargetName] = {
+      executor: `${NX_PLUGIN_NAME}:tidy`,
+      cache: true,
+      inputs: GO_PROJECT_INPUTS,
+      outputs: [`{projectRoot}/${GO_MOD_FILE}`, '{projectRoot}/go.sum'],
+      metadata: {
+        technologies: ['go'],
+        description: 'Tidies the Go project dependencies',
+        help: {
+          command: 'go help mod',
+          example: {},
+        },
+      },
+    };
+  }
 
   targets[options.generateTargetName] = {
     executor: `${NX_PLUGIN_NAME}:generate`,

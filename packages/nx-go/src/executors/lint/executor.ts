@@ -13,8 +13,11 @@ export default async function runExecutor(
   context: ExecutorContext
 ) {
   const defaultArgs = schema.linter == null ? ['fmt'] : [];
-  return executeCommand([...defaultArgs, ...(schema.args ?? []), './...'], {
-    cwd: resolveWorkingDirectory(context),
-    executable: schema.linter,
-  });
+  return executeCommand(
+    [...defaultArgs, ...(schema.args ?? []), ...(schema.packages ?? ['./...'])],
+    {
+      cwd: resolveWorkingDirectory(context),
+      executable: schema.linter,
+    }
+  );
 }
