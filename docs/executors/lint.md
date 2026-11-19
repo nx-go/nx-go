@@ -42,3 +42,7 @@ Usage with [revive](https://github.com/mgechev/revive) (need to be installed bef
 ### args
 
 - (array): Extra args when linting the project
+
+### packages
+
+- (array): Go packages to lint, relative to the project root and passed after `args` to go fmt or the custom linter, default is `./...`

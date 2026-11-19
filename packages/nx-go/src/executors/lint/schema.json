@@ -15,6 +15,13 @@
         "type": "string"
       },
       "description": "Extra args when linting the app"
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Go packages to lint, relative to the project root and passed after args to go fmt or the custom linter, default is ./..."
     }
   },
   "required": []
