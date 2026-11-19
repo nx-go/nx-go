@@ -30,6 +30,18 @@ describe('Lint Executor', () => {
     });
   });
 
+  it('should execute lint command on the given packages', async () => {
+    const output = await executor(
+      { ...options, packages: ['.', './internal/...'] },
+      context
+    );
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['fmt', '.', './internal/...'],
+      { cwd: 'apps/project' }
+    );
+  });
+
   it('should execute lint command with custom options', async () => {
     const output = await executor(
       { ...options, args: ['--config', 'revive.toml'], linter: 'revive' },
@@ -38,6 +50,23 @@ describe('Lint Executor', () => {
     expect(output.success).toBeTruthy();
     expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
       ['--config', 'revive.toml', './...'],
+      { cwd: 'apps/project', executable: 'revive' }
+    );
+  });
+
+  it('should execute lint command on the given packages with custom linter', async () => {
+    const output = await executor(
+      {
+        ...options,
+        args: ['--config', 'revive.toml'],
+        linter: 'revive',
+        packages: ['./internal/...']
+      },
+      context
+    );
+    expect(output.success).toBeTruthy();
+    expect(sharedFunctions.executeCommand).toHaveBeenCalledWith(
+      ['--config', 'revive.toml', './internal/...'],
       { cwd: 'apps/project', executable: 'revive' }
     );
   });
