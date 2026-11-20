@@ -5,6 +5,7 @@ import { generateTargets } from './generate-targets';
 
 describe('generateTargets', () => {
   const mockOptions: NxGoPluginNodeOptions = {
+    testDependenciesAsInputs: false,
     buildTargetName: 'build',
     serveTargetName: 'serve',
     serveAirTargetName: 'serve:air',
@@ -136,6 +137,22 @@ describe('generateTargets', () => {
     const result = generateTargets(mockOptions, true, { revive: true });
 
     expect(result[target].inputs).toEqual(expect.arrayOf(expect.any(String)));
+  });
+
+  it('should add test dependencies to test target inputs only', () => {
+    const result = generateTargets(mockOptions, true, {}, ['libs/a', 'libs/b']);
+
+    const projects = ['directory:libs/a', 'directory:libs/b'];
+    expect(result['test'].inputs).toEqual(
+      expect.arrayContaining([
+        { input: 'default', projects },
+        { input: 'default', projects, dependencies: true },
+      ]),
+    );
+    expect(result['build'].inputs).not.toContainEqual(
+      expect.objectContaining({ projects }),
+    );
+    expect(result['lint'].inputs).toEqual(expect.arrayOf(expect.any(String)));
   });
 
   it('should not include build and serve targets when isApplication is false', () => {

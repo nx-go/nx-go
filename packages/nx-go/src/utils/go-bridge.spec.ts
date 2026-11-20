@@ -14,6 +14,7 @@ import {
   getGoVersionForNewMod,
   isGoWorkspace,
   parseGoList,
+  parseGoModulePath,
   supportsGoWorkspace,
 } from './go-bridge';
 
@@ -179,6 +180,17 @@ describe('Go bridge', () => {
       const content = 'use ./first\n\nuse (\n  ./second\n  ./third\n)';
       const result = parseGoList('use', content);
       expect(result).toEqual(['./first', './second', './third']);
+    });
+  });
+
+  describe('Method: parseGoModulePath', () => {
+    it('should parse the module path of a go.mod file', () => {
+      const result = parseGoModulePath('module example.com/repo\n\ngo 1.24\n');
+      expect(result).toEqual('example.com/repo');
+    });
+
+    it('should return undefined without module directive', () => {
+      expect(parseGoModulePath('go 1.24\n')).toBeUndefined();
     });
   });
 

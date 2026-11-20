@@ -83,6 +83,39 @@ describe('Create dependencies', () => {
     expect(dependencies).toEqual(expectedDependencies);
   });
 
+  describe('Test files', () => {
+    const context = {
+      ...validContext,
+      filesToProcess: {
+        projectFileMap: {
+          api: [
+            { file: 'api.go', hash: '' },
+            { file: 'api_test.go', hash: '' },
+          ],
+        },
+        nonProjectFiles: [],
+      },
+    } as unknown as CreateDependenciesContext;
+
+    it('should create dependencies from test files', async () => {
+      const dependencies = await createDependencies(undefined, context);
+      expect(dependencies).toEqual([
+        expect.objectContaining({ sourceFile: 'api.go' }),
+        expect.objectContaining({ sourceFile: 'api_test.go' }),
+      ]);
+    });
+
+    it('should not create dependencies from test files used as inputs', async () => {
+      const dependencies = await createDependencies(
+        { testDependenciesAsInputs: true },
+        context
+      );
+      expect(dependencies).toEqual([
+        expect.objectContaining({ sourceFile: 'api.go' }),
+      ]);
+    });
+  });
+
   describe('Go modules', () => {
     it('should not compute Go if there is no file to process', async () => {
       const dependencies = await createDependencies(undefined, {

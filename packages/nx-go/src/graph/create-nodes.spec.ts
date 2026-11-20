@@ -2,12 +2,19 @@ import { CreateNodesContext } from '@nx/devkit';
 import { existsSync } from 'node:fs';
 import { shouldCreateAirTarget, shouldUseReviveLinter } from '../utils';
 import { createNodes } from './create-nodes';
+import {
+  findTestDependencies,
+  readGoModules,
+} from './create-nodes/find-test-dependencies';
 import { hasMainPackage } from './create-nodes/has-main-package';
 
+jest.mock('./create-nodes/find-test-dependencies');
 jest.mock('./create-nodes/has-main-package');
 jest.mock('../utils');
 jest.mock('node:fs');
 
+const mockedFindTestDependencies = jest.mocked(findTestDependencies);
+const mockedReadGoModules = jest.mocked(readGoModules);
 const mockedHasMainPackage = jest.mocked(hasMainPackage);
 const mockedShouldCreateAirTarget = jest.mocked(shouldCreateAirTarget);
 const mockedShouldUseReviveLinter = jest.mocked(shouldUseReviveLinter);
@@ -174,6 +181,56 @@ describe('Create nodes', () => {
       const result = await createNodes[1](['apps/api/go.mod'], {}, context);
 
       expect(result[0][1].projects?.['apps/api'].name).toBe('api');
+    });
+
+    describe('Test dependencies as inputs', () => {
+      const configFiles = ['libs/a/go.mod', 'libs/b/go.mod'];
+      const modules = [
+        { path: 'example.com/a', root: 'libs/a' },
+        { path: 'example.com/b', root: 'libs/b' },
+      ];
+
+      it('should not look for test dependencies by default', async () => {
+        await createNodes[1](configFiles, {}, context);
+
+        expect(mockedReadGoModules).not.toHaveBeenCalled();
+        expect(mockedFindTestDependencies).not.toHaveBeenCalled();
+      });
+
+      it('should add projects imported by test files to test inputs', async () => {
+        mockedReadGoModules.mockReturnValue(modules);
+        mockedFindTestDependencies.mockImplementation((_, projectRoot) =>
+          projectRoot === 'libs/a' ? ['libs/b'] : [],
+        );
+
+        const result = await createNodes[1](
+          configFiles,
+          { testDependenciesAsInputs: true },
+          context,
+        );
+
+        expect(mockedReadGoModules).toHaveBeenCalledTimes(1);
+        expect(mockedReadGoModules).toHaveBeenCalledWith(
+          '/workspace',
+          configFiles,
+        );
+        expect(mockedFindTestDependencies).toHaveBeenCalledWith(
+          '/workspace',
+          'libs/a',
+          modules,
+        );
+        const inputs = (root: string) =>
+          result.find(([file]) => file === `${root}/go.mod`)?.[1].projects?.[
+            root
+          ].targets?.['test'].inputs;
+        expect(inputs('libs/a')).toContainEqual({
+          input: 'default',
+          projects: ['directory:libs/b'],
+        });
+        expect(inputs('libs/b')).not.toContainEqual(
+          expect.objectContaining({ input: 'default' }),
+        );
+      });
     });
 
     describe('Air target', () => {

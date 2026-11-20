@@ -122,7 +122,9 @@ export const createDependencies: CreateDependencies<NxGoPluginOptions> = async (
 
   for (const projectName in context.filesToProcess.projectFileMap) {
     const files = context.filesToProcess.projectFileMap[projectName].filter(
-      (file) => extname(file.file) === '.go'
+      (file) =>
+        extname(file.file) === '.go' &&
+        !(options?.testDependenciesAsInputs && file.file.endsWith('_test.go'))
     );
 
     if (files.length > 0 && goModules == null) {

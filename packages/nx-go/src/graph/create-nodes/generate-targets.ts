@@ -25,15 +25,18 @@ export interface DetectedTools {
  * @param options - The plugin options containing target names
  * @param isApplication - A boolean indicating if the project is an application (has package main) or a library
  * @param detectedTools - Optional detected external tools that influence target generation
+ * @param testDependencies - Optional directories imported by test files only, added to the test target inputs
  * @returns An object containing the generated targets for the project
  * @see https://nx.dev/docs/extending-nx/project-graph-plugins#identifying-projects
  */
 export const generateTargets = (
   options: NxGoPluginNodeOptions,
   isApplication: boolean,
-  detectedTools: DetectedTools = {}
+  detectedTools: DetectedTools = {},
+  testDependencies: string[] = []
 ): Record<string, TargetConfiguration> => {
   const targets: Record<string, TargetConfiguration> = {};
+  const testProjects = testDependencies.map((root) => `directory:${root}`);
 
   // Build and Serve targets - only for applications
   if (isApplication) {
@@ -85,7 +88,16 @@ export const generateTargets = (
   targets[options.testTargetName] = {
     executor: `${NX_PLUGIN_NAME}:test`,
     cache: true,
-    inputs: [...GO_PROJECT_INPUTS, ...GO_DEPENDENCIES_INPUTS],
+    inputs: [
+      ...GO_PROJECT_INPUTS,
+      ...GO_DEPENDENCIES_INPUTS,
+      ...(testProjects.length > 0
+        ? [
+            { input: 'default', projects: testProjects },
+            { input: 'default', projects: testProjects, dependencies: true },
+          ]
+        : []),
+    ],
     // Note: test target intentionally has no outputs as test execution doesn't produce cacheable artifacts
     metadata: {
       technologies: ['go'],

@@ -406,6 +406,68 @@ describe('nx-go', () => {
     });
   });
 
+  describe('Test dependencies as inputs', () => {
+    const testedLib = uniq('lib');
+
+    const setTestDependenciesAsInputsOption = (enabled: boolean) => {
+      const nxJson = readJson('nx.json');
+      nxJson.plugins = (nxJson.plugins || []).map(
+        (plugin: string | { plugin: string; options?: object }) => {
+          const pluginName =
+            typeof plugin === 'string' ? plugin : plugin.plugin;
+          if (pluginName !== '@nx-go/nx-go') {
+            return plugin;
+          }
+          return enabled
+            ? {
+                plugin: pluginName,
+                options: { testDependenciesAsInputs: true },
+              }
+            : pluginName;
+        }
+      );
+      updateFile('nx.json', JSON.stringify(nxJson, null, 2));
+    };
+
+    beforeAll(async () => {
+      await runNxCommandAsync(`generate @nx-go/nx-go:library ${testedLib}`);
+      updateFile(
+        `${testedLib}/import_test.go`,
+        `package ${testedLib}_test
+
+        import (
+          _ "${libName}"
+        )`
+      );
+    });
+    afterAll(() => setTestDependenciesAsInputsOption(false));
+
+    it('should create dependencies from test files by default', async () => {
+      await runNxCommandAsync('dep-graph --file=graph.json');
+      const { graph } = readJson('graph.json');
+
+      expect(graph.dependencies[testedLib]).toEqual([
+        expect.objectContaining({ target: libName }),
+      ]);
+    });
+
+    it('should move dependencies from test files to test inputs', async () => {
+      setTestDependenciesAsInputsOption(true);
+
+      await runNxCommandAsync('dep-graph --file=graph.json');
+      const { graph } = readJson('graph.json');
+      expect(graph.dependencies[testedLib]).toEqual([]);
+
+      const result = await runNxCommandAsync(
+        `show project ${testedLib} --json`
+      );
+      expect(JSON.parse(result.stdout).targets.test.inputs).toContainEqual({
+        input: 'default',
+        projects: [`directory:${libName}`],
+      });
+    });
+  });
+
   describe('convert-to-inferred', () => {
     it('should convert explicit targets to inferred targets', async () => {
       const explicitApp = uniq('app');

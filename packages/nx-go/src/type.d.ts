@@ -15,6 +15,15 @@ export interface NxGoPluginOptions {
    */
   modulePrefix?: string;
   /**
+   * If true, imports of test files (`_test.go`) do not create dependencies in the graph.
+   * The imported projects are added to the inputs of the test target instead,
+   * so tests still run when they change but projects depending on the tested one are not affected.
+   *
+   * This requires `nx affected` to select tasks (default since Nx 24), not projects (`affected.legacy`).
+   * Default is false.
+   */
+  testDependenciesAsInputs?: boolean;
+  /**
    * Custom target name for the build target.
    * Default is 'build'.
    */
